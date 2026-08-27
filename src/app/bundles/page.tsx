@@ -10,7 +10,7 @@ import { CheckMark } from "@/components/primitives/Marks";
 export const metadata = pageMetadata({
   title: "Performance Bundles",
   description:
-    "Curated performance systems — apparel, training, nutrition and recovery chosen to work together. Save up to ₦86,000.",
+    "Curated performance systems — apparel, training, nutrition and recovery chosen to work together. Save up to $120.",
   path: "/bundles",
 });
 
@@ -63,7 +63,7 @@ export default function BundlesPage() {
                       <span className="block font-display text-h6 font-bold uppercase tracking-tight text-bone">
                         {b.name}
                       </span>
-                      <span className="numeric mt-1.5 block text-caption text-lime-bright">
+                      <span className="numeric mt-1.5 block text-caption text-purple-bright">
                         {formatPrice(b.price)}
                       </span>
                     </th>
@@ -84,7 +84,7 @@ export default function BundlesPage() {
                       {BUNDLES.map((b) => (
                         <td key={b.slug} className="py-3.5 pr-6">
                           {b.items.includes(slug) ? (
-                            <CheckMark className="size-4 text-lime" />
+                            <CheckMark className="size-4 text-purple-bright" />
                           ) : (
                             <span aria-hidden className="text-ash">
                               —
@@ -117,7 +117,7 @@ export default function BundlesPage() {
                     You save
                   </th>
                   {BUNDLES.map((b) => (
-                    <td key={b.slug} className="numeric py-4 pr-6 text-body-sm text-lime-bright">
+                    <td key={b.slug} className="numeric py-4 pr-6 text-body-sm text-purple-bright">
                       {formatPrice(b.saves)}
                     </td>
                   ))}

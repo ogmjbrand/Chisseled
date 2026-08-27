@@ -58,7 +58,7 @@ export function Community({ heading = true }: { heading?: boolean }) {
               />
 
               <div className="relative z-[3] flex h-full flex-col justify-end p-6">
-                <p className="eyebrow mb-2.5 text-lime-bright">{a.discipline}</p>
+                <p className="eyebrow mb-2.5 text-purple-bright">{a.discipline}</p>
                 <h3 className="display-sm mb-1 text-bone">{a.name}</h3>
                 <p className="mb-4 font-mono text-micro uppercase tracking-[0.12em] text-smoke">
                   {a.role} · {a.location}

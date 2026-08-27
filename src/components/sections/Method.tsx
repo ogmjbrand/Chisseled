@@ -66,7 +66,7 @@ export function Method({ compact = false }: { compact?: boolean }) {
           </h2>
 
           <div
-            className="grid gap-1 border-l-2 border-lime pl-6 sm:grid-cols-3"
+            className="grid gap-1 border-l-2 border-purple pl-6 sm:grid-cols-3"
             data-reveal
             style={{ "--reveal-delay": "100ms" } as React.CSSProperties}
           >
@@ -104,7 +104,7 @@ export function Method({ compact = false }: { compact?: boolean }) {
               />
 
               <div className="relative z-[3]">
-                <p className="numeric mb-6 text-caption text-lime">{pillar.number}</p>
+                <p className="numeric mb-6 text-caption text-purple-bright">{pillar.number}</p>
                 <h3 className="display-md mb-4 text-bone">{pillar.title}</h3>
                 <p className="max-w-[34ch] text-body-sm leading-relaxed text-fog">{pillar.body}</p>
               </div>

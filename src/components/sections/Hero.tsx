@@ -62,7 +62,7 @@ export function Hero() {
           opacity: 1 - exit * 1.1,
         }}
       >
-        <p className="eyebrow mb-6 animate-fade text-lime-bright" style={{ animationDelay: "200ms" }}>
+        <p className="eyebrow mb-6 animate-fade text-purple-bright" style={{ animationDelay: "200ms" }}>
           OGMJ Brands — Performance Division
         </p>
 
@@ -81,7 +81,7 @@ export function Hero() {
               style={{ "--reveal-delay": "110ms" } as React.CSSProperties}
             >
               <span>
-                the <em className="not-italic text-lime">disciplined.</em>
+                the <em className="not-italic text-purple-bright">disciplined.</em>
               </span>
             </span>
           </span>
@@ -116,7 +116,7 @@ export function Hero() {
             { k: "Athletes", v: "50,000+" },
             { k: "Customer rating", v: "4.9 / 5" },
             { k: "Training sessions logged", v: "100,000+" },
-            { k: "Ships from", v: "Lagos, worldwide" },
+            { k: "Ships from", v: "Florida, worldwide" },
           ].map((s, i) => (
             <li
               key={s.k}
@@ -141,7 +141,7 @@ export function Hero() {
         </span>
         <span className="relative h-14 w-px overflow-hidden bg-bone/15">
           <span
-            className="absolute inset-x-0 top-0 h-1/2 bg-lime-bright"
+            className="absolute inset-x-0 top-0 h-1/2 bg-purple-bright"
             style={{ animation: "chisseled-scan 2.6s var(--ease-in-out-quint) infinite" }}
           />
         </span>

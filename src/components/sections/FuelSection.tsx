@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getProductsByWorld } from "@/lib/catalog";
+import { getNutritionProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { Flat, Specimen } from "@/components/primitives/Visual";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
@@ -12,7 +12,7 @@ const CATEGORIES = [
 ];
 
 export function FuelSection() {
-  const products = getProductsByWorld("performance");
+  const products = getNutritionProducts();
 
   return (
     <section
@@ -133,7 +133,7 @@ export function FuelSection() {
                           key={t}
                           className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-smoke"
                         >
-                          <CheckMark className="size-3 text-lime" />
+                          <CheckMark className="size-3 text-purple-bright" />
                           {t}
                         </li>
                       ),
@@ -143,7 +143,7 @@ export function FuelSection() {
                   <div className="flex flex-wrap items-center gap-4">
                     <span className="numeric text-h6 text-bone">{formatPrice(p.price)}</span>
                     {p.nutrition && (
-                      <span className="badge badge-lime">
+                      <span className="badge badge-purple">
                         Subscribe &amp; save {p.nutrition.subscribeDiscount}%
                       </span>
                     )}

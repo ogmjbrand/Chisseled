@@ -147,7 +147,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   key={i}
                   className={
                     i < Math.round(product.rating)
-                      ? "size-3.5 text-lime-bright"
+                      ? "size-3.5 text-purple-bright"
                       : "size-3.5 text-iron"
                   }
                   filled={i < Math.round(product.rating)}
@@ -169,7 +169,7 @@ export function ProductDetail({ product }: { product: Product }) {
               </span>
             )}
             {subscribe && product.nutrition && (
-              <span className="badge badge-lime">
+              <span className="badge badge-purple">
                 {product.nutrition.subscribeDiscount}% off, every delivery
               </span>
             )}
@@ -199,7 +199,7 @@ export function ProductDetail({ product }: { product: Product }) {
                     className={[
                       "border p-4 text-left transition-colors duration-400",
                       subscribe === opt.on
-                        ? "border-lime bg-lime/8"
+                        ? "border-purple bg-purple/8"
                         : "border-bone/15 hover:border-bone/35",
                     ].join(" ")}
                   >
@@ -342,7 +342,7 @@ export function ProductDetail({ product }: { product: Product }) {
               className={[
                 "flex size-[3.4375rem] shrink-0 items-center justify-center border transition-colors duration-400",
                 saved
-                  ? "border-lime text-lime-bright"
+                  ? "border-purple text-purple-bright"
                   : "border-bone/25 text-bone hover:border-bone",
               ].join(" ")}
             >
@@ -358,12 +358,12 @@ export function ProductDetail({ product }: { product: Product }) {
           {/* Assurances */}
           <ul className="mb-9 grid gap-px border border-bone/10 bg-bone/10 sm:grid-cols-3">
             {[
-              { icon: TruckMark, title: "Free over ₦120,000", note: "2–5 days in Nigeria" },
+              { icon: TruckMark, title: "Free over $100", note: "3–5 days in the US" },
               { icon: ReturnMark, title: "30-day returns", note: "Unworn, tags on" },
               { icon: ShieldMark, title: "2-year guarantee", note: "Against defects" },
             ].map((a) => (
               <li key={a.title} className="bg-ink p-4">
-                <a.icon className="mb-2.5 size-4 text-lime" />
+                <a.icon className="mb-2.5 size-4 text-purple-bright" />
                 <p className="text-caption text-bone">{a.title}</p>
                 <p className="mt-0.5 text-micro text-ash">{a.note}</p>
               </li>
@@ -381,7 +381,7 @@ export function ProductDetail({ product }: { product: Product }) {
               <ul className="space-y-5">
                 {product.benefits.map((b) => (
                   <li key={b.title} className="flex gap-3">
-                    <CheckMark className="mt-1 size-4 shrink-0 text-lime" />
+                    <CheckMark className="mt-1 size-4 shrink-0 text-purple-bright" />
                     <div>
                       <p className="text-body-sm font-medium text-bone">{b.title}</p>
                       <p className="mt-1 text-body-sm leading-relaxed text-smoke">{b.detail}</p>
@@ -475,9 +475,9 @@ export function ProductDetail({ product }: { product: Product }) {
             >
               <dl className="space-y-5">
                 {[
-                  ["Nigeria", "2–5 working days. Free over ₦120,000, otherwise ₦4,500."],
+                  ["United States", "3–5 business days. Free over $100, otherwise $7."],
                   ["International", "5–12 working days to 38 countries. Duties calculated at checkout."],
-                  ["Returns", "30 days from delivery, unworn with tags attached. Return shipping is free within Nigeria."],
+                  ["Returns", "30 days from delivery, unworn with tags attached. Return shipping is free within the US."],
                   ["Guarantee", "Two years against manufacturing defects. Wear and tear is not a defect, and we will tell you which one we think it is."],
                 ].map(([k, v]) => (
                   <div key={k}>
@@ -700,7 +700,7 @@ export function ReviewList({ product }: { product: Product }) {
                   key={i}
                   className={
                     i < Math.round(product.rating)
-                      ? "size-4 text-lime-bright"
+                      ? "size-4 text-purple-bright"
                       : "size-4 text-iron"
                   }
                   filled={i < Math.round(product.rating)}
@@ -717,7 +717,7 @@ export function ReviewList({ product }: { product: Product }) {
                   <span className="numeric w-3 text-micro text-ash">{5 - i}</span>
                   <span className="h-1 flex-1 overflow-hidden bg-bone/10">
                     <span
-                      className="block h-full bg-lime/70"
+                      className="block h-full bg-purple/70"
                       style={{ width: `${pct}%` }}
                     />
                   </span>
@@ -737,13 +737,13 @@ export function ReviewList({ product }: { product: Product }) {
                       {Array.from({ length: 5 }).map((_, i) => (
                         <StarMark
                           key={i}
-                          className={i < r.rating ? "size-3.5 text-lime-bright" : "size-3.5 text-iron"}
+                          className={i < r.rating ? "size-3.5 text-purple-bright" : "size-3.5 text-iron"}
                           filled={i < r.rating}
                         />
                       ))}
                     </span>
                     {r.verified && (
-                      <span className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-lime">
+                      <span className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-purple-bright">
                         <CheckMark className="size-3" />
                         Verified purchase
                       </span>

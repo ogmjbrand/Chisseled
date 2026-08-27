@@ -52,7 +52,7 @@ const INITIAL: State = {
   lines: [],
   wishlist: [],
   recent: [],
-  currency: "NGN",
+  currency: "USD",
   ready: false,
 };
 

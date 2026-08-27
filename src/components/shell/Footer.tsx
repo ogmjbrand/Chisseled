@@ -17,7 +17,7 @@ export function Footer() {
             <h2 className="display-xl text-bone" data-reveal-line>
               <span>Become</span>
             </h2>
-            <h2 className="display-xl text-lime" data-reveal-line style={{ "--reveal-delay": "90ms" } as React.CSSProperties}>
+            <h2 className="display-xl text-purple-bright" data-reveal-line style={{ "--reveal-delay": "90ms" } as React.CSSProperties}>
               <span>Chisseled.</span>
             </h2>
           </div>
@@ -95,7 +95,7 @@ function NewsletterForm() {
 
       {state === "done" ? (
         <p
-          className="inline-flex items-center gap-2 border border-lime/30 bg-lime/10 px-5 py-4 text-body-sm text-lime-bright"
+          className="inline-flex items-center gap-2 border border-purple/30 bg-purple/10 px-5 py-4 text-body-sm text-purple-bright"
           role="status"
         >
           <CheckMark className="size-4 shrink-0" />
@@ -153,7 +153,7 @@ function RegionSelect() {
         id="currency"
         value={currency}
         onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
-        className="border border-bone/15 bg-transparent px-3 py-2 font-mono text-micro uppercase tracking-[0.14em] text-fog transition-colors hover:border-bone/35 focus:border-lime focus:outline-none"
+        className="border border-bone/15 bg-transparent px-3 py-2 font-mono text-micro uppercase tracking-[0.14em] text-fog transition-colors hover:border-bone/35 focus:border-purple focus:outline-none"
       >
         {Object.values(CURRENCIES).map((c) => (
           <option key={c.code} value={c.code} className="bg-ink">

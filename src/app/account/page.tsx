@@ -23,8 +23,8 @@ const BENEFITS = [
 
 const TIERS = [
   { name: "Foundation", spend: "From your first order", perks: "Free standard shipping · Birthday reward" },
-  { name: "Committed", spend: "₦250,000 lifetime", perks: "Early access to drops · Double points" },
-  { name: "Chisseled", spend: "₦750,000 lifetime", perks: "Member-only products · Coaching consultation · Priority support" },
+  { name: "Committed", spend: "$500 lifetime", perks: "Early access to drops · Double points" },
+  { name: "Chisseled", spend: "$1,500 lifetime", perks: "Member-only products · Coaching consultation · Priority support" },
 ];
 
 export default function AccountPage() {
@@ -42,7 +42,7 @@ export default function AccountPage() {
           <ul className="mb-14 grid gap-3 sm:grid-cols-2">
             {BENEFITS.map((b) => (
               <li key={b} className="flex items-baseline gap-2.5 text-body-sm text-fog">
-                <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-lime" />
+                <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-purple-bright" />
                 {b}
               </li>
             ))}
@@ -65,7 +65,7 @@ export default function AccountPage() {
                   <h3 className="mb-2 font-display text-h6 font-bold uppercase tracking-tight text-bone">
                     {t.name}
                   </h3>
-                  <p className="mb-3 font-mono text-micro uppercase tracking-[0.12em] text-lime">
+                  <p className="mb-3 font-mono text-micro uppercase tracking-[0.12em] text-purple-bright">
                     {t.spend}
                   </p>
                   <p className="text-body-sm leading-relaxed text-smoke">{t.perks}</p>
@@ -80,7 +80,7 @@ export default function AccountPage() {
               Refer a training partner
             </h2>
             <p className="mb-6 max-w-[52ch] text-body-sm leading-relaxed text-smoke">
-              They get ₦10,000 off their first order. You get ₦10,000 when it ships. No cap, no
+              They get $20 off their first order. You get $20 when it ships. No cap, no
               expiry, no requirement that they spend a qualifying amount first.
             </p>
             <Link href="#signin" className="btn btn-ghost btn-sm">

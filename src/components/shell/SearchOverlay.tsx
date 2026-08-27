@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useRef, useState, useEffect } from "react";
-import { ARTICLES, PROGRAMS, PRODUCTS, WORLDS } from "@/lib/catalog";
+import { ARTICLES, PROGRAMS, PRODUCTS, COLLECTIONS } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useEscape, useFocusTrap, useScrollLock } from "@/lib/motion";
@@ -53,7 +53,7 @@ export function SearchOverlay() {
       fields.some((f) => f.toLowerCase().includes(q));
 
     const products: Result[] = PRODUCTS.filter((p) =>
-      match(p.name, p.category, p.tagline, p.world, ...p.activities),
+      match(p.name, p.category, p.tagline, p.collection, ...p.activities),
     )
       .slice(0, 5)
       .map((p) => ({
@@ -65,7 +65,7 @@ export function SearchOverlay() {
         price: p.price,
       }));
 
-    const collections: Result[] = WORLDS.filter((w) => match(w.name, ...w.lines))
+    const collections: Result[] = COLLECTIONS.filter((w) => match(w.name, ...w.lines))
       .slice(0, 2)
       .map((w) => ({
         kind: "collection",

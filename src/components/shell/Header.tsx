@@ -90,7 +90,7 @@ export function Header() {
             className="group flex items-center gap-2.5 lg:flex-none"
             aria-label="CHISSELED — home"
           >
-            <Monogram className="size-6 text-bone transition-colors duration-500 group-hover:text-lime-bright" />
+            <Monogram className="size-6 text-bone transition-colors duration-500 group-hover:text-purple-bright" />
             <span className="font-display text-[1.0625rem] font-black uppercase leading-none tracking-[0.3em] text-bone">
               Chisseled
             </span>
@@ -115,7 +115,7 @@ export function Header() {
                       <span
                         aria-hidden
                         className={[
-                          "absolute inset-x-4 bottom-4 h-px origin-left bg-lime-bright transition-transform duration-500 ease-[var(--ease-out-expo)]",
+                          "absolute inset-x-4 bottom-4 h-px origin-left bg-purple-bright transition-transform duration-500 ease-[var(--ease-out-expo)]",
                           active ? "scale-x-100" : "scale-x-0",
                         ].join(" ")}
                       />
@@ -152,7 +152,7 @@ export function Header() {
             >
               <WishMark className="size-5" />
               {wishlist.length > 0 && (
-                <span className="absolute right-1 top-1 size-1.5 rounded-full bg-lime-bright" />
+                <span className="absolute right-1 top-1 size-1.5 rounded-full bg-purple-bright" />
               )}
             </Link>
 
@@ -166,7 +166,7 @@ export function Header() {
               <span
                 className={[
                   "numeric min-w-4 text-caption tabular-nums transition-all duration-300",
-                  count > 0 ? "text-lime-bright opacity-100" : "text-ash opacity-60",
+                  count > 0 ? "text-purple-bright opacity-100" : "text-ash opacity-60",
                 ].join(" ")}
               >
                 {count}
@@ -233,7 +233,7 @@ function MegaPanel({
                     >
                       <span className="link-rule">{link.label}</span>
                       {link.note && (
-                        <span className="font-mono text-micro uppercase tracking-[0.14em] text-lime">
+                        <span className="font-mono text-micro uppercase tracking-[0.14em] text-purple-bright">
                           {link.note}
                         </span>
                       )}
@@ -259,7 +259,7 @@ function MegaPanel({
             className="absolute inset-0 size-full transition-transform duration-[1400ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
           />
           <div className="relative z-[3] flex h-full max-w-[24rem] flex-col justify-end p-8">
-            <p className="eyebrow mb-3 text-lime-bright">{section.feature.eyebrow}</p>
+            <p className="eyebrow mb-3 text-purple-bright">{section.feature.eyebrow}</p>
             <h3 className="display-sm mb-3 text-bone">{section.feature.title}</h3>
             <p className="mb-5 text-body-sm leading-relaxed text-fog">{section.feature.body}</p>
             <span className="inline-flex items-center gap-2 font-mono text-label uppercase tracking-[0.18em] text-bone">
@@ -334,7 +334,7 @@ function MobileNav({ onClose }: { onClose: () => void }) {
                                 >
                                   {link.label}
                                   {link.note && (
-                                    <span className="ml-2 font-mono text-micro uppercase tracking-[0.14em] text-lime">
+                                    <span className="ml-2 font-mono text-micro uppercase tracking-[0.14em] text-purple-bright">
                                       {link.note}
                                     </span>
                                   )}
@@ -361,7 +361,7 @@ function MobileNav({ onClose }: { onClose: () => void }) {
           </Link>
         </div>
 
-        <Link href="/fit" onClick={onClose} className="btn btn-lime btn-block mt-3">
+        <Link href="/fit" onClick={onClose} className="btn btn-purple btn-block mt-3">
           Find your fit
         </Link>
       </nav>

@@ -59,7 +59,7 @@ const STAGES: Stage[] = [
     tone: "train",
     pose: "back",
     flat: "compressionTop",
-    colorway: "lime",
+    colorway: "purple",
     bg: "#04120d",
   },
   {
@@ -196,7 +196,7 @@ export function Sequence() {
                   }}
                   aria-hidden
                 >
-                  <p className="eyebrow mb-6 text-lime-bright">
+                  <p className="eyebrow mb-6 text-purple-bright">
                     0{i + 1} — {stage.line}
                   </p>
                   <p className="display-mega mb-7 text-bone">{stage.word}</p>
@@ -216,9 +216,9 @@ export function Sequence() {
               }}
               aria-hidden={resolve <= 0.5}
             >
-              <p className="eyebrow mb-6 text-lime-bright">The Method</p>
+              <p className="eyebrow mb-6 text-purple-bright">The Method</p>
               <p className="display-mega text-bone">Become</p>
-              <p className="display-mega mb-9 text-lime">Chisseled.</p>
+              <p className="display-mega mb-9 text-purple-bright">Chisseled.</p>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link href="/shop" className="btn btn-primary">
@@ -245,7 +245,7 @@ export function Sequence() {
                 <span
                   className={[
                     "h-px transition-all duration-700 ease-[var(--ease-out-expo)]",
-                    active ? "w-14 bg-lime-bright" : "w-7 bg-bone/25",
+                    active ? "w-14 bg-purple-bright" : "w-7 bg-bone/25",
                   ].join(" ")}
                 />
               </li>
@@ -255,7 +255,7 @@ export function Sequence() {
             <span
               className={[
                 "block h-px transition-all duration-700 ease-[var(--ease-out-expo)]",
-                resolve >= 0.5 ? "w-14 bg-lime-bright" : "w-7 bg-bone/25",
+                resolve >= 0.5 ? "w-14 bg-purple-bright" : "w-7 bg-bone/25",
               ].join(" ")}
             />
           </li>
@@ -296,7 +296,7 @@ function SequenceStatic() {
               <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
               <div className="relative z-[3]">
-                <p className="eyebrow mb-4 text-lime-bright">{stage.line}</p>
+                <p className="eyebrow mb-4 text-purple-bright">{stage.line}</p>
                 <p className="display-md mb-4 text-bone">{stage.word}</p>
                 <p className="text-body-sm leading-relaxed text-fog">{stage.body}</p>
               </div>
@@ -306,7 +306,7 @@ function SequenceStatic() {
 
         <div className="mt-14 border-t border-bone/10 pt-14">
           <p className="display-xl text-bone">Become</p>
-          <p className="display-xl mb-9 text-lime">Chisseled.</p>
+          <p className="display-xl mb-9 text-purple-bright">Chisseled.</p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link href="/shop" className="btn btn-primary">
               Shop the collection

@@ -17,8 +17,8 @@ const FAQ_SECTIONS = [
     id: "shipping",
     title: "Shipping",
     items: [
-      ["Nigeria", "2–5 working days. Free on orders over ₦120,000, otherwise ₦4,500. Express is 1–2 working days at ₦12,000."],
-      ["International", "5–12 working days to 38 countries at ₦28,000. Duties and import taxes are calculated at checkout so nothing arrives as a surprise."],
+      ["United States", "3–5 business days. Free on orders over $100, otherwise $7. Express is 1–2 business days at $18."],
+      ["International", "6–12 business days to 38 countries at $35. Duties and import taxes are calculated at checkout so nothing arrives as a surprise."],
       ["Tracking", "Every order ships with tracking. You will get the number the moment the parcel is scanned, not when the label is printed."],
     ],
   },
@@ -27,7 +27,7 @@ const FAQ_SECTIONS = [
     title: "Returns",
     items: [
       ["Window", "30 days from delivery. Unworn, unwashed, tags attached."],
-      ["Cost", "Free within Nigeria. International returns are at your cost unless the item is faulty."],
+      ["Cost", "Free within the US. International returns are at your cost unless the item is faulty."],
       ["Nutrition", "Unopened tubs and boxes only, for obvious reasons."],
       ["Refunds", "Processed within 3 working days of the return arriving, back to the original payment method."],
     ],
@@ -38,7 +38,7 @@ const FAQ_SECTIONS = [
     items: [
       ["Between sizes", "Compression and sculpt fits run close. Take the larger size for comfort, the smaller for hold."],
       ["Measurements", "Every product page carries the full measurement table in centimetres, plus the height and size of the model shown."],
-      ["Exchanges", "Wrong size is the most common return, so exchanges within Nigeria ship the replacement before the original arrives back."],
+      ["Exchanges", "Wrong size is the most common return, so exchanges within the US ship the replacement before the original arrives back."],
     ],
   },
   {
@@ -172,7 +172,7 @@ export default function AboutPage() {
               },
             ].map((c) => (
               <li key={c.n} className="bg-ink p-8">
-                <p className="numeric mb-6 text-caption text-lime">{c.n}</p>
+                <p className="numeric mb-6 text-caption text-purple-bright">{c.n}</p>
                 <h3 className="mb-4 font-display text-h5 font-bold uppercase leading-tight tracking-tight text-bone">
                   {c.t}
                 </h3>
@@ -243,7 +243,7 @@ export default function AboutPage() {
                 ["Support", "support@chisseled.com"],
                 ["Wholesale & press", "studio@chisseled.com"],
                 ["Accessibility issues", "access@chisseled.com"],
-                ["Studio", "Lagos, Nigeria — shipping to 38 countries"],
+                ["Studio", "Florida, USA — shipping to 38 countries"],
               ].map(([k, v]) => (
                 <div key={k}>
                   <dt className="eyebrow mb-1.5">{k}</dt>

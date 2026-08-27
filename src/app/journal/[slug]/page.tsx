@@ -68,7 +68,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <li>
                 <Link
                   href={`/journal?category=${encodeURIComponent(article.category)}`}
-                  className="font-mono text-micro uppercase tracking-[0.16em] text-lime-bright"
+                  className="font-mono text-micro uppercase tracking-[0.16em] text-purple-bright"
                 >
                   {article.category}
                 </Link>

@@ -32,33 +32,32 @@ export const NAV: NavSection[] = [
     href: "/shop",
     columns: [
       {
-        title: "Women",
+        title: "Collections",
         links: [
-          { label: "All Women's", href: "/shop/women" },
-          { label: "Leggings", href: "/shop/women?category=Leggings" },
-          { label: "Sports Bras", href: "/shop/women?category=Sports+Bras" },
-          { label: "Tops", href: "/shop/women?category=Tops" },
-          { label: "Shorts", href: "/shop/women?category=Shorts" },
-        ],
-      },
-      {
-        title: "Men",
-        links: [
-          { label: "All Men's", href: "/shop/men" },
-          { label: "Tops", href: "/shop/men?category=Tops" },
-          { label: "Compression", href: "/shop/men?category=Compression" },
-          { label: "Shorts", href: "/shop/men?category=Shorts" },
-          { label: "Outerwear", href: "/shop/men?category=Outerwear" },
+          { label: "All Products", href: "/shop" },
+          { label: "Scarred", href: "/shop/scarred", note: "Signature" },
+          { label: "CH Monogram", href: "/shop/monogram" },
+          { label: "Camo", href: "/shop/camo" },
+          { label: "Tracksuits", href: "/shop/tracksuits" },
         ],
       },
       {
         title: "Essentials",
         links: [
-          { label: "Accessories", href: "/shop/accessories" },
-          { label: "Bags", href: "/shop/accessories?category=Bags" },
-          { label: "Compression Socks", href: "/shop/accessories?category=Compression" },
-          { label: "Supplements", href: "/shop/performance" },
-          { label: "Performance Bundles", href: "/bundles", note: "Save up to ₦86,000" },
+          { label: "All Essentials", href: "/shop/essentials" },
+          { label: "Training Sets", href: "/shop/essentials?category=Sets" },
+          { label: "Sports Bras", href: "/shop/essentials?category=Sports+Bras" },
+          { label: "Socks", href: "/shop/essentials?category=Socks" },
+          { label: "Bags", href: "/shop/essentials?category=Bags" },
+        ],
+      },
+      {
+        title: "Fuel & Bundles",
+        links: [
+          { label: "Supplements", href: "/shop/essentials?category=Supplements" },
+          { label: "Nutrition", href: "/fuel" },
+          { label: "Performance Bundles", href: "/bundles", note: "Save up to $120" },
+          { label: "Gift Cards", href: "/about#gifting" },
         ],
       },
     ],
@@ -131,8 +130,8 @@ export const NAV: NavSection[] = [
       {
         title: "Recovery",
         links: [
-          { label: "Recovery Formula", href: "/product/recover-magnesium" },
-          { label: "Recovery Tools", href: "/product/recovery-roller" },
+          { label: "Creatine Monohydrate", href: "/product/creatine-monohydrate" },
+          { label: "14 Day Detox Tea", href: "/product/detox-tea" },
           { label: "Mobility", href: "/method#recover" },
         ],
       },
@@ -235,10 +234,11 @@ export const FOOTER_COLUMNS: NavColumn[] = [
   {
     title: "Shop",
     links: [
-      { label: "Women", href: "/shop/women" },
-      { label: "Men", href: "/shop/men" },
-      { label: "Accessories", href: "/shop/accessories" },
-      { label: "Performance", href: "/shop/performance" },
+      { label: "Scarred", href: "/shop/scarred" },
+      { label: "CH Monogram", href: "/shop/monogram" },
+      { label: "Camo", href: "/shop/camo" },
+      { label: "Tracksuits", href: "/shop/tracksuits" },
+      { label: "Performance Essentials", href: "/shop/essentials" },
       { label: "Bundles", href: "/bundles" },
       { label: "Gift Cards", href: "/about#gifting" },
     ],

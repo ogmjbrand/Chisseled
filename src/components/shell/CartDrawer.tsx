@@ -106,7 +106,7 @@ export function CartDrawer() {
                   away from free shipping.
                 </>
               ) : (
-                <span className="inline-flex items-center gap-1.5 text-lime-bright">
+                <span className="inline-flex items-center gap-1.5 text-purple-bright">
                   <CheckMark className="size-4" />
                   Free shipping unlocked.
                 </span>
@@ -121,7 +121,7 @@ export function CartDrawer() {
               aria-label="Progress toward free shipping"
             >
               <div
-                className="h-full bg-lime-bright transition-[width] duration-700 ease-[var(--ease-out-expo)]"
+                className="h-full bg-purple-bright transition-[width] duration-700 ease-[var(--ease-out-expo)]"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -163,7 +163,7 @@ export function CartDrawer() {
                           <Link
                             href={bundle ? `/bundles#${bundle.slug}` : `/product/${line.slug}`}
                             onClick={() => setCartOpen(false)}
-                            className="block truncate text-body-sm font-medium text-bone hover:text-lime-bright"
+                            className="block truncate text-body-sm font-medium text-bone hover:text-purple-bright"
                           >
                             {name}
                           </Link>

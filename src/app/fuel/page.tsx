@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getProductsByWorld, getProduct } from "@/lib/catalog";
+import { getNutritionProducts, getProduct } from "@/lib/catalog";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Flat, Specimen } from "@/components/primitives/Visual";
@@ -41,8 +41,8 @@ const SECTIONS = [
 ];
 
 export default function FuelPage() {
-  const products = getProductsByWorld("performance");
-  const hero = getProduct("base-whey-isolate");
+  const products = getNutritionProducts();
+  const hero = getProduct("creatine-monohydrate");
 
   return (
     <>
@@ -152,7 +152,7 @@ export default function FuelPage() {
                       key={t}
                       className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-smoke"
                     >
-                      <CheckMark className="size-3 text-lime" />
+                      <CheckMark className="size-3 text-purple-bright" />
                       {t}
                     </li>
                   ),

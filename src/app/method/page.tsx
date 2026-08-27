@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PROGRAMS, getProductsByWorld } from "@/lib/catalog";
+import { PROGRAMS, getProductsByCollection } from "@/lib/catalog";
 import { Method, PILLARS } from "@/components/sections/Method";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -49,7 +49,7 @@ const PRINCIPLES = [
 ];
 
 export default function MethodPage() {
-  const recovery = getProductsByWorld("accessories").filter((p) =>
+  const recovery = getProductsByCollection("essentials").filter((p) =>
     p.activities.includes("recovery"),
   );
 
@@ -108,7 +108,7 @@ export default function MethodPage() {
                 data-reveal
                 style={{ "--reveal-delay": `${(i % 3) * 90}ms` } as React.CSSProperties}
               >
-                <p className="numeric mb-6 text-caption text-lime">{p.n}</p>
+                <p className="numeric mb-6 text-caption text-purple-bright">{p.n}</p>
                 <h3 className="mb-3.5 font-display text-h5 font-bold uppercase leading-tight tracking-tight text-bone">
                   {p.title}
                 </h3>
@@ -154,7 +154,7 @@ export default function MethodPage() {
                 <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink via-ink/85 to-ink/50" />
 
                 <div className="relative z-[3]">
-                  <p className="numeric mb-6 text-caption text-lime">{pillar.number}</p>
+                  <p className="numeric mb-6 text-caption text-purple-bright">{pillar.number}</p>
                   <h3 className="display-sm mb-4 text-bone">{pillar.statement}</h3>
                   <p className="mb-6 text-body-sm leading-relaxed text-fog">{pillar.body}</p>
 

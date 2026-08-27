@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { COLORWAYS } from "@/lib/art";
 import { ProductCard } from "@/components/product/ProductCard";
 import { CloseMark } from "@/components/primitives/Marks";
+import { formatPrice } from "@/lib/format";
 import type { Activity, Fit, Product } from "@/lib/types";
 
 /**
@@ -156,7 +157,7 @@ export function ProductGrid({
           >
             Filter
             {activeCount > 0 && (
-              <span className="flex size-5 items-center justify-center bg-lime text-[0.625rem] text-ink">
+              <span className="flex size-5 items-center justify-center bg-purple text-[0.625rem] text-bone">
                 {activeCount}
               </span>
             )}
@@ -174,7 +175,7 @@ export function ProductGrid({
               id="sort"
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="border border-bone/15 bg-transparent px-3 py-2 font-mono text-micro uppercase tracking-[0.12em] text-fog transition-colors hover:border-bone/35 focus:border-lime focus:outline-none"
+              className="border border-bone/15 bg-transparent px-3 py-2 font-mono text-micro uppercase tracking-[0.12em] text-fog transition-colors hover:border-bone/35 focus:border-purple focus:outline-none"
             >
               {SORTS.map((s) => (
                 <option key={s.key} value={s.key} className="bg-ink">
@@ -220,7 +221,7 @@ export function ProductGrid({
                   onClick={() => setFilters((f) => ({ ...f, maxPrice: null }))}
                   className="inline-flex items-center gap-1.5 border border-bone/20 px-2.5 py-1.5 font-mono text-micro uppercase tracking-[0.12em] text-fog"
                 >
-                  Under ₦{filters.maxPrice.toLocaleString()}
+                  Under {formatPrice(filters.maxPrice)}
                   <CloseMark className="size-3" />
                 </button>
               </li>
@@ -342,15 +343,15 @@ export function ProductGrid({
                   type="range"
                   min={facets.min}
                   max={facets.max}
-                  step={2000}
+                  step={500}
                   value={filters.maxPrice ?? facets.max}
                   onChange={(e) =>
                     setFilters((f) => ({ ...f, maxPrice: Number(e.target.value) }))
                   }
-                  className="w-full accent-[var(--color-lime)]"
+                  className="w-full accent-[var(--color-purple)]"
                 />
                 <p className="numeric mt-2 text-micro text-smoke">
-                  Up to ₦{(filters.maxPrice ?? facets.max).toLocaleString()}
+                  Up to {formatPrice(filters.maxPrice ?? facets.max)}
                 </p>
               </div>
             </FacetGroup>
@@ -406,7 +407,7 @@ function Check({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="size-4 shrink-0 appearance-none border border-bone/25 transition-colors duration-300 checked:border-lime checked:bg-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-bright"
+        className="size-4 shrink-0 appearance-none border border-bone/25 transition-colors duration-300 checked:border-purple checked:bg-purple focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-bright"
       />
       {label}
     </label>

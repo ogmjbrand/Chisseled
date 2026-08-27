@@ -152,14 +152,14 @@ export default function TrainPage() {
                   </div>
 
                   <h3 className="display-sm mb-3 text-bone">{p.name}</h3>
-                  <p className="mb-5 text-body-sm font-medium text-lime-bright">{p.focus}</p>
+                  <p className="mb-5 text-body-sm font-medium text-purple-bright">{p.focus}</p>
                   <p className="mb-7 text-body-sm leading-relaxed text-smoke">{p.summary}</p>
 
                   {/* Block structure */}
                   <ol className="mb-7 space-y-px overflow-hidden border border-bone/10 bg-bone/10">
                     {p.blocks.map((b) => (
                       <li key={b.name} className="flex gap-4 bg-ink p-3.5">
-                        <span className="numeric w-16 shrink-0 font-mono text-micro uppercase tracking-[0.12em] text-lime">
+                        <span className="numeric w-16 shrink-0 font-mono text-micro uppercase tracking-[0.12em] text-purple-bright">
                           {b.weeks}
                         </span>
                         <span className="min-w-0 flex-1">
@@ -218,7 +218,7 @@ export default function TrainPage() {
                 className={[
                   "relative flex flex-col border p-8",
                   tier.accent
-                    ? "border-lime/40 bg-gradient-to-b from-lime/[0.08] to-transparent"
+                    ? "border-purple/40 bg-gradient-to-b from-purple/[0.08] to-transparent"
                     : "border-bone/10 bg-carbon",
                 ].join(" ")}
                 data-reveal
@@ -227,7 +227,7 @@ export default function TrainPage() {
                 {tier.accent && <span aria-hidden className="metal-edge-line" />}
 
                 {tier.accent && (
-                  <span className="badge badge-lime absolute right-6 top-6">Most chosen</span>
+                  <span className="badge badge-purple absolute right-6 top-6">Most chosen</span>
                 )}
 
                 <h3 className="display-sm mb-2 text-bone">{tier.name}</h3>
@@ -241,7 +241,7 @@ export default function TrainPage() {
                 <ul className="mb-9 space-y-3">
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-baseline gap-2.5 text-body-sm text-fog">
-                      <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-lime" />
+                      <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-purple-bright" />
                       {f}
                     </li>
                   ))}
@@ -305,7 +305,7 @@ export default function TrainPage() {
                   <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/40 to-transparent" />
 
                   <div className="relative z-[3] flex h-full flex-col justify-end p-6">
-                    <p className="eyebrow mb-2.5 text-lime-bright">{coach.discipline}</p>
+                    <p className="eyebrow mb-2.5 text-purple-bright">{coach.discipline}</p>
                     <h3 className="display-sm mb-1.5 text-bone">{coach.name}</h3>
                     <p className="mb-4 font-mono text-micro uppercase tracking-[0.12em] text-smoke">
                       {coach.role}
@@ -338,13 +338,13 @@ export default function TrainPage() {
               <li key={c.name} className="bg-carbon p-7">
                 <div className="mb-5 flex items-center gap-2">
                   {c.live ? (
-                    <span className="badge badge-lime">
+                    <span className="badge badge-purple">
                       <span className="relative flex size-1.5">
                         <span
-                          className="absolute inline-flex size-full rounded-full bg-lime-bright"
+                          className="absolute inline-flex size-full rounded-full bg-purple-bright"
                           style={{ animation: "chisseled-pulse-ring 2.4s ease-out infinite" }}
                         />
-                        <span className="relative inline-flex size-1.5 rounded-full bg-lime-bright" />
+                        <span className="relative inline-flex size-1.5 rounded-full bg-purple-bright" />
                       </span>
                       Live
                     </span>

@@ -82,7 +82,7 @@ export function PageHeader({
           </nav>
         )}
 
-        <p className="eyebrow mb-6 text-lime-bright">{eyebrow}</p>
+        <p className="eyebrow mb-6 text-purple-bright">{eyebrow}</p>
 
         <h1 className={compact ? "display-lg max-w-[18ch] text-bone" : "display-xl max-w-[15ch] text-bone"}>
           {title}

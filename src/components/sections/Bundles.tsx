@@ -59,13 +59,13 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
                   <span className={complete ? "badge badge-steel" : "badge badge-outline"}>
                     {bundle.tier}
                   </span>
-                  <span className="badge badge-lime">
+                  <span className="badge badge-purple">
                     Save {formatPrice(bundle.saves, currency)}
                   </span>
                 </div>
 
                 <h3 className="display-sm mb-3 text-bone">{bundle.name}</h3>
-                <p className="mb-5 text-body-sm font-medium text-lime-bright">{bundle.promise}</p>
+                <p className="mb-5 text-body-sm font-medium text-purple-bright">{bundle.promise}</p>
                 <p className="mb-7 text-body-sm leading-relaxed text-smoke">{bundle.description}</p>
 
                 {/* The pieces, as flats */}
@@ -88,7 +88,7 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
                   {items.map((p) =>
                     p ? (
                       <li key={p.slug} className="flex items-baseline gap-2 text-body-sm text-fog">
-                        <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-lime" />
+                        <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-purple-bright" />
                         <span className="min-w-0 flex-1 truncate">{p.name}</span>
                       </li>
                     ) : null,

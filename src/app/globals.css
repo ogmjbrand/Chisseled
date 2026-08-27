@@ -8,38 +8,45 @@
 
 @theme {
   /* ------------------------------------------------------------
-     BRAND PALETTE — the five. Everything else is derived.
-       OBSIDIAN      #080808   ground
-       GRAPHITE      #181818   raised surface
-       STEEL         #8c8c87   muted voice
-       BONE          #f2efe8   primary voice
-       ELECTRIC LIME #c7ff2e   the only accent
+     BRAND PALETTE — Black x Purple x Performance
+       OBSIDIAN      #08080a   ground
+       GRAPHITE      #17171b   raised surface
+       BRAND PURPLE  #6d28d9   signal surface — LIGHT type on it
+       BRIGHT PURPLE #8b5cf6   the type-safe accent
+       LIGHT         #f5f5f5   primary voice
+
+     TYPE RULE (measured, not assumed):
+       #6d28d9 as text on obsidian .... 2.82:1  FAIL  — never type
+       #6d28d9 as a surface + #f5f5f5 . 6.52:1  PASS  — this is its job
+       #8b5cf6 as text on obsidian .... 4.73:1  PASS  — accent type
+     Purple is a signal, not a wash. Light type on it, always.
      ------------------------------------------------------------ */
-  --color-obsidian: #080808;
-  --color-graphite: #181818;
-  --color-steel: #8c8c87;
-  --color-bone: #f2efe8;
-  --color-lime: #c7ff2e;
+  --color-obsidian: #08080a;
+  --color-graphite: #17171b;
+  --color-purple: #6d28d9;
+  --color-purple-bright: #8b5cf6;
+  --color-light: #f5f5f5;
 
-  /* --- SURFACE RAMP: obsidian floor, graphite ceiling --- */
+  /* --- SURFACE RAMP --- */
   --color-void: #000000;
-  --color-ink: #080808;
-  --color-carbon: #0f0f0f;
-  --color-slate: #202020;
-  --color-iron: #2b2b29;
+  --color-ink: #08080a;
+  --color-carbon: #0f0f12;
+  --color-slate: #1e1e24;
+  --color-iron: #2a2a32;
 
-  /* --- VOICE RAMP: dim → primary. All AA on obsidian. --- */
-  --color-ash: #6a6a64;
-  --color-smoke: #8c8c87;
-  --color-fog: #b0b0aa;
-  --color-chalk: #fbfaf6;
+  /* --- VOICE RAMP: cooled a touch to sit with the purple --- */
+  --color-ash: #6a6a75;
+  --color-smoke: #8c8c99;
+  --color-steel: #8c8c99;
+  --color-fog: #b4b4bf;
+  --color-bone: #f5f5f5;
+  --color-chalk: #fbfbfd;
 
-  /* --- ACCENT: electric lime. Dark type on it, always. --- */
-  --color-lime-shade: #1b2408;
-  --color-lime-dim: #8fbf16;
-  --color-lime-bright: #d8ff6b;
+  /* --- PURPLE DEPTH --- */
+  --color-purple-shade: #1a0f2e;
+  --color-purple-dim: #4c1d95;
 
-  /* --- SIGNAL: semantic only, never decorative --- */
+  /* --- SIGNAL: semantic only --- */
   --color-signal-low: #c9743f;
   --color-signal-out: #7a3f3f;
 
@@ -173,13 +180,13 @@
   }
 
   ::selection {
-    background: var(--color-lime);
-    color: var(--color-ink);
+    background: var(--color-purple);
+    color: var(--color-bone);
   }
 
   /* --- FOCUS: visible, premium, never removed --- */
   :focus-visible {
-    outline: 2px solid var(--color-lime-bright);
+    outline: 2px solid var(--color-purple-bright);
     outline-offset: 3px;
     border-radius: 1px;
   }
@@ -316,15 +323,15 @@
   border: 1px solid color-mix(in oklab, var(--color-bone) 8%, transparent);
 }
 
-@utility glass-lime {
+@utility glass-purple {
   background: linear-gradient(
     160deg,
-    color-mix(in oklab, var(--color-lime) 12%, transparent),
-    color-mix(in oklab, var(--color-lime-shade) 40%, transparent)
+    color-mix(in oklab, var(--color-purple) 12%, transparent),
+    color-mix(in oklab, var(--color-purple-shade) 40%, transparent)
   );
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid color-mix(in oklab, var(--color-lime) 26%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-purple) 26%, transparent);
 }
 
 /* Brushed metal edge — a 1px specular highlight along the top */
@@ -561,14 +568,14 @@
     pointer-events: none;
   }
 
-  /* Solid bone button → inverts to lime */
+  /* Solid bone button → inverts to purple */
   .btn-primary {
     background: var(--color-bone);
     color: var(--color-ink);
   }
-  .btn-primary::before { background: var(--color-lime); }
+  .btn-primary::before { background: var(--color-purple); }
   .btn-primary:hover,
-  .btn-primary:focus-visible { color: var(--color-ink); }
+  .btn-primary:focus-visible { color: var(--color-bone); }
 
   /* Outline button → fills with bone */
   .btn-ghost {
@@ -582,12 +589,12 @@
     border-color: var(--color-bone);
   }
 
-  /* Emerald button → the conversion accent */
-  .btn-lime {
-    background: var(--color-lime);
-    color: var(--color-ink);
+  /* Purple button → the conversion accent. Light type, presses deeper. */
+  .btn-purple {
+    background: var(--color-purple);
+    color: var(--color-bone);
   }
-  .btn-lime::before { background: var(--color-lime-bright); }
+  .btn-purple::before { background: var(--color-purple-dim); }
 
   .btn-sm {
     padding: 0.75rem 1.25rem;
@@ -635,7 +642,7 @@
   .field:hover { border-color: color-mix(in oklab, var(--color-bone) 22%, transparent); }
   .field:focus {
     outline: none;
-    border-color: var(--color-lime);
+    border-color: var(--color-purple);
     background: color-mix(in oklab, var(--color-bone) 6%, transparent);
   }
 
@@ -653,10 +660,10 @@
     line-height: 1;
     white-space: nowrap;
   }
-  .badge-lime {
-    background: color-mix(in oklab, var(--color-lime) 16%, transparent);
-    color: var(--color-lime-bright);
-    border: 1px solid color-mix(in oklab, var(--color-lime) 34%, transparent);
+  .badge-purple {
+    background: color-mix(in oklab, var(--color-purple) 16%, transparent);
+    color: var(--color-purple-bright);
+    border: 1px solid color-mix(in oklab, var(--color-purple) 34%, transparent);
   }
   .badge-steel {
     background: color-mix(in oklab, var(--color-steel) 13%, transparent);

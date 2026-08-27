@@ -96,7 +96,7 @@ export function productSchema(product: Product) {
     offers: {
       "@type": "Offer",
       url: `${SITE.url}/product/${product.slug}`,
-      priceCurrency: "NGN",
+      priceCurrency: "USD",
       price: product.price,
       availability: available
         ? "https://schema.org/InStock"

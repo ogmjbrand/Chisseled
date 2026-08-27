@@ -25,7 +25,7 @@ interface Option {
   /** Weights applied when this option is chosen. */
   activities?: Activity[];
   fits?: Fit[];
-  worlds?: Product["world"][];
+  collections?: Product["collection"][];
   disciplines?: string[];
   levels?: Program["level"][];
   categories?: string[];
@@ -51,7 +51,7 @@ const QUESTIONS: Question[] = [
         note: "Barbell work, progressive overload, numbers going up.",
         activities: ["lifting"],
         disciplines: ["Strength"],
-        categories: ["Compression", "Shorts"],
+        categories: ["Sets", "Sports Bras"],
       },
       {
         id: "physique",
@@ -59,7 +59,7 @@ const QUESTIONS: Question[] = [
         note: "Volume, hypertrophy, proximity to failure.",
         activities: ["lifting", "training"],
         disciplines: ["Physique"],
-        categories: ["Tops", "Leggings"],
+        categories: ["Tops", "Sets"],
       },
       {
         id: "engine",
@@ -67,7 +67,7 @@ const QUESTIONS: Question[] = [
         note: "Running, rowing, conditioning, aerobic base.",
         activities: ["running", "training"],
         disciplines: ["Conditioning"],
-        categories: ["Shorts", "Compression"],
+        categories: ["Sets", "Sports Bras"],
       },
       {
         id: "general",
@@ -75,7 +75,7 @@ const QUESTIONS: Question[] = [
         note: "Three sessions a week that fit around everything else.",
         activities: ["everyday", "training"],
         disciplines: ["General", "Mobility & Recovery"],
-        categories: ["Tops", "Outerwear"],
+        categories: ["Tops", "Hoodies"],
       },
     ],
   },
@@ -85,10 +85,10 @@ const QUESTIONS: Question[] = [
     helper: "Choose as many as apply.",
     multi: true,
     options: [
-      { id: "leggings", label: "Leggings", note: "Full length, every session.", categories: ["Leggings"], worlds: ["women"] },
-      { id: "shorts", label: "Shorts", note: "Whatever the weather is doing.", categories: ["Shorts"] },
-      { id: "tops", label: "Tees & tanks", note: "A layer, not a statement.", categories: ["Tops"] },
-      { id: "compression", label: "Compression", note: "Under everything, or on its own.", categories: ["Compression"], fits: ["compression"] },
+      { id: "sets", label: "Matched sets", note: "One decision, head to toe.", categories: ["Sets"], collections: ["essentials"] },
+      { id: "tops", label: "Tees & tops", note: "A layer, not a statement.", categories: ["T-Shirts", "Tops"] },
+      { id: "hoodies", label: "Hoodies & fleece", note: "Before the session and after it.", categories: ["Hoodies", "Sweatshirts"], collections: ["scarred", "tracksuits"] },
+      { id: "compression", label: "Compression", note: "Under everything, or on its own.", categories: ["Sports Bras", "Sets"], fits: ["compression"] },
     ],
   },
   {
@@ -120,8 +120,8 @@ const QUESTIONS: Question[] = [
     multi: true,
     options: [
       { id: "consistency", label: "Consistency", note: "The programme is fine. Showing up is the problem.", disciplines: ["General"], levels: ["Foundation"] },
-      { id: "recovery", label: "Recovery", note: "Something always hurts, or sleep is the weak link.", activities: ["recovery"], disciplines: ["Mobility & Recovery"], categories: ["Recovery"] },
-      { id: "nutrition", label: "Nutrition", note: "The training is there, the eating is not.", worlds: ["performance"], categories: ["Protein", "Daily Essentials"] },
+      { id: "recovery", label: "Recovery", note: "Something always hurts, or sleep is the weak link.", activities: ["recovery"], disciplines: ["Mobility & Recovery"], categories: ["Nutrition"] },
+      { id: "nutrition", label: "Nutrition", note: "The training is there, the eating is not.", collections: ["essentials"], categories: ["Supplements", "Nutrition"] },
       { id: "plateau", label: "A plateau", note: "The numbers have not moved in months.", disciplines: ["Strength", "Physique"], levels: ["Intermediate", "Advanced"] },
     ],
   },
@@ -200,7 +200,7 @@ export function FitQuiz() {
           aria-label="Quiz progress"
         >
           <div
-            className="h-full bg-lime-bright transition-[width] duration-700 ease-[var(--ease-out-expo)]"
+            className="h-full bg-purple-bright transition-[width] duration-700 ease-[var(--ease-out-expo)]"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -222,14 +222,14 @@ export function FitQuiz() {
                 className={[
                   "group relative border p-6 text-left transition-all duration-400",
                   on
-                    ? "border-lime bg-lime/8"
+                    ? "border-purple bg-purple/8"
                     : "border-bone/15 bg-carbon hover:border-bone/40",
                 ].join(" ")}
               >
                 <span
                   className={[
                     "absolute right-5 top-5 flex size-5 items-center justify-center border transition-colors duration-300",
-                    on ? "border-lime bg-lime text-ink" : "border-bone/25 text-transparent",
+                    on ? "border-purple bg-purple text-bone" : "border-bone/25 text-transparent",
                   ].join(" ")}
                   aria-hidden
                 >
@@ -303,7 +303,7 @@ function score(answers: Answers): ScoreResult {
         let points = 0;
         if (opt.activities?.some((a) => p.activities.includes(a))) points += 3;
         if (opt.categories?.includes(p.category)) points += 3;
-        if (opt.worlds?.includes(p.world)) points += 2;
+        if (opt.collections?.includes(p.collection)) points += 2;
         if (opt.fits?.includes(p.fit)) points += 2;
         if (points > 0) productScores.set(p.slug, (productScores.get(p.slug) ?? 0) + points);
       }
@@ -364,7 +364,7 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
     <div className="pb-24 pt-[calc(var(--nav-h)+3rem)]">
       <div className="shell">
         <div className="mb-14 max-w-[46rem] animate-rise">
-          <p className="eyebrow mb-5 text-lime-bright">Your performance fit</p>
+          <p className="eyebrow mb-5 text-purple-bright">Your performance fit</p>
           <h1 className="display-lg mb-6 text-bone">
             {result.fit.charAt(0).toUpperCase() + result.fit.slice(1)}.
           </h1>
@@ -372,7 +372,7 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
         </div>
 
         {/* Programme */}
-        <section className="relative grain mb-14 overflow-hidden border border-lime/30 bg-carbon p-8 lg:p-10">
+        <section className="relative grain mb-14 overflow-hidden border border-purple/30 bg-carbon p-8 lg:p-10">
           <Specimen
             seed={`fit-${result.programme.slug}`}
             tone={result.programme.tone}
@@ -382,9 +382,9 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
 
           <div className="relative z-[3] grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <p className="eyebrow mb-4 text-lime-bright">Start here</p>
+              <p className="eyebrow mb-4 text-purple-bright">Start here</p>
               <h2 className="display-md mb-3 text-bone">{result.programme.name}</h2>
-              <p className="mb-5 text-body font-medium text-lime-bright">
+              <p className="mb-5 text-body font-medium text-purple-bright">
                 {result.programme.focus}
               </p>
               <p className="mb-6 max-w-[54ch] text-body-sm leading-relaxed text-smoke">
@@ -396,7 +396,7 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
               </p>
             </div>
 
-            <Link href={`/train#${result.programme.slug}`} className="btn btn-lime shrink-0">
+            <Link href={`/train#${result.programme.slug}`} className="btn btn-purple shrink-0">
               Start this programme
               <ArrowMark className="size-4" />
             </Link>

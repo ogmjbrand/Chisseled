@@ -28,7 +28,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   if (!product) notFound();
 
   const related = relatedProducts(product);
-  const worldName = product.world.charAt(0).toUpperCase() + product.world.slice(1);
+  const collectionName = product.collection.charAt(0).toUpperCase() + product.collection.slice(1);
 
   return (
     <>
@@ -38,7 +38,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           breadcrumbSchema([
             { name: "Home", path: "/" },
             { name: "Shop", path: "/shop" },
-            { name: worldName, path: `/shop/${product.world}` },
+            { name: collectionName, path: `/shop/${product.collection}` },
             { name: product.name, path: `/product/${product.slug}` },
           ]),
         ]}
@@ -49,7 +49,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           {[
             { name: "Home", path: "/" },
             { name: "Shop", path: "/shop" },
-            { name: worldName, path: `/shop/${product.world}` },
+            { name: collectionName, path: `/shop/${product.collection}` },
             { name: product.name, path: `/product/${product.slug}` },
           ].map((t, i, arr) => (
             <li key={t.path} className="flex items-center gap-2">

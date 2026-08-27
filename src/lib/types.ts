@@ -2,7 +2,17 @@ import type { ColorwayKey, FlatKey, Tone } from "@/lib/art";
 
 export type Gender = "women" | "men" | "unisex";
 
-export type WorldSlug = "women" | "men" | "accessories" | "performance";
+/**
+ * The shop taxonomy is the five real CHISSELED collections. Gender stays a
+ * filter rather than a top-level split, because most of these pieces are cut
+ * for both.
+ */
+export type CollectionSlug =
+  | "scarred"
+  | "monogram"
+  | "camo"
+  | "tracksuits"
+  | "essentials";
 
 export type Activity =
   | "lifting"
@@ -41,13 +51,19 @@ export interface Product {
   name: string;
   /** The one-line editorial promise. */
   tagline: string;
-  world: WorldSlug;
+  collection: CollectionSlug;
   gender: Gender;
   category: string;
-  /** Naira, in whole units. */
+  /** USD, in integer cents. */
   price: number;
   compareAt?: number;
   flat: FlatKey;
+  /**
+   * Slug of real photography under /media/product. Absent means we have no
+   * shot at usable resolution yet, and the PDP renders a designed placeholder
+   * rather than inventing a garment the customer would not receive.
+   */
+  media?: string;
   variants: Variant[];
   sizes: string[];
   activities: Activity[];

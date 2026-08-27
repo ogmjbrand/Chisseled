@@ -16,7 +16,7 @@ export default function NotFound() {
       <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-r from-ink via-ink/80 to-ink/20" />
 
       <div className="shell relative z-[4]">
-        <p className="eyebrow mb-6 text-lime-bright">Error 404</p>
+        <p className="eyebrow mb-6 text-purple-bright">Error 404</p>
         <h1 className="display-xl mb-7 max-w-[14ch] text-bone">This one isn&apos;t here.</h1>
         <p className="lede mb-10 max-w-[42ch]">
           The page you were looking for has moved or never existed. The collection has not gone

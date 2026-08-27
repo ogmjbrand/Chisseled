@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { getProductsByWorld } from "@/lib/catalog";
+import { getProductsByGender } from "@/lib/catalog";
 import { Sculpture, Flat } from "@/components/primitives/Visual";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { Tone } from "@/lib/art";
 
 interface GenderEditorialProps {
-  world: "women" | "men";
+  gender: "women" | "men";
   index: string;
   headline: string;
   body: string;
@@ -21,7 +21,7 @@ interface GenderEditorialProps {
  * coincidence, and sharing the implementation is how it stays that way.
  */
 export function GenderEditorial({
-  world,
+  gender,
   index,
   headline,
   body,
@@ -29,13 +29,13 @@ export function GenderEditorial({
   pose,
   flip = false,
 }: GenderEditorialProps) {
-  const products = getProductsByWorld(world).slice(0, 4);
-  const label = world === "women" ? "Women" : "Men";
+  const products = getProductsByGender(gender).slice(0, 4);
+  const label = gender === "women" ? "Women" : "Men";
 
   return (
     <section
       className="relative border-t border-bone/10 bg-ink section-pad"
-      aria-labelledby={`${world}-heading`}
+      aria-labelledby={`${gender}-heading`}
     >
       <div className="shell grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         {/* --- Campaign --- */}
@@ -47,7 +47,7 @@ export function GenderEditorial({
           data-reveal-media
         >
           <Sculpture
-            seed={`editorial-${world}`}
+            seed={`editorial-${gender}`}
             tone={tone}
             pose={pose}
             anchor={flip ? 0.38 : 0.6}
@@ -60,7 +60,7 @@ export function GenderEditorial({
             <Flat
               flat={products[0]?.flat ?? "tee"}
               colorway={products[0]?.variants[0].colorway ?? "onyx"}
-              seed={`float-${world}`}
+              seed={`float-${gender}`}
               className="size-full"
             />
             <p className="mt-1.5 truncate px-1 pb-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-fog">
@@ -76,7 +76,7 @@ export function GenderEditorial({
           </p>
 
           <h2
-            id={`${world}-heading`}
+            id={`${gender}-heading`}
             className="display-lg mb-6 max-w-[13ch] text-bone"
             data-reveal
           >
@@ -119,7 +119,7 @@ export function GenderEditorial({
             ))}
           </ul>
 
-          <Link href={`/shop/${world}`} className="btn btn-primary">
+          <Link href="/shop" className="btn btn-primary">
             Shop {label.toLowerCase()}&apos;s
             <ArrowMark className="size-4" />
           </Link>

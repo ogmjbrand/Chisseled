@@ -41,7 +41,7 @@ export function JournalStrip() {
             <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/70 to-ink/20" />
 
             <div className="relative z-[3] max-w-[38ch]">
-              <p className="eyebrow mb-4 text-lime-bright">{lead.category}</p>
+              <p className="eyebrow mb-4 text-purple-bright">{lead.category}</p>
               <h3 className="display-md mb-4 text-bone">{lead.title}</h3>
               <p className="mb-5 text-body-sm leading-relaxed text-fog">{lead.excerpt}</p>
               <p className="font-mono text-micro uppercase tracking-[0.14em] text-ash">

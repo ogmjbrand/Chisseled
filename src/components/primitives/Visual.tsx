@@ -300,8 +300,8 @@ export function Flat({
       {/* Woven brand tab */}
       {g.tab ? (
         <g>
-          <circle cx={g.tab.x} cy={g.tab.y} r={g.tab.r} fill="none" stroke="#16d992" strokeWidth="1.4" opacity="0.85" />
-          <circle cx={g.tab.x} cy={g.tab.y} r={g.tab.r * 0.34} fill="#16d992" opacity="0.7" />
+          <circle cx={g.tab.x} cy={g.tab.y} r={g.tab.r} fill="none" stroke="var(--color-purple-bright)" strokeWidth="1.4" opacity="0.85" />
+          <circle cx={g.tab.x} cy={g.tab.y} r={g.tab.r * 0.34} fill="var(--color-purple-bright)" opacity="0.7" />
         </g>
       ) : null}
 

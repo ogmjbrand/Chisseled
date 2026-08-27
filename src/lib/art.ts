@@ -62,48 +62,48 @@ export interface TonePalette {
 }
 
 export const TONES: Record<Tone, TonePalette> = {
-  // Neutral everywhere. Lime only where the work happens.
+  // Obsidian ground throughout. Purple is the signal, never a wash.
   void: {
-    base: "#050505",
-    mid: "#181818",
-    high: "#55554f",
-    key: "#f2efe8",
-    haze: "#2b2b29",
+    base: "#050506",
+    mid: "#17171b",
+    high: "#55555f",
+    key: "#f5f5f5",
+    haze: "#2a2a32",
   },
   apparel: {
-    base: "#080808",
-    mid: "#1c1c1b",
-    high: "#6a6a64",
-    key: "#f2efe8",
-    haze: "#32322f",
+    base: "#08080a",
+    mid: "#1b1b21",
+    high: "#6a6a75",
+    key: "#f5f5f5",
+    haze: "#31313a",
   },
   train: {
-    base: "#0a1000",
-    mid: "#24310a",
-    high: "#8fbf16",
-    key: "#c7ff2e",
-    haze: "#3d5210",
+    base: "#0b0616",
+    mid: "#241344",
+    high: "#6d28d9",
+    key: "#8b5cf6",
+    haze: "#3b1d70",
   },
   fuel: {
-    base: "#0b0b09",
-    mid: "#262622",
-    high: "#8c8c87",
-    key: "#d6d3cc",
-    haze: "#383834",
+    base: "#0a0a0c",
+    mid: "#242430",
+    high: "#8c8c99",
+    key: "#d4d4de",
+    haze: "#363644",
   },
   recover: {
-    base: "#060708",
-    mid: "#17191a",
-    high: "#5e6260",
-    key: "#b0b0aa",
-    haze: "#262a2b",
+    base: "#07070c",
+    mid: "#191926",
+    high: "#5e5e75",
+    key: "#b4b4cf",
+    haze: "#26263a",
   },
   bone: {
-    base: "#141414",
-    mid: "#3a3a37",
-    high: "#c8c6c0",
-    key: "#fbfaf6",
-    haze: "#55554f",
+    base: "#131317",
+    mid: "#3a3a45",
+    high: "#c6c6cf",
+    key: "#fbfbfd",
+    haze: "#55555f",
   },
 };
 
@@ -331,20 +331,25 @@ export const FLATS: Record<string, GarmentFlat> = {
     tab: { x: 268, y: 138, r: 6 },
   },
   hoodie: {
+    // A hoodie, drawn as one: hood over the shoulder line, long sleeves to a
+    // ribbed cuff, kangaroo pocket. The previous geometry here was a
+    // short-sleeve crew, which misrepresented every product using it.
     outline:
-      "M 96 108 L 152 72 C 168 118 232 118 248 72 L 304 108 L 344 200 L 300 228 L 288 194 L 288 386 L 112 386 L 112 194 L 100 228 L 56 200 Z",
+      "M 138 110 C 132 48 268 48 262 110 L 292 130 L 332 150 L 358 318 L 314 332 L 296 180 L 296 404 L 104 404 L 104 180 L 86 332 L 42 318 L 68 150 L 108 130 Z",
     seams: [
-      "M 152 72 C 168 122 232 122 248 72",
-      "M 112 194 L 112 386",
-      "M 288 194 L 288 386",
-      "M 112 330 C 152 318 248 318 288 330",
-      "M 150 344 L 170 330",
-      "M 250 344 L 230 330",
-      "M 186 96 L 186 130",
-      "M 214 96 L 214 130",
+      "M 138 110 C 150 72 250 72 262 110",
+      "M 140 112 C 162 132 238 132 260 112",
+      "M 108 130 L 104 180",
+      "M 292 130 L 296 180",
+      "M 130 302 L 142 264 L 258 264 L 270 302",
+      "M 104 372 L 296 372",
+      "M 92 302 L 48 288",
+      "M 308 302 L 352 288",
+      "M 186 118 L 182 172",
+      "M 214 118 L 218 172",
     ],
-    panels: ["M 112 330 C 152 318 248 318 288 330 L 288 386 L 112 386 Z"],
-    tab: { x: 200, y: 240, r: 8 },
+    panels: ["M 130 302 L 142 264 L 258 264 L 270 302 Z"],
+    tab: { x: 200, y: 218, r: 8 },
   },
   jacket: {
     outline:
@@ -470,16 +475,18 @@ export interface Colorway {
 }
 
 export const COLORWAYS: Record<string, Colorway> = {
+  // Drawn from the actual garments, not from the brand palette — customers
+  // receive these colours, so they are described honestly.
   onyx: { name: "Onyx", hex: "#141518", seam: "#3c4047" },
   graphite: { name: "Graphite", hex: "#25282d", seam: "#565c66" },
-  bone: { name: "Bone", hex: "#d9d9d4", seam: "#8f9089" },
-  emerald: { name: "Emerald", hex: "#0d5f43", seam: "#16d992" },
-  slate: { name: "Slate", hex: "#31383f", seam: "#657280" },
-  clay: { name: "Clay", hex: "#4a3a30", seam: "#8a6d5a" },
-  sand: { name: "Sand", hex: "#8d8272", seam: "#c2b7a4" },
-  oxide: { name: "Oxide", hex: "#5a2f2a", seam: "#96574d" },
-  storm: { name: "Storm", hex: "#3d4348", seam: "#767f86" },
-  gold: { name: "Brass", hex: "#6b5a34", seam: "#b1955f" },
+  heather: { name: "Heather Grey", hex: "#8b8d92", seam: "#b9bbbf" },
+  bone: { name: "Bone", hex: "#e4e2dc", seam: "#8f9089" },
+  royal: { name: "Royal", hex: "#1f3fb0", seam: "#5878e0" },
+  sage: { name: "Sage", hex: "#6f8778", seam: "#9db3a5" },
+  blush: { name: "Blush", hex: "#c98b98", seam: "#e6b5be" },
+  camo: { name: "Woodland Camo", hex: "#4a4632", seam: "#7b7455" },
+  rust: { name: "Rust", hex: "#9a5424", seam: "#c98450" },
+  violet: { name: "Violet", hex: "#6d28d9", seam: "#8b5cf6" },
 };
 
 export type ColorwayKey = keyof typeof COLORWAYS;

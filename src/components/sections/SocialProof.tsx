@@ -71,7 +71,7 @@ export function SocialProof() {
             <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/30 to-transparent" />
 
             <div className="relative z-[3] flex h-full flex-col justify-end p-7">
-              <p className="eyebrow mb-3 text-lime-bright">{ATHLETES[3].discipline}</p>
+              <p className="eyebrow mb-3 text-purple-bright">{ATHLETES[3].discipline}</p>
               <p className="display-sm mb-3 text-bone">{ATHLETES[3].name}</p>
               <p className="mb-5 max-w-[30ch] text-body-sm italic leading-relaxed text-fog">
                 “{ATHLETES[3].quote}”
@@ -100,7 +100,7 @@ export function SocialProof() {
                   {Array.from({ length: 5 }).map((_, s) => (
                     <StarMark
                       key={s}
-                      className={s < q.rating ? "size-3.5 text-lime-bright" : "size-3.5 text-iron"}
+                      className={s < q.rating ? "size-3.5 text-purple-bright" : "size-3.5 text-iron"}
                       filled={s < q.rating}
                     />
                   ))}
@@ -117,7 +117,7 @@ export function SocialProof() {
                 <span className="text-caption text-fog">{q.author}</span>
                 <Link
                   href={`/product/${q.slug}`}
-                  className="truncate font-mono text-micro uppercase tracking-[0.12em] text-ash transition-colors hover:text-lime-bright"
+                  className="truncate font-mono text-micro uppercase tracking-[0.12em] text-ash transition-colors hover:text-purple-bright"
                 >
                   {q.product}
                 </Link>
