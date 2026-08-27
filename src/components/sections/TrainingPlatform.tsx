@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Meter, WeekBars, MetaPills } from "@/components/primitives/Stats";
 import { PROGRAMS } from "@/lib/catalog";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
 
@@ -10,6 +11,17 @@ import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
  * The tabs, the week selector and the session list all respond, because a
  * static screenshot of a dashboard reads as a mockup and this should not.
  */
+
+/** Minutes under load, Monday through Sunday. Thursday is the session above. */
+const WEEK = [
+  { day: "M", value: 48 },
+  { day: "T", value: 0 },
+  { day: "W", value: 55 },
+  { day: "T", value: 62, today: true },
+  { day: "F", value: 0 },
+  { day: "S", value: 38 },
+  { day: "S", value: 0 },
+];
 
 const TABS = ["Today", "Programme", "Progress"] as const;
 type Tab = (typeof TABS)[number];
@@ -95,19 +107,23 @@ export function TrainingPlatform() {
           <span aria-hidden className="metal-edge-line" />
 
           {/* Chrome */}
-          <div className="flex items-center justify-between border-b border-bone/10 px-5 py-3.5">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-3 border-b border-bone/10 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-center gap-3">
               <span className="flex gap-1.5" aria-hidden>
                 {["bg-iron", "bg-iron", "bg-purple/60"].map((c, i) => (
                   <span key={i} className={`size-2 rounded-full ${c}`} />
                 ))}
               </span>
-              <span className="font-mono text-micro uppercase tracking-[0.16em] text-smoke">
+              <span className="truncate font-mono text-micro uppercase tracking-[0.16em] text-smoke">
                 Chisseled Training — Peak 16 · Week 8
               </span>
             </div>
 
-            <div role="tablist" aria-label="Dashboard view" className="flex gap-1">
+            <div
+              role="tablist"
+              aria-label="Dashboard view"
+              className="-mx-1 flex shrink-0 gap-1 overflow-x-auto px-1"
+            >
               {TABS.map((t) => (
                 <button
                   key={t}
@@ -117,7 +133,7 @@ export function TrainingPlatform() {
                   id={`tab-${t}`}
                   onClick={() => setTab(t)}
                   className={[
-                    "px-3 py-1.5 font-mono text-micro uppercase tracking-[0.14em] transition-colors duration-300",
+                    "shrink-0 px-3 py-1.5 font-mono text-micro uppercase tracking-[0.14em] transition-colors duration-300",
                     tab === t ? "bg-bone text-ink" : "text-smoke hover:text-bone",
                   ].join(" ")}
                 >
@@ -138,21 +154,29 @@ export function TrainingPlatform() {
             >
               {tab === "Today" && (
                 <>
-                  <div className="mb-6 flex items-end justify-between gap-4">
-                    <div>
-                      <p className="eyebrow mb-2">Thursday — Lower, Heavy</p>
-                      <p className="display-sm text-bone">Session 4 of 4</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="numeric text-h4 text-purple-bright">{completion}%</p>
-                      <p className="eyebrow mt-1">Complete</p>
+                  <div className="mb-7">
+                    <p className="eyebrow mb-2">Thursday — Lower, Heavy</p>
+                    <p className="display-sm mb-6 text-bone">Session 4 of 4</p>
+
+                    <div className="grid gap-8 sm:grid-cols-2">
+                      <Meter
+                        label="Session complete"
+                        value={checked.size}
+                        goal={SESSION.length}
+                        unit={`/ ${SESSION.length}`}
+                        caption={`${completion}% of today's lifts logged`}
+                      />
+                      <WeekBars label="This week — time under load" data={WEEK} />
                     </div>
                   </div>
 
-                  <div className="mb-6 h-0.5 w-full overflow-hidden bg-bone/10">
-                    <div
-                      className="h-full bg-purple-bright transition-[width] duration-500 ease-[var(--ease-out-expo)]"
-                      style={{ width: `${completion}%` }}
+                  <div className="mb-6">
+                    <MetaPills
+                      items={[
+                        { text: "62 min" },
+                        { text: "Heavy" },
+                        { text: "Peak 16 · W3" },
+                      ]}
                     />
                   </div>
 
