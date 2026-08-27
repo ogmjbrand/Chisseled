@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRef } from "react";
 import { useScrollProgress } from "@/lib/motion";
 import { EditorialImage } from "@/components/primitives/EditorialImage";
-import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { ArrowMark } from "@/components/primitives/Marks";
 
 /**
@@ -40,13 +39,6 @@ export function Hero() {
           willChange: "transform, opacity",
         }}
       >
-        <BrandVideo
-          role="hero"
-          fit="cover"
-          grade="deep"
-          lazy={false}
-          className="size-full lg:hidden"
-        />
         <EditorialImage
           src="push-up"
           alt="An athlete holding a one-arm push-up at the bottom of the rep, outdoors at first light."
@@ -54,7 +46,7 @@ export function Hero() {
           priority
           grade="deep"
           position="72% center"
-          className="hidden size-full lg:block"
+          className="size-full"
         />
       </div>
 
@@ -68,23 +60,13 @@ export function Hero() {
         className="absolute inset-0 z-[2] bg-gradient-to-r from-ink/85 via-ink/25 to-transparent"
       />
 
-      {/* The film itself, at native aspect, on viewports too wide to wear it. */}
-      <div
-        /* No -translate-y-1/2 here: Tailwind v4 compiles it to the standalone
-           `translate` property, which composes with the inline `transform`
-           below instead of being overridden by it — the centring would apply
-           twice. The -50% lives in the transform only. */
-        className="absolute right-[var(--gutter)] top-1/2 z-[3] hidden w-[clamp(16rem,22vw,22rem)] lg:block"
-        style={{
-          transform: `translate3d(0, calc(-50% + ${exit * -40}px), 0)`,
-          opacity: 1 - exit * 1.2,
-        }}
-      >
-        <div className="relative aspect-[9/16] overflow-hidden border border-bone/12">
-          <BrandVideo role="hero" fit="cover" grade="signal" lazy={false} className="size-full" />
-        </div>
-        <p className="eyebrow mt-3 text-ash">The 2026 campaign film</p>
-      </div>
+      {/*
+        The hero film column lived here. It was wired to the car-race brief but
+        pointed at the envelope clip, which belongs on the order confirmation.
+        Restore it once the race film is identified: drop a `hero` entry into
+        FILMS and render <BrandVideo role="hero" /> in a 9:16 frame — the clip
+        is phone video, so it must not be stretched across a landscape hero.
+      */}
 
       {/* --- Content --- */}
       <div
@@ -95,7 +77,7 @@ export function Hero() {
         }}
       >
         <p className="eyebrow mb-6 animate-fade text-purple-bright" style={{ animationDelay: "200ms" }}>
-          OGMJ Brands — Performance Division
+          Performance Division — Est. Florida
         </p>
 
         <h1 id="hero-heading" className="display-mega text-bone">

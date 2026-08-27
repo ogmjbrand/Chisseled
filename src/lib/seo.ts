@@ -3,10 +3,10 @@ import type { Article, Product } from "@/lib/types";
 
 export const SITE = {
   name: "CHISSELED",
-  legalName: "CHISSELED — OGMJ Brands",
+  legalName: "CHISSELED",
   tagline: "Look Chisseled. Move Chisseled. Live Chisseled.",
   description:
-    "Premium performance apparel, training, nutrition and essentials engineered for people committed to becoming more. By OGMJ Brands.",
+    "Premium performance apparel, training, nutrition and essentials engineered for people committed to becoming more.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://chisseled.com",
   locale: "en_NG",
 } as const;
@@ -57,7 +57,6 @@ export function organizationSchema() {
     url: SITE.url,
     slogan: SITE.tagline,
     description: SITE.description,
-    parentOrganization: { "@type": "Organization", name: "OGMJ Brands" },
     sameAs: [
       "https://instagram.com",
       "https://tiktok.com",

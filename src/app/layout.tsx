@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   },
   description: SITE.description,
   applicationName: SITE.name,
-  authors: [{ name: "OGMJ Brands" }],
-  creator: "OGMJ Brands",
-  publisher: "OGMJ Brands",
+  authors: [{ name: "CHISSELED" }],
+  creator: "CHISSELED",
+  publisher: "CHISSELED",
   keywords: [
     "performance apparel",
     "training programmes",
@@ -54,7 +54,6 @@ export const metadata: Metadata = {
     "compression wear",
     "activewear",
     "gym clothing",
-    "OGMJ Brands",
   ],
   formatDetection: { telephone: false },
   openGraph: {

@@ -2,18 +2,16 @@
  * The supplied brand films, and where each one plays.
  *
  * ------------------------------------------------------------------
- * PROVISIONAL ASSIGNMENT — needs one look from a human to confirm.
+ * f0cfce6a is the ENVELOPE, confirmed by the client. An earlier guess put it
+ * in the hero on a bitrate hunch; it was wrong. This container has no H.264
+ * decoder (the bundled ffmpeg is a stripped screencast build and Chromium
+ * here ships without proprietary codecs), so the clips cannot be watched from
+ * inside the build — role assignments have to come from someone who can see
+ * them, not from inference.
  *
- * This container has no H.264 decoder (the bundled ffmpeg is a stripped
- * screencast build, and Chromium here ships without proprietary codecs), so
- * the clips could not be viewed before wiring them. The roles below are
- * inferred from duration and bitrate, not from watching:
- *
- *   f0cfce6a  17.1s  1150 kbps  dense, motion-heavy  -> read as live action
- *   ac54cc7f   6.1s   269 kbps  flat, compresses well -> read as motion design
- *
- * To correct a mapping, change the slug on the role below. Nothing else
- * needs to move — the files are named by content hash on purpose.
+ * STILL UNIDENTIFIED: the car-race film for the hero. Until someone names the
+ * file, the hero runs on photography rather than on another guess. Adding it
+ * back is a one-line change here plus re-enabling the block in Hero.tsx.
  * ------------------------------------------------------------------
  */
 
@@ -29,21 +27,21 @@ export interface BrandFilm {
 }
 
 export const FILMS = {
-  /** Hero. The car-race film. */
-  hero: {
+  /** Order confirmation. The envelope, opening after payment clears. */
+  envelope: {
     file: "f0cfce6a",
     duration: 17.1,
     width: 720,
     height: 1280,
-    description: "A race sequence, cut fast.",
+    description: "An envelope opening to reveal the order confirmation.",
   },
-  /** Order confirmation. The envelope, opening after payment clears. */
-  envelope: {
+  /** Previously mis-assigned to the envelope; role still to be identified. */
+  unassigned: {
     file: "ac54cc7f",
     duration: 6.1,
     width: 720,
     height: 1280,
-    description: "An envelope opening to reveal the order confirmation.",
+    description: "A short brand sequence.",
   },
   /** The remaining films, played across the editorial surfaces. */
   campaign: {

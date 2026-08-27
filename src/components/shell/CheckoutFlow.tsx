@@ -477,32 +477,12 @@ function Confirmation() {
           <BrandVideo
             role="envelope"
             fit="cover"
-            grade="none"
+            grade="purple"
             lazy={false}
             loop={false}
             onEnded={() => setOpened(true)}
             onError={() => setOpened(true)}
             className="size-full"
-          />
-          {/* The purple the brief asked for, laid over the envelope itself. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(150deg, color-mix(in oklab, var(--color-purple) 62%, transparent), color-mix(in oklab, var(--color-purple-dim) 46%, transparent))",
-              mixBlendMode: "color",
-            }}
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(60% 55% at 50% 42%, color-mix(in oklab, var(--color-purple-bright) 40%, transparent), transparent 70%)",
-              mixBlendMode: "screen",
-              opacity: 0.5,
-            }}
           />
         </div>
       </div>

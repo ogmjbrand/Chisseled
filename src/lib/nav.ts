@@ -218,7 +218,7 @@ export const NAV: NavSection[] = [
       },
     ],
     feature: {
-      eyebrow: "OGMJ Brands",
+      eyebrow: "The Brand",
       title: "Your Body Is the Project",
       body: "CHISSELED exists because most performance brands sell an image. We would rather sell the thing that produces it.",
       href: "/about",
@@ -276,7 +276,6 @@ export const FOOTER_COLUMNS: NavColumn[] = [
       { label: "Our Story", href: "/about" },
       { label: "The Studio", href: "/about#studio" },
       { label: "Careers", href: "/about#careers" },
-      { label: "OGMJ Brands", href: "/about#ogmj" },
     ],
   },
   {

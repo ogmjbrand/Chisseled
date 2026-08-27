@@ -53,7 +53,7 @@ export function Footer() {
           <Monogram className="size-5 text-bone" />
           <p className="font-mono text-micro uppercase tracking-[0.18em] text-ash">
             © {new Date().getFullYear()} Chisseled ·{" "}
-            <span className="text-smoke">OGMJ Brands — From Idea to Empire</span>
+            <span className="text-smoke">Built different.</span>
           </p>
         </div>
 

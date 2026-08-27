@@ -10,8 +10,13 @@ interface BrandVideoProps {
    * matches the clip's aspect. `contain` shows the whole frame.
    */
   fit?: "cover" | "contain";
-  /** Purple rim and obsidian floor, matching EditorialImage. */
-  grade?: "signal" | "deep" | "none";
+  /**
+   * `signal`/`deep` keep the source colour and add a purple rim.
+   * `purple` is a true duotone: the clip is desaturated first, then tinted,
+   * so whatever hue the source carries it resolves to brand purple — a red
+   * or magenta source cannot come through the tint reading pink.
+   */
+  grade?: "signal" | "deep" | "purple" | "none";
   /** Start paused until scrolled into view. Off for the hero. */
   lazy?: boolean;
   loop?: boolean;
@@ -82,10 +87,28 @@ export function BrandVideo({
         onEnded={onEnded}
         onError={onError}
         aria-label={f.description}
+        style={grade === "purple" ? { filter: "grayscale(1) contrast(1.08) brightness(1.04)" } : undefined}
         className={`size-full ${fit === "cover" ? "object-cover" : "object-contain"}`}
       />
 
-      {grade !== "none" && (
+      {grade === "purple" && (
+        <>
+          {/* The clip is greyscale underneath, so `color` sets the hue outright. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-purple"
+            style={{ mixBlendMode: "color" }}
+          />
+          {/* Lifts the highlights toward bright purple so it reads lit, not flat. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-purple-bright"
+            style={{ mixBlendMode: "overlay", opacity: 0.28 }}
+          />
+        </>
+      )}
+
+      {(grade === "signal" || grade === "deep") && (
         <>
           <div
             aria-hidden

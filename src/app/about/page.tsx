@@ -8,7 +8,7 @@ import { ArrowMark } from "@/components/primitives/Marks";
 export const metadata = pageMetadata({
   title: "Our Story",
   description:
-    "CHISSELED exists because most performance brands sell an image. We would rather sell the things that produce it. An OGMJ Brands company.",
+    "CHISSELED exists because most performance brands sell an image. We would rather sell the things that produce it.",
   path: "/about",
 });
 
@@ -63,7 +63,7 @@ export default function AboutPage() {
       />
 
       <PageHeader
-        eyebrow="OGMJ Brands"
+        eyebrow="The Studio"
         title="Your body is the project."
         lede="CHISSELED exists because most performance brands sell you an image of the person you want to be. We would rather sell the things that produce them."
         seed="about-header"
@@ -221,7 +221,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* --- Contact & OGMJ --- */}
+      {/* --- Contact --- */}
       <section
         id="contact"
         className="border-t border-bone/10 bg-carbon section-pad"
@@ -253,33 +253,18 @@ export default function AboutPage() {
             </dl>
           </div>
 
-          <div id="ogmj" className="border border-bone/10 bg-ink p-8 lg:p-10">
-            <p className="eyebrow mb-5 text-steel">OGMJ Brands</p>
-            <h2 className="display-sm mb-6 text-bone">From idea to empire.</h2>
+          <div className="border border-bone/10 bg-ink p-8 lg:p-10">
+            <p className="eyebrow mb-5 text-steel">The Studio</p>
+            <h2 className="display-sm mb-6 text-bone">Built as one system.</h2>
             <p className="mb-6 text-body-sm leading-relaxed text-smoke">
-              CHISSELED is the performance division of OGMJ Brands — a group that builds
-              brands as complete operating systems rather than as logos with a storefront
-              attached. Identity, product, platform, community and commerce are designed
-              together, because a brand that only exists at the surface stops working the
-              moment someone looks closely.
+              CHISSELED exists because most performance brands sell an image. We would
+              rather sell the things that produce it — apparel, training, nutrition and
+              recovery designed together rather than assembled after the fact.
             </p>
             <p className="text-body-sm leading-relaxed text-smoke">
-              This site is one expression of that. The design system, the art direction, the
-              training platform and the commerce layer were built as a single system, and every
-              piece of it is meant to scale.
-            </p>
-
-            <div id="careers" className="mt-9 border-t border-bone/10 pt-7">
-              <p className="eyebrow mb-3">Careers</p>
-              <p className="mb-5 text-body-sm leading-relaxed text-smoke">
-                We hire people who publish the number. If that sounds like how you work, write
-                to us — even when nothing is listed.
-              </p>
-              <a href="mailto:studio@chisseled.com" className="btn btn-ghost btn-sm">
-                Get in touch
-              </a>
-            </div>
-          </div>
+              The design system, the art direction, the training platform and the commerce
+              layer were built as a single system, and every piece of it is meant to scale.
+            </p></div>
         </div>
 
         <div id="legal" className="shell mt-16 border-t border-bone/10 pt-10">
