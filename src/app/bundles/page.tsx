@@ -63,7 +63,7 @@ export default function BundlesPage() {
                       <span className="block font-display text-h6 font-bold uppercase tracking-tight text-bone">
                         {b.name}
                       </span>
-                      <span className="numeric mt-1.5 block text-caption text-emerald-bright">
+                      <span className="numeric mt-1.5 block text-caption text-lime-bright">
                         {formatPrice(b.price)}
                       </span>
                     </th>
@@ -84,7 +84,7 @@ export default function BundlesPage() {
                       {BUNDLES.map((b) => (
                         <td key={b.slug} className="py-3.5 pr-6">
                           {b.items.includes(slug) ? (
-                            <CheckMark className="size-4 text-emerald" />
+                            <CheckMark className="size-4 text-lime" />
                           ) : (
                             <span aria-hidden className="text-ash">
                               —
@@ -100,7 +100,7 @@ export default function BundlesPage() {
                 })}
 
                 <tr>
-                  <th scope="row" className="py-3.5 pr-6 text-body-sm font-normal text-gold">
+                  <th scope="row" className="py-3.5 pr-6 text-body-sm font-normal text-steel">
                     Training membership
                   </th>
                   {BUNDLES.map((b) => (
@@ -117,7 +117,7 @@ export default function BundlesPage() {
                     You save
                   </th>
                   {BUNDLES.map((b) => (
-                    <td key={b.slug} className="numeric py-4 pr-6 text-body-sm text-emerald-bright">
+                    <td key={b.slug} className="numeric py-4 pr-6 text-body-sm text-lime-bright">
                       {formatPrice(b.saves)}
                     </td>
                   ))}

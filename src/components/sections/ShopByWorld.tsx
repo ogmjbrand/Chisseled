@@ -48,7 +48,7 @@ export function ShopByWorld() {
               {/* Emerald wash on hover — the portal opening */}
               <span
                 aria-hidden
-                className="absolute inset-0 z-[2] bg-gradient-to-t from-emerald-shade/70 via-transparent to-transparent opacity-0 transition-opacity duration-[900ms] group-hover:opacity-100"
+                className="absolute inset-0 z-[2] bg-gradient-to-t from-lime-shade/70 via-transparent to-transparent opacity-0 transition-opacity duration-[900ms] group-hover:opacity-100"
               />
               <span
                 aria-hidden
@@ -56,7 +56,7 @@ export function ShopByWorld() {
               />
 
               <div className="relative z-[3] flex h-full flex-col justify-end p-6">
-                <p className="eyebrow mb-3 text-emerald-bright">
+                <p className="eyebrow mb-3 text-lime-bright">
                   {count} {count === 1 ? "piece" : "pieces"}
                 </p>
 

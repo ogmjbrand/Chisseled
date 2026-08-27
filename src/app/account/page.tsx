@@ -42,7 +42,7 @@ export default function AccountPage() {
           <ul className="mb-14 grid gap-3 sm:grid-cols-2">
             {BENEFITS.map((b) => (
               <li key={b} className="flex items-baseline gap-2.5 text-body-sm text-fog">
-                <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-emerald" />
+                <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-lime" />
                 {b}
               </li>
             ))}
@@ -61,11 +61,11 @@ export default function AccountPage() {
             <ol className="grid gap-px border border-bone/10 bg-bone/10 sm:grid-cols-3">
               {TIERS.map((t, i) => (
                 <li key={t.name} className="bg-carbon p-6">
-                  <p className="numeric mb-4 text-caption text-gold">0{i + 1}</p>
+                  <p className="numeric mb-4 text-caption text-steel">0{i + 1}</p>
                   <h3 className="mb-2 font-display text-h6 font-bold uppercase tracking-tight text-bone">
                     {t.name}
                   </h3>
-                  <p className="mb-3 font-mono text-micro uppercase tracking-[0.12em] text-emerald">
+                  <p className="mb-3 font-mono text-micro uppercase tracking-[0.12em] text-lime">
                     {t.spend}
                   </p>
                   <p className="text-body-sm leading-relaxed text-smoke">{t.perks}</p>

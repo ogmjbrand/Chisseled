@@ -47,7 +47,7 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
                 className={[
                   "group relative grain flex flex-col overflow-hidden border p-7 transition-colors duration-700 lg:p-8",
                   complete
-                    ? "border-gold/35 bg-gradient-to-b from-gold/[0.07] to-transparent"
+                    ? "border-steel/35 bg-gradient-to-b from-steel/[0.07] to-transparent"
                     : "border-bone/10 bg-carbon hover:border-bone/25",
                 ].join(" ")}
                 data-reveal
@@ -56,16 +56,16 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
                 {complete && <span aria-hidden className="metal-edge-line" />}
 
                 <div className="mb-6 flex items-start justify-between gap-4">
-                  <span className={complete ? "badge badge-gold" : "badge badge-outline"}>
+                  <span className={complete ? "badge badge-steel" : "badge badge-outline"}>
                     {bundle.tier}
                   </span>
-                  <span className="badge badge-emerald">
+                  <span className="badge badge-lime">
                     Save {formatPrice(bundle.saves, currency)}
                   </span>
                 </div>
 
                 <h3 className="display-sm mb-3 text-bone">{bundle.name}</h3>
-                <p className="mb-5 text-body-sm font-medium text-emerald-bright">{bundle.promise}</p>
+                <p className="mb-5 text-body-sm font-medium text-lime-bright">{bundle.promise}</p>
                 <p className="mb-7 text-body-sm leading-relaxed text-smoke">{bundle.description}</p>
 
                 {/* The pieces, as flats */}
@@ -88,13 +88,13 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
                   {items.map((p) =>
                     p ? (
                       <li key={p.slug} className="flex items-baseline gap-2 text-body-sm text-fog">
-                        <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-emerald" />
+                        <CheckMark className="size-3.5 shrink-0 translate-y-0.5 text-lime" />
                         <span className="min-w-0 flex-1 truncate">{p.name}</span>
                       </li>
                     ) : null,
                   )}
                   {bundle.extras?.map((e) => (
-                    <li key={e} className="flex items-baseline gap-2 text-body-sm text-gold">
+                    <li key={e} className="flex items-baseline gap-2 text-body-sm text-steel">
                       <CheckMark className="size-3.5 shrink-0 translate-y-0.5" />
                       <span className="min-w-0 flex-1">{e}</span>
                     </li>

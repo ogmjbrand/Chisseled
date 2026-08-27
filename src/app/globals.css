@@ -7,31 +7,39 @@
    ============================================================ */
 
 @theme {
-  /* --- SURFACE: near-black through graphite --- */
+  /* ------------------------------------------------------------
+     BRAND PALETTE — the five. Everything else is derived.
+       OBSIDIAN      #080808   ground
+       GRAPHITE      #181818   raised surface
+       STEEL         #8c8c87   muted voice
+       BONE          #f2efe8   primary voice
+       ELECTRIC LIME #c7ff2e   the only accent
+     ------------------------------------------------------------ */
+  --color-obsidian: #080808;
+  --color-graphite: #181818;
+  --color-steel: #8c8c87;
+  --color-bone: #f2efe8;
+  --color-lime: #c7ff2e;
+
+  /* --- SURFACE RAMP: obsidian floor, graphite ceiling --- */
   --color-void: #000000;
-  --color-ink: #050506;
-  --color-carbon: #0a0a0c;
-  --color-graphite: #101113;
-  --color-slate: #17181b;
-  --color-steel: #202226;
-  --color-iron: #2c2f34;
-  --color-ash: #4a4e55;
-  --color-smoke: #74797f;
-  --color-fog: #a4a8ad;
-  --color-bone: #e9e9e6;
-  --color-chalk: #f7f7f5;
+  --color-ink: #080808;
+  --color-carbon: #0f0f0f;
+  --color-slate: #202020;
+  --color-iron: #2b2b29;
 
-  /* --- ACCENT: emerald, restrained --- */
-  --color-emerald-shade: #052e21;
-  --color-emerald-dim: #0a6d49;
-  --color-emerald: #0fb176;
-  --color-emerald-bright: #16d992;
+  /* --- VOICE RAMP: dim → primary. All AA on obsidian. --- */
+  --color-ash: #6a6a64;
+  --color-smoke: #8c8c87;
+  --color-fog: #b0b0aa;
+  --color-chalk: #fbfaf6;
 
-  /* --- SECONDARY ACCENT: muted gold, used sparingly --- */
-  --color-gold: #b1955f;
-  --color-gold-dim: #7a6640;
+  /* --- ACCENT: electric lime. Dark type on it, always. --- */
+  --color-lime-shade: #1b2408;
+  --color-lime-dim: #8fbf16;
+  --color-lime-bright: #d8ff6b;
 
-  /* --- SIGNAL --- */
+  /* --- SIGNAL: semantic only, never decorative --- */
   --color-signal-low: #c9743f;
   --color-signal-out: #7a3f3f;
 
@@ -165,13 +173,13 @@
   }
 
   ::selection {
-    background: var(--color-emerald);
+    background: var(--color-lime);
     color: var(--color-ink);
   }
 
   /* --- FOCUS: visible, premium, never removed --- */
   :focus-visible {
-    outline: 2px solid var(--color-emerald-bright);
+    outline: 2px solid var(--color-lime-bright);
     outline-offset: 3px;
     border-radius: 1px;
   }
@@ -180,7 +188,7 @@
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: var(--color-ink); }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-steel);
+    background: var(--color-iron);
     border: 3px solid var(--color-ink);
     border-radius: 99px;
   }
@@ -308,15 +316,15 @@
   border: 1px solid color-mix(in oklab, var(--color-bone) 8%, transparent);
 }
 
-@utility glass-emerald {
+@utility glass-lime {
   background: linear-gradient(
     160deg,
-    color-mix(in oklab, var(--color-emerald) 12%, transparent),
-    color-mix(in oklab, var(--color-emerald-shade) 40%, transparent)
+    color-mix(in oklab, var(--color-lime) 12%, transparent),
+    color-mix(in oklab, var(--color-lime-shade) 40%, transparent)
   );
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid color-mix(in oklab, var(--color-emerald) 26%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-lime) 26%, transparent);
 }
 
 /* Brushed metal edge — a 1px specular highlight along the top */
@@ -553,12 +561,12 @@
     pointer-events: none;
   }
 
-  /* Solid bone button → inverts to emerald */
+  /* Solid bone button → inverts to lime */
   .btn-primary {
     background: var(--color-bone);
     color: var(--color-ink);
   }
-  .btn-primary::before { background: var(--color-emerald); }
+  .btn-primary::before { background: var(--color-lime); }
   .btn-primary:hover,
   .btn-primary:focus-visible { color: var(--color-ink); }
 
@@ -575,11 +583,11 @@
   }
 
   /* Emerald button → the conversion accent */
-  .btn-emerald {
-    background: var(--color-emerald);
+  .btn-lime {
+    background: var(--color-lime);
     color: var(--color-ink);
   }
-  .btn-emerald::before { background: var(--color-emerald-bright); }
+  .btn-lime::before { background: var(--color-lime-bright); }
 
   .btn-sm {
     padding: 0.75rem 1.25rem;
@@ -627,7 +635,7 @@
   .field:hover { border-color: color-mix(in oklab, var(--color-bone) 22%, transparent); }
   .field:focus {
     outline: none;
-    border-color: var(--color-emerald);
+    border-color: var(--color-lime);
     background: color-mix(in oklab, var(--color-bone) 6%, transparent);
   }
 
@@ -645,15 +653,15 @@
     line-height: 1;
     white-space: nowrap;
   }
-  .badge-emerald {
-    background: color-mix(in oklab, var(--color-emerald) 16%, transparent);
-    color: var(--color-emerald-bright);
-    border: 1px solid color-mix(in oklab, var(--color-emerald) 34%, transparent);
+  .badge-lime {
+    background: color-mix(in oklab, var(--color-lime) 16%, transparent);
+    color: var(--color-lime-bright);
+    border: 1px solid color-mix(in oklab, var(--color-lime) 34%, transparent);
   }
-  .badge-gold {
-    background: color-mix(in oklab, var(--color-gold) 13%, transparent);
-    color: var(--color-gold);
-    border: 1px solid color-mix(in oklab, var(--color-gold) 32%, transparent);
+  .badge-steel {
+    background: color-mix(in oklab, var(--color-steel) 13%, transparent);
+    color: var(--color-steel);
+    border: 1px solid color-mix(in oklab, var(--color-steel) 32%, transparent);
   }
   .badge-bone {
     background: var(--color-bone);

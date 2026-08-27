@@ -20,12 +20,12 @@ export function FuelSection() {
       className="relative grain border-t border-bone/10 bg-carbon section-pad"
       aria-labelledby="fuel-heading"
     >
-      {/* A single warm plane — the only place gold appears on the homepage */}
+      {/* A single steel plane — the one neutral warm-up on the homepage */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[30rem] opacity-[0.09]"
         style={{
-          background: "radial-gradient(60% 100% at 70% 0%, var(--color-gold), transparent 70%)",
+          background: "radial-gradient(60% 100% at 70% 0%, var(--color-steel), transparent 70%)",
         }}
       />
 
@@ -62,7 +62,7 @@ export function FuelSection() {
                 data-reveal
                 style={{ "--reveal-delay": `${i * 70}ms` } as React.CSSProperties}
               >
-                <p className="numeric mb-4 text-micro text-gold">0{i + 1}</p>
+                <p className="numeric mb-4 text-micro text-steel">0{i + 1}</p>
                 <p className="font-display text-h5 font-bold uppercase tracking-tight text-bone">
                   {c.name}
                 </p>
@@ -104,7 +104,7 @@ export function FuelSection() {
                 </Link>
 
                 <div>
-                  <p className="eyebrow mb-2.5 text-gold">{p.category}</p>
+                  <p className="eyebrow mb-2.5 text-steel">{p.category}</p>
                   <h3 className="display-sm mb-2.5 text-bone">
                     <Link href={`/product/${p.slug}`} className="link-rule">
                       {p.name}
@@ -133,7 +133,7 @@ export function FuelSection() {
                           key={t}
                           className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-smoke"
                         >
-                          <CheckMark className="size-3 text-emerald" />
+                          <CheckMark className="size-3 text-lime" />
                           {t}
                         </li>
                       ),
@@ -143,7 +143,7 @@ export function FuelSection() {
                   <div className="flex flex-wrap items-center gap-4">
                     <span className="numeric text-h6 text-bone">{formatPrice(p.price)}</span>
                     {p.nutrition && (
-                      <span className="badge badge-emerald">
+                      <span className="badge badge-lime">
                         Subscribe &amp; save {p.nutrition.subscribeDiscount}%
                       </span>
                     )}

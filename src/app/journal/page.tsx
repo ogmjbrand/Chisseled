@@ -114,7 +114,7 @@ export default async function JournalPage({
               <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/75 to-ink/20" />
 
               <div className="relative z-[3] max-w-[46ch]">
-                <p className="eyebrow mb-5 text-emerald-bright">{lead.category}</p>
+                <p className="eyebrow mb-5 text-lime-bright">{lead.category}</p>
                 <h2 className="display-lg mb-5 text-bone">{lead.title}</h2>
                 <p className="mb-6 text-body leading-relaxed text-fog">{lead.excerpt}</p>
                 <p className="font-mono text-micro uppercase tracking-[0.14em] text-ash">

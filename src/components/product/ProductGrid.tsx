@@ -156,7 +156,7 @@ export function ProductGrid({
           >
             Filter
             {activeCount > 0 && (
-              <span className="flex size-5 items-center justify-center bg-emerald text-[0.625rem] text-ink">
+              <span className="flex size-5 items-center justify-center bg-lime text-[0.625rem] text-ink">
                 {activeCount}
               </span>
             )}
@@ -174,7 +174,7 @@ export function ProductGrid({
               id="sort"
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="border border-bone/15 bg-transparent px-3 py-2 font-mono text-micro uppercase tracking-[0.12em] text-fog transition-colors hover:border-bone/35 focus:border-emerald focus:outline-none"
+              className="border border-bone/15 bg-transparent px-3 py-2 font-mono text-micro uppercase tracking-[0.12em] text-fog transition-colors hover:border-bone/35 focus:border-lime focus:outline-none"
             >
               {SORTS.map((s) => (
                 <option key={s.key} value={s.key} className="bg-ink">
@@ -347,7 +347,7 @@ export function ProductGrid({
                   onChange={(e) =>
                     setFilters((f) => ({ ...f, maxPrice: Number(e.target.value) }))
                   }
-                  className="w-full accent-[var(--color-emerald)]"
+                  className="w-full accent-[var(--color-lime)]"
                 />
                 <p className="numeric mt-2 text-micro text-smoke">
                   Up to ₦{(filters.maxPrice ?? facets.max).toLocaleString()}
@@ -406,7 +406,7 @@ function Check({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="size-4 shrink-0 appearance-none border border-bone/25 transition-colors duration-300 checked:border-emerald checked:bg-emerald focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-bright"
+        className="size-4 shrink-0 appearance-none border border-bone/25 transition-colors duration-300 checked:border-lime checked:bg-lime focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-bright"
       />
       {label}
     </label>

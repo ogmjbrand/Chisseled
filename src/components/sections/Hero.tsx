@@ -62,27 +62,26 @@ export function Hero() {
           opacity: 1 - exit * 1.1,
         }}
       >
-        <p className="eyebrow mb-6 animate-fade text-emerald-bright" style={{ animationDelay: "200ms" }}>
+        <p className="eyebrow mb-6 animate-fade text-lime-bright" style={{ animationDelay: "200ms" }}>
           OGMJ Brands — Performance Division
         </p>
 
-        <h1 id="hero-heading" className="max-w-[16ch]">
+        <h1 id="hero-heading" className="display-mega text-bone">
           <span className="sr-only">
             CHISSELED — built for the disciplined. Premium performance apparel, training,
             nutrition and essentials.
           </span>
 
           <span aria-hidden className="block">
-            <span data-reveal-line className="display-mega text-bone">
+            <span data-reveal-line>
               <span>Built for</span>
             </span>
             <span
               data-reveal-line
-              className="display-mega text-bone"
               style={{ "--reveal-delay": "110ms" } as React.CSSProperties}
             >
               <span>
-                the <em className="not-italic text-emerald">disciplined.</em>
+                the <em className="not-italic text-lime">disciplined.</em>
               </span>
             </span>
           </span>
@@ -142,7 +141,7 @@ export function Hero() {
         </span>
         <span className="relative h-14 w-px overflow-hidden bg-bone/15">
           <span
-            className="absolute inset-x-0 top-0 h-1/2 bg-emerald-bright"
+            className="absolute inset-x-0 top-0 h-1/2 bg-lime-bright"
             style={{ animation: "chisseled-scan 2.6s var(--ease-in-out-quint) infinite" }}
           />
         </span>

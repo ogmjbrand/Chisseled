@@ -147,7 +147,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   key={i}
                   className={
                     i < Math.round(product.rating)
-                      ? "size-3.5 text-emerald-bright"
+                      ? "size-3.5 text-lime-bright"
                       : "size-3.5 text-iron"
                   }
                   filled={i < Math.round(product.rating)}
@@ -169,7 +169,7 @@ export function ProductDetail({ product }: { product: Product }) {
               </span>
             )}
             {subscribe && product.nutrition && (
-              <span className="badge badge-emerald">
+              <span className="badge badge-lime">
                 {product.nutrition.subscribeDiscount}% off, every delivery
               </span>
             )}
@@ -199,7 +199,7 @@ export function ProductDetail({ product }: { product: Product }) {
                     className={[
                       "border p-4 text-left transition-colors duration-400",
                       subscribe === opt.on
-                        ? "border-emerald bg-emerald/8"
+                        ? "border-lime bg-lime/8"
                         : "border-bone/15 hover:border-bone/35",
                     ].join(" ")}
                   >
@@ -342,7 +342,7 @@ export function ProductDetail({ product }: { product: Product }) {
               className={[
                 "flex size-[3.4375rem] shrink-0 items-center justify-center border transition-colors duration-400",
                 saved
-                  ? "border-emerald text-emerald-bright"
+                  ? "border-lime text-lime-bright"
                   : "border-bone/25 text-bone hover:border-bone",
               ].join(" ")}
             >
@@ -363,7 +363,7 @@ export function ProductDetail({ product }: { product: Product }) {
               { icon: ShieldMark, title: "2-year guarantee", note: "Against defects" },
             ].map((a) => (
               <li key={a.title} className="bg-ink p-4">
-                <a.icon className="mb-2.5 size-4 text-emerald" />
+                <a.icon className="mb-2.5 size-4 text-lime" />
                 <p className="text-caption text-bone">{a.title}</p>
                 <p className="mt-0.5 text-micro text-ash">{a.note}</p>
               </li>
@@ -381,7 +381,7 @@ export function ProductDetail({ product }: { product: Product }) {
               <ul className="space-y-5">
                 {product.benefits.map((b) => (
                   <li key={b.title} className="flex gap-3">
-                    <CheckMark className="mt-1 size-4 shrink-0 text-emerald" />
+                    <CheckMark className="mt-1 size-4 shrink-0 text-lime" />
                     <div>
                       <p className="text-body-sm font-medium text-bone">{b.title}</p>
                       <p className="mt-1 text-body-sm leading-relaxed text-smoke">{b.detail}</p>
@@ -700,7 +700,7 @@ export function ReviewList({ product }: { product: Product }) {
                   key={i}
                   className={
                     i < Math.round(product.rating)
-                      ? "size-4 text-emerald-bright"
+                      ? "size-4 text-lime-bright"
                       : "size-4 text-iron"
                   }
                   filled={i < Math.round(product.rating)}
@@ -717,7 +717,7 @@ export function ReviewList({ product }: { product: Product }) {
                   <span className="numeric w-3 text-micro text-ash">{5 - i}</span>
                   <span className="h-1 flex-1 overflow-hidden bg-bone/10">
                     <span
-                      className="block h-full bg-emerald/70"
+                      className="block h-full bg-lime/70"
                       style={{ width: `${pct}%` }}
                     />
                   </span>
@@ -737,13 +737,13 @@ export function ReviewList({ product }: { product: Product }) {
                       {Array.from({ length: 5 }).map((_, i) => (
                         <StarMark
                           key={i}
-                          className={i < r.rating ? "size-3.5 text-emerald-bright" : "size-3.5 text-iron"}
+                          className={i < r.rating ? "size-3.5 text-lime-bright" : "size-3.5 text-iron"}
                           filled={i < r.rating}
                         />
                       ))}
                     </span>
                     {r.verified && (
-                      <span className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-emerald">
+                      <span className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-lime">
                         <CheckMark className="size-3" />
                         Verified purchase
                       </span>

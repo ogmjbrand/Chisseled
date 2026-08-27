@@ -89,7 +89,7 @@ export default function FuelPage() {
                 data-reveal
                 style={{ "--reveal-delay": `${i * 80}ms` } as React.CSSProperties}
               >
-                <p className="numeric mb-6 text-caption text-gold">0{i + 1}</p>
+                <p className="numeric mb-6 text-caption text-steel">0{i + 1}</p>
                 <h3 className="mb-3.5 font-display text-h6 font-bold uppercase leading-tight tracking-tight text-bone">
                   {s.title}
                 </h3>
@@ -125,7 +125,7 @@ export default function FuelPage() {
             </div>
 
             <div>
-              <p className="eyebrow mb-5 text-gold">The foundation</p>
+              <p className="eyebrow mb-5 text-steel">The foundation</p>
               <h2 id="hero-fuel-heading" className="display-md mb-5 text-bone">
                 {hero.name}
               </h2>
@@ -138,7 +138,7 @@ export default function FuelPage() {
                   ["Who it's for", hero.nutrition.who],
                   ["Why it matters", hero.nutrition.why],
                 ].map(([k, v]) => (
-                  <div key={k} className="border-l border-gold/35 pl-5">
+                  <div key={k} className="border-l border-steel/35 pl-5">
                     <dt className="eyebrow mb-1.5">{k}</dt>
                     <dd className="text-body-sm leading-relaxed text-smoke">{v}</dd>
                   </div>
@@ -152,7 +152,7 @@ export default function FuelPage() {
                       key={t}
                       className="inline-flex items-center gap-1.5 font-mono text-micro uppercase tracking-[0.12em] text-smoke"
                     >
-                      <CheckMark className="size-3 text-emerald" />
+                      <CheckMark className="size-3 text-lime" />
                       {t}
                     </li>
                   ),

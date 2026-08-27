@@ -20,13 +20,13 @@ export function BrandStatement() {
       className="relative grain overflow-hidden border-y border-bone/10 bg-ink section-pad"
       aria-labelledby="statement-heading"
     >
-      {/* A single emerald plane, barely there */}
+      {/* A single lime plane, barely there */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-1/2 h-[42rem] -translate-y-1/2 opacity-[0.16]"
         style={{
           background:
-            "radial-gradient(58% 46% at 50% 50%, var(--color-emerald-shade), transparent 72%)",
+            "radial-gradient(58% 46% at 50% 50%, var(--color-lime-shade), transparent 72%)",
         }}
       />
 
@@ -58,7 +58,7 @@ export function BrandStatement() {
             </span>
             <span
               data-reveal-line
-              className="display-mega block text-emerald"
+              className="display-mega block text-lime"
               style={
                 {
                   "--reveal-delay": "180ms",
@@ -86,7 +86,7 @@ export function BrandStatement() {
                 ["Move Chisseled.", "Programmes that adapt to the effort you actually log."],
                 ["Live Chisseled.", "Nutrition, recovery and a community that keeps going."],
               ].map(([title, body]) => (
-                <li key={title} className="border-l border-emerald/40 pl-5">
+                <li key={title} className="border-l border-lime/40 pl-5">
                   <p className="font-display text-h6 font-bold uppercase tracking-tight text-bone">
                     {title}
                   </p>

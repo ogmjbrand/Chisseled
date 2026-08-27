@@ -172,7 +172,7 @@ export default function AboutPage() {
               },
             ].map((c) => (
               <li key={c.n} className="bg-ink p-8">
-                <p className="numeric mb-6 text-caption text-emerald">{c.n}</p>
+                <p className="numeric mb-6 text-caption text-lime">{c.n}</p>
                 <h3 className="mb-4 font-display text-h5 font-bold uppercase leading-tight tracking-tight text-bone">
                   {c.t}
                 </h3>
@@ -254,7 +254,7 @@ export default function AboutPage() {
           </div>
 
           <div id="ogmj" className="border border-bone/10 bg-ink p-8 lg:p-10">
-            <p className="eyebrow mb-5 text-gold">OGMJ Brands</p>
+            <p className="eyebrow mb-5 text-steel">OGMJ Brands</p>
             <h2 className="display-sm mb-6 text-bone">From idea to empire.</h2>
             <p className="mb-6 text-body-sm leading-relaxed text-smoke">
               CHISSELED is the performance division of OGMJ Brands — a group that builds

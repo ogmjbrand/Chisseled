@@ -200,7 +200,7 @@ export function FitQuiz() {
           aria-label="Quiz progress"
         >
           <div
-            className="h-full bg-emerald-bright transition-[width] duration-700 ease-[var(--ease-out-expo)]"
+            className="h-full bg-lime-bright transition-[width] duration-700 ease-[var(--ease-out-expo)]"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -222,14 +222,14 @@ export function FitQuiz() {
                 className={[
                   "group relative border p-6 text-left transition-all duration-400",
                   on
-                    ? "border-emerald bg-emerald/8"
+                    ? "border-lime bg-lime/8"
                     : "border-bone/15 bg-carbon hover:border-bone/40",
                 ].join(" ")}
               >
                 <span
                   className={[
                     "absolute right-5 top-5 flex size-5 items-center justify-center border transition-colors duration-300",
-                    on ? "border-emerald bg-emerald text-ink" : "border-bone/25 text-transparent",
+                    on ? "border-lime bg-lime text-ink" : "border-bone/25 text-transparent",
                   ].join(" ")}
                   aria-hidden
                 >
@@ -364,7 +364,7 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
     <div className="pb-24 pt-[calc(var(--nav-h)+3rem)]">
       <div className="shell">
         <div className="mb-14 max-w-[46rem] animate-rise">
-          <p className="eyebrow mb-5 text-emerald-bright">Your performance fit</p>
+          <p className="eyebrow mb-5 text-lime-bright">Your performance fit</p>
           <h1 className="display-lg mb-6 text-bone">
             {result.fit.charAt(0).toUpperCase() + result.fit.slice(1)}.
           </h1>
@@ -372,7 +372,7 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
         </div>
 
         {/* Programme */}
-        <section className="relative grain mb-14 overflow-hidden border border-emerald/30 bg-carbon p-8 lg:p-10">
+        <section className="relative grain mb-14 overflow-hidden border border-lime/30 bg-carbon p-8 lg:p-10">
           <Specimen
             seed={`fit-${result.programme.slug}`}
             tone={result.programme.tone}
@@ -382,9 +382,9 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
 
           <div className="relative z-[3] grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <p className="eyebrow mb-4 text-emerald-bright">Start here</p>
+              <p className="eyebrow mb-4 text-lime-bright">Start here</p>
               <h2 className="display-md mb-3 text-bone">{result.programme.name}</h2>
-              <p className="mb-5 text-body font-medium text-emerald-bright">
+              <p className="mb-5 text-body font-medium text-lime-bright">
                 {result.programme.focus}
               </p>
               <p className="mb-6 max-w-[54ch] text-body-sm leading-relaxed text-smoke">
@@ -396,7 +396,7 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
               </p>
             </div>
 
-            <Link href={`/train#${result.programme.slug}`} className="btn btn-emerald shrink-0">
+            <Link href={`/train#${result.programme.slug}`} className="btn btn-lime shrink-0">
               Start this programme
               <ArrowMark className="size-4" />
             </Link>

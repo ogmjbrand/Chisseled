@@ -77,7 +77,7 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
             </span>
           ))}
           {stock === "low" && <span className="badge badge-low bg-ink/60 backdrop-blur-sm">Low stock</span>}
-          {product.compareAt && <span className="badge badge-emerald">Save {formatPrice(product.compareAt - product.price, currency)}</span>}
+          {product.compareAt && <span className="badge badge-lime">Save {formatPrice(product.compareAt - product.price, currency)}</span>}
         </div>
 
         {/* Wishlist */}
@@ -89,7 +89,7 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
           className={[
             "absolute right-3 top-3 p-2 backdrop-blur-sm transition-all duration-400",
             saved
-              ? "text-emerald-bright opacity-100"
+              ? "text-lime-bright opacity-100"
               : "text-bone opacity-0 group-hover:opacity-100 focus-visible:opacity-100",
           ].join(" ")}
         >
@@ -104,7 +104,7 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
           ].join(" ")}
         >
           {added ? (
-            <p className="flex items-center justify-center gap-2 py-4 font-mono text-micro uppercase tracking-[0.16em] text-emerald-bright">
+            <p className="flex items-center justify-center gap-2 py-4 font-mono text-micro uppercase tracking-[0.16em] text-lime-bright">
               <CheckMark className="size-4" /> Added to bag
             </p>
           ) : sizeOpen ? (
@@ -137,7 +137,7 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
             <button
               type="button"
               onClick={() => setSizeOpen(true)}
-              className="w-full py-4 font-mono text-micro uppercase tracking-[0.18em] text-bone transition-colors duration-300 hover:text-emerald-bright"
+              className="w-full py-4 font-mono text-micro uppercase tracking-[0.18em] text-bone transition-colors duration-300 hover:text-lime-bright"
             >
               Quick add
             </button>
@@ -171,7 +171,7 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
 
         {/* Rating */}
         <div className="mt-2 flex items-center gap-1.5">
-          <StarMark className="size-3 text-emerald-bright" />
+          <StarMark className="size-3 text-lime-bright" />
           <span className="numeric text-micro text-fog">{product.rating.toFixed(1)}</span>
           <span className="text-micro text-ash">({product.reviewCount.toLocaleString()})</span>
         </div>

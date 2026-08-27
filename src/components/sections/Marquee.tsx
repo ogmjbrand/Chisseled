@@ -12,7 +12,7 @@ export function Marquee({
     <div
       className={[
         "relative overflow-hidden border-y py-5",
-        accent ? "border-emerald/25 bg-emerald-shade/40" : "border-bone/10 bg-carbon",
+        accent ? "border-lime/25 bg-lime-shade/40" : "border-bone/10 bg-carbon",
       ].join(" ")}
       aria-hidden
     >
@@ -22,11 +22,11 @@ export function Marquee({
             key={i}
             className={[
               "flex shrink-0 items-center gap-8 px-8 font-display text-h5 font-black uppercase tracking-tight",
-              accent ? "text-emerald-bright" : "text-bone/45",
+              accent ? "text-lime-bright" : "text-bone/45",
             ].join(" ")}
           >
             {item}
-            <span className={accent ? "text-emerald/50" : "text-bone/15"}>—</span>
+            <span className={accent ? "text-lime/50" : "text-bone/15"}>—</span>
           </span>
         ))}
       </div>
@@ -35,13 +35,13 @@ export function Marquee({
       <span
         className={[
           "pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r to-transparent",
-          accent ? "from-emerald-shade" : "from-carbon",
+          accent ? "from-lime-shade" : "from-carbon",
         ].join(" ")}
       />
       <span
         className={[
           "pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l to-transparent",
-          accent ? "from-emerald-shade" : "from-carbon",
+          accent ? "from-lime-shade" : "from-carbon",
         ].join(" ")}
       />
     </div>

@@ -80,7 +80,7 @@ export default function CommunityPage() {
                 </div>
 
                 <div className="flex flex-col justify-center">
-                  <p className="eyebrow mb-4 text-emerald-bright">
+                  <p className="eyebrow mb-4 text-lime-bright">
                     {a.discipline} · {a.location}
                   </p>
                   <h3 className="display-sm mb-1.5 text-bone">{a.name}</h3>
@@ -88,7 +88,7 @@ export default function CommunityPage() {
                     {a.role}
                   </p>
 
-                  <blockquote className="mb-6 border-l-2 border-emerald/50 pl-5">
+                  <blockquote className="mb-6 border-l-2 border-lime/50 pl-5">
                     <p className="font-display text-h5 font-bold uppercase leading-tight tracking-tight text-bone">
                       “{a.quote}”
                     </p>
@@ -132,7 +132,7 @@ export default function CommunityPage() {
               <li key={e.name}>
                 <div className="grid items-center gap-4 py-6 sm:grid-cols-[1fr_auto] sm:gap-8">
                   <div className="grid gap-2 sm:grid-cols-[12rem_1fr] sm:items-baseline sm:gap-8">
-                    <p className="numeric text-caption text-emerald">{formatDate(e.date)}</p>
+                    <p className="numeric text-caption text-lime">{formatDate(e.date)}</p>
                     <div>
                       <h3 className="font-display text-h5 font-bold uppercase leading-tight tracking-tight text-bone">
                         {e.name}

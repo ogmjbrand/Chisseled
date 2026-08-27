@@ -81,7 +81,7 @@ export function TrainingPlatform() {
             </p>
           </div>
 
-          <Link href="/train" className="btn btn-emerald justify-self-start lg:justify-self-end">
+          <Link href="/train" className="btn btn-lime justify-self-start lg:justify-self-end">
             Start training
             <ArrowMark className="size-4" />
           </Link>
@@ -98,7 +98,7 @@ export function TrainingPlatform() {
           <div className="flex items-center justify-between border-b border-bone/10 px-5 py-3.5">
             <div className="flex items-center gap-3">
               <span className="flex gap-1.5" aria-hidden>
-                {["bg-iron", "bg-iron", "bg-emerald/60"].map((c, i) => (
+                {["bg-iron", "bg-iron", "bg-lime/60"].map((c, i) => (
                   <span key={i} className={`size-2 rounded-full ${c}`} />
                 ))}
               </span>
@@ -144,14 +144,14 @@ export function TrainingPlatform() {
                       <p className="display-sm text-bone">Session 4 of 4</p>
                     </div>
                     <div className="text-right">
-                      <p className="numeric text-h4 text-emerald-bright">{completion}%</p>
+                      <p className="numeric text-h4 text-lime-bright">{completion}%</p>
                       <p className="eyebrow mt-1">Complete</p>
                     </div>
                   </div>
 
                   <div className="mb-6 h-0.5 w-full overflow-hidden bg-bone/10">
                     <div
-                      className="h-full bg-emerald-bright transition-[width] duration-500 ease-[var(--ease-out-expo)]"
+                      className="h-full bg-lime-bright transition-[width] duration-500 ease-[var(--ease-out-expo)]"
                       style={{ width: `${completion}%` }}
                     />
                   </div>
@@ -171,7 +171,7 @@ export function TrainingPlatform() {
                               className={[
                                 "flex size-5 shrink-0 items-center justify-center border transition-colors duration-300",
                                 done
-                                  ? "border-emerald bg-emerald text-ink"
+                                  ? "border-lime bg-lime text-ink"
                                   : "border-bone/25 text-transparent",
                               ].join(" ")}
                             >
@@ -216,7 +216,7 @@ export function TrainingPlatform() {
                               w.block === "Deload"
                                 ? "bg-iron"
                                 : w.w === 8
-                                  ? "bg-emerald-bright"
+                                  ? "bg-lime-bright"
                                   : "bg-bone/30 group-hover:bg-bone/50",
                             ].join(" ")}
                             style={{ height: `${w.load}%` }}
@@ -257,7 +257,7 @@ export function TrainingPlatform() {
                           <span className="numeric text-h3 text-bone">{m.value}</span>
                           <span className="numeric text-caption text-smoke">{m.unit}</span>
                         </p>
-                        <p className="numeric mt-1.5 text-micro text-emerald-bright">{m.delta}</p>
+                        <p className="numeric mt-1.5 text-micro text-lime-bright">{m.delta}</p>
                       </li>
                     ))}
                   </ul>
@@ -274,7 +274,7 @@ export function TrainingPlatform() {
                     key={p.slug}
                     className={[
                       "border p-3.5 transition-colors duration-400",
-                      i === 0 ? "border-emerald/40 bg-emerald/8" : "border-bone/10",
+                      i === 0 ? "border-lime/40 bg-lime/8" : "border-bone/10",
                     ].join(" ")}
                   >
                     <p className="text-caption font-medium text-bone">{p.name}</p>
@@ -283,7 +283,7 @@ export function TrainingPlatform() {
                     </p>
                     {i === 0 && (
                       <div className="mt-2.5 h-px w-full bg-bone/10">
-                        <div className="h-full w-[47%] bg-emerald-bright" />
+                        <div className="h-full w-[47%] bg-lime-bright" />
                       </div>
                     )}
                   </li>

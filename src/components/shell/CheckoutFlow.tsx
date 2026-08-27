@@ -88,7 +88,7 @@ export function CheckoutFlow() {
                   <input
                     type="checkbox"
                     defaultChecked
-                    className="mt-0.5 size-4 shrink-0 appearance-none border border-bone/25 checked:border-emerald checked:bg-emerald"
+                    className="mt-0.5 size-4 shrink-0 appearance-none border border-bone/25 checked:border-lime checked:bg-lime"
                   />
                   Email me order updates and early access to drops.
                 </label>
@@ -140,7 +140,7 @@ export function CheckoutFlow() {
                         key={s.id}
                         className={[
                           "flex cursor-pointer items-center gap-3.5 border p-4 transition-colors duration-400",
-                          shipping === s.id ? "border-emerald bg-emerald/8" : "border-bone/15 hover:border-bone/35",
+                          shipping === s.id ? "border-lime bg-lime/8" : "border-bone/15 hover:border-bone/35",
                         ].join(" ")}
                       >
                         <input
@@ -149,7 +149,7 @@ export function CheckoutFlow() {
                           value={s.id}
                           checked={shipping === s.id}
                           onChange={() => setShipping(s.id)}
-                          className="size-4 shrink-0 accent-[var(--color-emerald)]"
+                          className="size-4 shrink-0 accent-[var(--color-lime)]"
                         />
                         <span className="flex-1">
                           <span className="block text-body-sm text-bone">{s.label}</span>
@@ -157,7 +157,7 @@ export function CheckoutFlow() {
                         </span>
                         <span className="numeric text-body-sm text-bone">
                           {free ? (
-                            <span className="text-emerald-bright">Free</span>
+                            <span className="text-lime-bright">Free</span>
                           ) : (
                             formatPrice(s.price, currency)
                           )}
@@ -182,7 +182,7 @@ export function CheckoutFlow() {
                       key={p.id}
                       className={[
                         "flex cursor-pointer items-center gap-3.5 border p-4 transition-colors duration-400",
-                        payment === p.id ? "border-emerald bg-emerald/8" : "border-bone/15 hover:border-bone/35",
+                        payment === p.id ? "border-lime bg-lime/8" : "border-bone/15 hover:border-bone/35",
                       ].join(" ")}
                     >
                       <input
@@ -191,7 +191,7 @@ export function CheckoutFlow() {
                         value={p.id}
                         checked={payment === p.id}
                         onChange={() => setPayment(p.id)}
-                        className="size-4 shrink-0 accent-[var(--color-emerald)]"
+                        className="size-4 shrink-0 accent-[var(--color-lime)]"
                       />
                       <span className="flex-1">
                         <span className="block text-body-sm text-bone">{p.label}</span>
@@ -204,7 +204,7 @@ export function CheckoutFlow() {
 
               {payment === "card" && (
                 <p className="mt-6 flex items-start gap-2.5 border border-bone/10 bg-carbon p-4 text-body-sm text-smoke">
-                  <ShieldMark className="mt-0.5 size-4 shrink-0 text-emerald" />
+                  <ShieldMark className="mt-0.5 size-4 shrink-0 text-lime" />
                   Card details are collected by our payment provider on their own secure form.
                   CHISSELED never sees or stores your card number.
                 </p>
@@ -220,7 +220,7 @@ export function CheckoutFlow() {
               <button
                 type="button"
                 onClick={() => setPlaced(true)}
-                className="btn btn-emerald btn-block mt-8"
+                className="btn btn-lime btn-block mt-8"
               >
                 Place order · {formatPrice(total, currency)}
               </button>
@@ -312,7 +312,7 @@ export function CheckoutFlow() {
               { icon: ReturnMark, text: "Easy returns — 30 days, tags on" },
             ].map((a) => (
               <li key={a.text} className="flex items-center gap-2.5 text-caption text-smoke">
-                <a.icon className="size-4 shrink-0 text-emerald" />
+                <a.icon className="size-4 shrink-0 text-lime" />
                 {a.text}
               </li>
             ))}
@@ -365,7 +365,7 @@ function Step({
             className={[
               "flex size-7 shrink-0 items-center justify-center border font-mono text-micro transition-colors duration-400",
               done
-                ? "border-emerald bg-emerald text-ink"
+                ? "border-lime bg-lime text-ink"
                 : open
                   ? "border-bone text-bone"
                   : "border-bone/25 text-ash",
@@ -439,7 +439,7 @@ function Row({
       <span
         className={[
           "numeric text-body-sm",
-          accent ? "text-emerald-bright" : muted ? "text-ash" : "text-bone",
+          accent ? "text-lime-bright" : muted ? "text-ash" : "text-bone",
         ].join(" ")}
       >
         {value}
@@ -451,10 +451,10 @@ function Row({
 function Confirmation() {
   return (
     <div className="shell flex min-h-[78svh] flex-col items-center justify-center py-20 text-center">
-      <span className="mb-8 flex size-16 items-center justify-center border border-emerald text-emerald">
+      <span className="mb-8 flex size-16 items-center justify-center border border-lime text-lime">
         <CheckMark className="size-8" />
       </span>
-      <p className="eyebrow mb-5 text-emerald-bright">Order placed</p>
+      <p className="eyebrow mb-5 text-lime-bright">Order placed</p>
       <h1 className="display-lg mb-5 max-w-[16ch] text-bone">Welcome to the work.</h1>
       <p className="mb-9 max-w-[46ch] text-body leading-relaxed text-smoke">
         A confirmation is on its way to your inbox with tracking details. This is a
