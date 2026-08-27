@@ -2,7 +2,7 @@
   "name": "chisseled",
   "version": "1.0.0",
   "private": true,
-  "description": "CHISSELED — premium performance apparel, training, nutrition and essentials. An OGMJ Brands digital flagship.",
+  "description": "CHISSELED \u2014 premium performance apparel, training, nutrition and essentials.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
