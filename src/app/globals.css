@@ -1,0 +1,707 @@
+@import "tailwindcss";
+
+/* ============================================================
+   CHISSELED — DESIGN SYSTEM
+   Dark luxury performance. Editorial × Athletic × Laboratory.
+   OGMJ Brands.
+   ============================================================ */
+
+@theme {
+  /* --- SURFACE: near-black through graphite --- */
+  --color-void: #000000;
+  --color-ink: #050506;
+  --color-carbon: #0a0a0c;
+  --color-graphite: #101113;
+  --color-slate: #17181b;
+  --color-steel: #202226;
+  --color-iron: #2c2f34;
+  --color-ash: #4a4e55;
+  --color-smoke: #74797f;
+  --color-fog: #a4a8ad;
+  --color-bone: #e9e9e6;
+  --color-chalk: #f7f7f5;
+
+  /* --- ACCENT: emerald, restrained --- */
+  --color-emerald-shade: #052e21;
+  --color-emerald-dim: #0a6d49;
+  --color-emerald: #0fb176;
+  --color-emerald-bright: #16d992;
+
+  /* --- SECONDARY ACCENT: muted gold, used sparingly --- */
+  --color-gold: #b1955f;
+  --color-gold-dim: #7a6640;
+
+  /* --- SIGNAL --- */
+  --color-signal-low: #c9743f;
+  --color-signal-out: #7a3f3f;
+
+  /* --- TYPE FAMILIES --- */
+  --font-display: var(--font-archivo), "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+
+  /* --- EDITORIAL TYPE SCALE (fluid) --- */
+  --text-micro: 0.625rem;
+  --text-label: 0.6875rem;
+  --text-caption: 0.75rem;
+  --text-body-sm: 0.8125rem;
+  --text-body: 0.9375rem;
+  --text-body-lg: 1.0625rem;
+  --text-lede: clamp(1.0625rem, 0.9rem + 0.7vw, 1.5rem);
+  --text-h6: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-h5: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --text-h4: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  --text-h3: clamp(2rem, 1.5rem + 2.2vw, 3.5rem);
+  --text-h2: clamp(2.5rem, 1.6rem + 4vw, 5.5rem);
+  --text-h1: clamp(3rem, 1.2rem + 7.4vw, 9rem);
+  --text-mega: clamp(3.75rem, 0.5rem + 13vw, 15rem);
+
+  /* --- SPACING: strict 4px base, editorial rhythm --- */
+  --spacing: 0.25rem;
+  --section-y: clamp(4.5rem, 9vw, 11rem);
+  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+
+  /* --- MOTION --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-brand: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* --- ELEVATION --- */
+  --shadow-lift: 0 24px 60px -20px rgb(0 0 0 / 0.85);
+  --shadow-panel: 0 40px 120px -32px rgb(0 0 0 / 0.9);
+
+  /* --- LAYOUT --- */
+  --breakpoint-xs: 26rem;
+  --container-editorial: 92rem;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  :root {
+    --nav-h: 4.25rem;
+    --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    --shell-bg: var(--color-ink);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --nav-h: 5.25rem;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Offset anchor targets beneath the fixed nav */
+    scroll-padding-top: calc(var(--nav-h) + 1rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--shell-bg);
+    color: var(--color-bone);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    font-feature-settings: "kern" 1, "liga" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    transition: background-color 900ms var(--ease-brand);
+  }
+
+  /* The shell locks scroll while a drawer/overlay owns the viewport */
+  body[data-scroll-locked="true"] {
+    overflow: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  p {
+    text-wrap: pretty;
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  input, select, textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  img, svg, video {
+    display: block;
+    max-width: 100%;
+  }
+
+  ::selection {
+    background: var(--color-emerald);
+    color: var(--color-ink);
+  }
+
+  /* --- FOCUS: visible, premium, never removed --- */
+  :focus-visible {
+    outline: 2px solid var(--color-emerald-bright);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  /* --- SCROLLBAR --- */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--color-ink); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-steel);
+    border: 3px solid var(--color-ink);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-iron); }
+}
+
+/* ============================================================
+   TYPOGRAPHIC UTILITIES
+   ============================================================ */
+
+@utility display-mega {
+  font-family: var(--font-display);
+  font-size: var(--text-mega);
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  font-stretch: 112%;
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 900;
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  font-stretch: 108%;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  font-stretch: 105%;
+}
+
+@utility display-md {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+}
+
+@utility display-sm {
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+
+/* Technical eyebrow label — the "laboratory" voice of the brand */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-smoke);
+}
+
+@utility lede {
+  font-size: var(--text-lede);
+  line-height: 1.5;
+  color: var(--color-fog);
+  font-weight: 350;
+  letter-spacing: -0.01em;
+}
+
+@utility numeric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ============================================================
+   LAYOUT UTILITIES
+   ============================================================ */
+
+@utility shell {
+  width: 100%;
+  max-width: var(--container-editorial);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility shell-wide {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility section-pad {
+  padding-block: var(--section-y);
+}
+
+/* Hairline rule — the structural grammar of the layout */
+@utility hairline {
+  border-color: color-mix(in oklab, var(--color-bone) 11%, transparent);
+}
+
+@utility hairline-t {
+  border-top: 1px solid color-mix(in oklab, var(--color-bone) 11%, transparent);
+}
+
+@utility hairline-b {
+  border-bottom: 1px solid color-mix(in oklab, var(--color-bone) 11%, transparent);
+}
+
+/* ============================================================
+   SURFACE TREATMENTS — black glass, metal, grain
+   ============================================================ */
+
+@utility glass-black {
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--color-slate) 78%, transparent),
+    color-mix(in oklab, var(--color-carbon) 92%, transparent)
+  );
+  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+  border: 1px solid color-mix(in oklab, var(--color-bone) 8%, transparent);
+}
+
+@utility glass-emerald {
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--color-emerald) 12%, transparent),
+    color-mix(in oklab, var(--color-emerald-shade) 40%, transparent)
+  );
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--color-emerald) 26%, transparent);
+}
+
+/* Brushed metal edge — a 1px specular highlight along the top */
+@utility metal-edge {
+  position: relative;
+}
+@utility metal-edge-line {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-bone) 38%, transparent) 22%,
+    color-mix(in oklab, var(--color-bone) 55%, transparent) 50%,
+    color-mix(in oklab, var(--color-bone) 38%, transparent) 78%,
+    transparent
+  );
+}
+
+/* Film grain — the single most effective "expensive" tell */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: var(--grain-url);
+  background-size: 180px 180px;
+}
+
+/* Cinematic vignette */
+@utility vignette {
+  position: relative;
+}
+.vignette::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 90% at 50% 38%,
+    transparent 30%,
+    color-mix(in oklab, var(--color-void) 55%, transparent) 78%,
+    color-mix(in oklab, var(--color-void) 88%, transparent) 100%
+  );
+}
+
+/* ============================================================
+   MOTION PRIMITIVES
+   Every reveal is opt-in via data-reveal and driven by
+   IntersectionObserver. Nothing animates without intent.
+   ============================================================ */
+
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-y, 24px), 0);
+    transition:
+      opacity 900ms var(--ease-out-expo),
+      transform 1100ms var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal="in"] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    will-change: auto;
+  }
+
+  /* Line-by-line typographic reveal for editorial headlines */
+  [data-reveal-line] {
+    display: block;
+    overflow: hidden;
+  }
+  [data-reveal-line] > span {
+    display: block;
+    transform: translate3d(0, 105%, 0);
+    transition: transform 1200ms var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  [data-reveal-line="in"] > span {
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Image reveal — a wipe rather than a fade */
+  [data-reveal-media] {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1400ms var(--ease-in-out-quint);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  [data-reveal-media="in"] {
+    clip-path: inset(0 0 0% 0);
+  }
+}
+
+/* --- Reduced motion: everything resolves instantly, nothing is lost --- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal],
+  [data-reveal-line] > span,
+  [data-reveal-media] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
+
+/* ============================================================
+   NAMED ANIMATIONS
+   ============================================================ */
+
+@keyframes chisseled-rise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes chisseled-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes chisseled-scan {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  25%  { opacity: 1; }
+  100% { transform: translateY(400%); opacity: 0; }
+}
+
+@keyframes chisseled-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes chisseled-pulse-ring {
+  0%   { transform: scale(0.85); opacity: 0.7; }
+  70%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes chisseled-shimmer {
+  from { background-position: -180% 0; }
+  to   { background-position: 180% 0; }
+}
+
+@utility animate-rise {
+  animation: chisseled-rise 900ms var(--ease-out-expo) both;
+}
+
+@utility animate-fade {
+  animation: chisseled-fade 700ms var(--ease-out-quart) both;
+}
+
+@utility marquee-track {
+  display: flex;
+  width: max-content;
+  animation: chisseled-marquee 48s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+/* ============================================================
+   COMPONENT PRIMITIVES
+   ============================================================ */
+
+@layer components {
+  /* --- Magnetic / kinetic button base --- */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 1.0625rem 2rem;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      color 420ms var(--ease-brand),
+      border-color 420ms var(--ease-brand),
+      background-color 420ms var(--ease-brand),
+      transform 420ms var(--ease-out-expo);
+  }
+
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: translate3d(0, 101%, 0);
+    transition: transform 560ms var(--ease-in-out-quint);
+  }
+
+  .btn:hover::before,
+  .btn:focus-visible::before {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .btn:active {
+    transform: scale(0.985);
+  }
+
+  .btn[disabled],
+  .btn[aria-disabled="true"] {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* Solid bone button → inverts to emerald */
+  .btn-primary {
+    background: var(--color-bone);
+    color: var(--color-ink);
+  }
+  .btn-primary::before { background: var(--color-emerald); }
+  .btn-primary:hover,
+  .btn-primary:focus-visible { color: var(--color-ink); }
+
+  /* Outline button → fills with bone */
+  .btn-ghost {
+    border: 1px solid color-mix(in oklab, var(--color-bone) 26%, transparent);
+    color: var(--color-bone);
+  }
+  .btn-ghost::before { background: var(--color-bone); }
+  .btn-ghost:hover,
+  .btn-ghost:focus-visible {
+    color: var(--color-ink);
+    border-color: var(--color-bone);
+  }
+
+  /* Emerald button → the conversion accent */
+  .btn-emerald {
+    background: var(--color-emerald);
+    color: var(--color-ink);
+  }
+  .btn-emerald::before { background: var(--color-emerald-bright); }
+
+  .btn-sm {
+    padding: 0.75rem 1.25rem;
+    font-size: var(--text-micro);
+    letter-spacing: 0.16em;
+  }
+
+  .btn-block { display: flex; width: 100%; }
+
+  /* --- Underline link with a wiping rule --- */
+  .link-rule {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2px;
+  }
+  .link-rule::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 520ms var(--ease-out-expo);
+  }
+  .link-rule:hover::after,
+  .link-rule:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* --- Form fields --- */
+  .field {
+    width: 100%;
+    background: color-mix(in oklab, var(--color-bone) 4%, transparent);
+    border: 1px solid color-mix(in oklab, var(--color-bone) 12%, transparent);
+    color: var(--color-bone);
+    padding: 0.9375rem 1rem;
+    font-size: var(--text-body-sm);
+    transition: border-color 300ms var(--ease-brand), background-color 300ms var(--ease-brand);
+  }
+  .field::placeholder { color: var(--color-ash); }
+  .field:hover { border-color: color-mix(in oklab, var(--color-bone) 22%, transparent); }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-emerald);
+    background: color-mix(in oklab, var(--color-bone) 6%, transparent);
+  }
+
+  /* --- Badges --- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.3125rem 0.5625rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .badge-emerald {
+    background: color-mix(in oklab, var(--color-emerald) 16%, transparent);
+    color: var(--color-emerald-bright);
+    border: 1px solid color-mix(in oklab, var(--color-emerald) 34%, transparent);
+  }
+  .badge-gold {
+    background: color-mix(in oklab, var(--color-gold) 13%, transparent);
+    color: var(--color-gold);
+    border: 1px solid color-mix(in oklab, var(--color-gold) 32%, transparent);
+  }
+  .badge-bone {
+    background: var(--color-bone);
+    color: var(--color-ink);
+  }
+  .badge-low {
+    background: color-mix(in oklab, var(--color-signal-low) 16%, transparent);
+    color: var(--color-signal-low);
+    border: 1px solid color-mix(in oklab, var(--color-signal-low) 36%, transparent);
+  }
+  .badge-outline {
+    border: 1px solid color-mix(in oklab, var(--color-bone) 22%, transparent);
+    color: var(--color-fog);
+  }
+
+  /* --- Screen-reader-only, still focusable when needed --- */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ============================================================
+   THE SIGNATURE SEQUENCE
+   Environment tokens that shift as the WEAR → TRAIN → LIVE
+   narrative advances. Driven by --seq (0 → 1) from scroll.
+   ============================================================ */
+
+@layer components {
+  .sequence-stage {
+    --seq: 0;
+    --seq-hue-a: 158;
+    --seq-hue-b: 42;
+  }
+}
+
+/* ============================================================
+   PRINT — the one light-mode surface we support
+   ============================================================ */
+
+@media print {
+  body { background: #fff; color: #000; }
+  .no-print { display: none !important; }
+}
