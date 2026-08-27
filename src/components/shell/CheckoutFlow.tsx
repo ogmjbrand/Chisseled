@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { COLORWAYS } from "@/lib/art";
 import { getBundle, getProduct } from "@/lib/catalog";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
-import { BrandVideo } from "@/components/primitives/BrandVideo";
+import { OrderCelebration } from "@/components/shell/OrderCelebration";
 import { Flat } from "@/components/primitives/Visual";
 import {
   ArrowMark,
@@ -456,44 +456,17 @@ function Row({
  * a viewer on reduced motion gets the message immediately instead.
  */
 function Confirmation() {
-  const [opened, setOpened] = useState(false);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setOpened(true);
-      return;
-    }
-    // The confirmation is the whole point of this screen, so it can never be
-    // gated on a video playing. If the clip stalls, fails to decode, or is
-    // blocked, the message resolves anyway a beat after it would have.
-    const t = setTimeout(() => setOpened(true), 7200);
-    return () => clearTimeout(t);
-  }, []);
-
   return (
-    <div className="shell flex min-h-[78svh] flex-col items-center justify-center py-20 text-center">
-      <div className="relative mb-10 w-[clamp(13rem,26vw,17rem)]">
-        <div className="relative aspect-[9/16] overflow-hidden border border-purple/30">
-          <BrandVideo
-            role="envelope"
-            fit="cover"
-            grade="purple"
-            lazy={false}
-            loop={false}
-            onEnded={() => setOpened(true)}
-            onError={() => setOpened(true)}
-            className="size-full"
-          />
-        </div>
-      </div>
+    <div className="shell relative flex min-h-[78svh] flex-col items-center justify-center overflow-hidden py-20 text-center">
+      {/*
+        The field builds around the message, never in front of it. In the
+        reference the copy is legible from the first frame, and on a screen
+        someone reaches by paying, gating the confirmation behind an
+        animation would be the wrong trade regardless.
+      */}
+      <OrderCelebration />
 
-      <div
-        className="flex flex-col items-center transition-all duration-[900ms] ease-[var(--ease-out-expo)]"
-        style={{
-          opacity: opened ? 1 : 0,
-          transform: opened ? "translate3d(0,0,0)" : "translate3d(0,14px,0)",
-        }}
-      >
+      <div className="relative z-[2] flex flex-col items-center">
       <span className="mb-8 flex size-16 items-center justify-center border border-purple text-purple-bright">
         <CheckMark className="size-8" />
       </span>

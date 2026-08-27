@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getNutritionProducts, getProduct } from "@/lib/catalog";
-import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Flat, Specimen } from "@/components/primitives/Visual";
@@ -220,9 +219,6 @@ export default function FuelPage() {
               These are not upsells. They are the combinations where one product covers what
               another leaves open.
             </p>
-            </div>
-            <div className="w-full max-w-[18rem] overflow-hidden border border-bone/10">
-              <BrandVideo role="fuel" fit="cover" grade="signal" className="aspect-[9/16] w-full" />
             </div>
           </div>
 

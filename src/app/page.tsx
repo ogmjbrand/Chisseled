@@ -12,7 +12,6 @@ import { Community } from "@/components/sections/Community";
 import { JournalStrip } from "@/components/sections/JournalStrip";
 import { Sequence } from "@/components/sections/Sequence";
 import { Marquee } from "@/components/sections/Marquee";
-import { FilmStrip } from "@/components/sections/FilmStrip";
 
 /**
  * The homepage is a directed sequence, not a stack of blocks. It moves:
@@ -73,8 +72,6 @@ export default function HomePage() {
       />
 
       {/* The signature moment */}
-      <FilmStrip />
-
       <Sequence />
 
       <SocialProof />
