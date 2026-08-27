@@ -24,15 +24,24 @@ export function ShopByCollection() {
         </Link>
       </div>
 
-      <div className="shell grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="shell grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {COLLECTIONS.map((collection, i) => {
           const count = getProductsByCollection(collection.slug).length;
+          // The signature collection anchors the mosaic; five panels then fill
+          // a 4x2 grid exactly instead of orphaning the fifth on its own row.
+          const feature = i === 0;
 
           return (
             <Link
               key={collection.slug}
               href={`/shop/${collection.slug}`}
-              className="group relative grain vignette block aspect-[3/4] overflow-hidden bg-carbon lg:aspect-[3/4.4]"
+              className={[
+                "group relative grain vignette block overflow-hidden bg-carbon",
+                feature
+                  ? "aspect-[3/4] sm:col-span-2 sm:aspect-[16/10] lg:row-span-2 lg:aspect-auto"
+                  : "aspect-[3/4] lg:aspect-[3/4.4]",
+              ].join(" ")}
+              /* The reticle reads the same hover the panel already responds to. */
               data-reveal
               style={{ "--reveal-delay": `${i * 90}ms` } as React.CSSProperties}
             >
@@ -55,12 +64,40 @@ export function ShopByCollection() {
                 className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/25 to-transparent"
               />
 
+              {/*
+                Lock-on brackets, from the glowing-icon reference. They sit
+                proud of the panel at rest and pull flush to the corners on
+                hover, so selecting a collection reads as targeting it. One
+                accent only — the reference's five saturated hues would read
+                as a logo bar.
+              */}
+              <span aria-hidden className="pointer-events-none absolute inset-0 z-[4]">
+                {[
+                  "left-3 top-3 border-l border-t group-hover:left-0 group-hover:top-0",
+                  "right-3 top-3 border-r border-t group-hover:right-0 group-hover:top-0",
+                  "bottom-3 left-3 border-b border-l group-hover:bottom-0 group-hover:left-0",
+                  "bottom-3 right-3 border-b border-r group-hover:bottom-0 group-hover:right-0",
+                ].map((pos) => (
+                  <span
+                    key={pos}
+                    className={`absolute size-4 border-bone/25 transition-all duration-[520ms] ease-[var(--ease-out-expo)] group-hover:size-7 group-hover:border-purple-bright ${pos}`}
+                  />
+                ))}
+              </span>
+
               <div className="relative z-[3] flex h-full flex-col justify-end p-6">
                 <p className="eyebrow mb-3 text-purple-bright">
                   {count} {count === 1 ? "piece" : "pieces"}
                 </p>
 
-                <h3 className="display-md mb-3 text-bone">{collection.name}</h3>
+                <h3
+                  className={[
+                    "mb-3 text-balance text-bone",
+                    feature ? "display-lg" : "display-sm",
+                  ].join(" ")}
+                >
+                  {collection.name}
+                </h3>
 
                 <p className="mb-4 text-body-sm text-fog">{collection.statement}</p>
 

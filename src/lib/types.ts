@@ -12,7 +12,8 @@ export type CollectionSlug =
   | "monogram"
   | "camo"
   | "tracksuits"
-  | "essentials";
+  | "essentials"
+  | "statement";
 
 export type Activity =
   | "lifting"
@@ -59,11 +60,16 @@ export interface Product {
   compareAt?: number;
   flat: FlatKey;
   /**
-   * Slug of real photography under /media/product. Absent means we have no
-   * shot at usable resolution yet, and the PDP renders a designed placeholder
-   * rather than inventing a garment the customer would not receive.
+   * Real photography under /media/product.
+   *
+   * A string is one shot for the whole product. A record keyed by colourway is
+   * a shot per colour, so choosing a colour on the PDP shows that actual
+   * garment rather than recolouring one photo — which would misrepresent every
+   * colour but the one photographed.
+   *
+   * Absent, or absent for the chosen colour, falls back to the technical flat.
    */
-  media?: string;
+  media?: string | Partial<Record<string, string>>;
   variants: Variant[];
   sizes: string[];
   activities: Activity[];

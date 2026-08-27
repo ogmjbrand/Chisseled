@@ -478,15 +478,20 @@ export const COLORWAYS: Record<string, Colorway> = {
   // Drawn from the actual garments, not from the brand palette — customers
   // receive these colours, so they are described honestly.
   onyx: { name: "Onyx", hex: "#141518", seam: "#3c4047" },
-  graphite: { name: "Graphite", hex: "#25282d", seam: "#565c66" },
+  graphite: { name: "Graphite", hex: "#5a565b", seam: "#8a848c" },
   heather: { name: "Heather Grey", hex: "#8b8d92", seam: "#b9bbbf" },
   bone: { name: "Bone", hex: "#e4e2dc", seam: "#8f9089" },
-  royal: { name: "Royal", hex: "#1f3fb0", seam: "#5878e0" },
-  sage: { name: "Sage", hex: "#6f8778", seam: "#9db3a5" },
-  blush: { name: "Blush", hex: "#c98b98", seam: "#e6b5be" },
+  royal: { name: "Steel Blue", hex: "#4c6480", seam: "#7d94ad" },
+  sage: { name: "Sage", hex: "#818886", seam: "#a8afad" },
+  blush: { name: "Blush", hex: "#b89c9b", seam: "#d6bcbb" },
   camo: { name: "Woodland Camo", hex: "#4a4632", seam: "#7b7455" },
   rust: { name: "Rust", hex: "#9a5424", seam: "#c98450" },
   violet: { name: "Violet", hex: "#6d28d9", seam: "#8b5cf6" },
+  sand: { name: "Sand", hex: "#c9b39b", seam: "#e0cfbd" },
+  red: { name: "Signal Red", hex: "#ba454a", seam: "#d97b7f" },
+  deer: { name: "Woodland — Deer", hex: "#685b4c", seam: "#8f8271" },
+  boar: { name: "Woodland — Boar", hex: "#5f5144", seam: "#877868" },
+  ibex: { name: "Woodland — Ibex", hex: "#605142", seam: "#887866" },
 };
 
 export type ColorwayKey = keyof typeof COLORWAYS;

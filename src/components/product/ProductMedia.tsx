@@ -4,8 +4,8 @@ import { COLORWAYS } from "@/lib/art";
 import type { FlatKey, ColorwayKey } from "@/lib/art";
 
 interface ProductMediaProps {
-  /** Slug under /media/product. Absent means we have no shot at usable resolution. */
-  media?: string;
+  /** One shot, or a shot per colourway. */
+  media?: string | Partial<Record<string, string>>;
   flat: FlatKey;
   colorway: ColorwayKey;
   seed: string;
@@ -42,10 +42,15 @@ export function ProductMedia({
 }: ProductMediaProps) {
   const colourName = COLORWAYS[colorway]?.name ?? colorway;
 
-  if (media && view === "front") {
+  // Per-colourway photography resolves to the chosen colour; a bare string is
+  // one shot for every colour. A colour we have not photographed falls through
+  // to the flat rather than showing a different colour's garment.
+  const shot = typeof media === "string" ? media : media?.[colorway];
+
+  if (shot && view === "front") {
     return (
       <Image
-        src={`/media/product/${media}.webp`}
+        src={`/media/product/${shot}.webp`}
         alt={`${name} in ${colourName}`}
         width={1400}
         height={1400}

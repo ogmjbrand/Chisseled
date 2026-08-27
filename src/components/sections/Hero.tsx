@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useScrollProgress } from "@/lib/motion";
 import { ArrowMark } from "@/components/primitives/Marks";
 
@@ -27,6 +27,11 @@ import { ArrowMark } from "@/components/primitives/Marks";
 
 interface Slide {
   slug: string;
+  /**
+   * A slug under /media/product. The hero shows the same matted file the grid
+   * and the PDP show — there is no second copy to fall out of date when a
+   * matte is corrected.
+   */
   cutout: string;
   script: string;
   word: string;
@@ -37,16 +42,16 @@ interface Slide {
 
 const SLIDES: Slide[] = [
   {
-    slug: "heavyweight-hoodie-set",
-    cutout: "hoodie-green",
-    script: "The layer",
-    word: "HEAVY",
+    slug: "scarred-hoodie",
+    cutout: "scarred-hoodie--onyx",
+    script: "The signature",
+    word: "SCARRED",
     accent: "#6d28d9",
     onAccent: "#f5f5f5",
     specs: [
-      { k: "420 GSM", v: "Brushed fleece" },
-      { k: "3 colourways", v: "Dyed as a set" },
-      { k: "$158", v: "Two pieces" },
+      { k: "380 GSM", v: "Brushed fleece" },
+      { k: "5 colourways", v: "Stronger today" },
+      { k: "$118", v: "Oversized cut" },
     ],
   },
   {
@@ -79,10 +84,82 @@ const SLIDES: Slide[] = [
 
 const DWELL = 6200;
 
+/** Shared type spec for the oversized word, so probe and render cannot drift. */
+const WORD_CLASS =
+  "whitespace-nowrap text-center font-display font-black leading-[0.78] tracking-[-0.05em]";
+const WORD_STYLE: React.CSSProperties = { fontStretch: "112%" };
+
+/**
+ * Size each word so it spans the frame without losing a letter off the edge.
+ *
+ * The previous version guessed an average character advance and multiplied.
+ * That guess was wrong for this face at font-stretch 112% — SCARRED rendered
+ * about twice the viewport wide, so the storefront's own name read "CARRE".
+ * A display face's advance is not derivable from a character count, so it is
+ * measured instead: one offscreen probe per word at a known size gives the
+ * exact width-per-pixel ratio, and the real size falls out of it.
+ */
+function useFittedWords(words: string[]) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState<number[]>(() => words.map(() => 0));
+
+  useLayoutEffect(() => {
+    const PROBE = 100;
+
+    const measure = () => {
+      const host = hostRef.current;
+      if (!host) return;
+      const avail = host.clientWidth;
+      if (!avail) return;
+
+      const probe = document.createElement("span");
+      probe.className = WORD_CLASS;
+      Object.assign(probe.style, WORD_STYLE, {
+        position: "absolute",
+        visibility: "hidden",
+        left: "-9999px",
+        top: "0",
+        fontSize: `${PROBE}px`,
+      });
+      host.appendChild(probe);
+
+      const next = words.map((w) => {
+        probe.textContent = w;
+        const ratio = probe.getBoundingClientRect().width / PROBE;
+        if (!ratio) return 0;
+        // 0.94 leaves the terminal letters clear of the frame and keeps the
+        // word from running under the slide index on the right.
+        return Math.max(40, Math.min((avail * 0.94) / ratio, 340));
+      });
+
+      host.removeChild(probe);
+      setSize((prev) =>
+        prev.length === next.length && prev.every((v, k) => Math.abs(v - next[k]) < 0.5)
+          ? prev
+          : next,
+      );
+    };
+
+    measure();
+    // Webfonts land after first paint; a measurement taken before they do is
+    // a measurement of the fallback face.
+    document.fonts?.ready.then(measure).catch(() => {});
+    const ro = new ResizeObserver(measure);
+    if (hostRef.current) ro.observe(hostRef.current);
+    return () => ro.disconnect();
+  }, [words]);
+
+  return { hostRef, size };
+}
+
+const WORDS = SLIDES.map((s) => s.word);
+
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const p = useScrollProgress(ref, "--hero-p");
   const exit = Math.max(0, (p - 0.5) * 2);
+
+  const { hostRef, size } = useFittedWords(WORDS);
 
   const [i, setI] = useState(0);
   const [reduced, setReduced] = useState(false);
@@ -136,15 +213,18 @@ export function Hero() {
           opacity: 1 - exit * 0.8,
         }}
       >
-        <div className="relative h-full w-full overflow-hidden">
+        <div ref={hostRef} className="relative h-full w-full overflow-hidden">
           {SLIDES.map((s, n) => (
             <span
               key={s.slug}
-              className="absolute inset-x-0 flex -translate-y-1/2 justify-center whitespace-nowrap text-center font-display font-black leading-[0.78] tracking-[-0.05em] text-bone"
+              className={`absolute inset-x-0 flex -translate-y-1/2 justify-center text-bone ${WORD_CLASS}`}
               style={{
+                ...WORD_STYLE,
                 top: "50%",
-                fontSize: "clamp(4.5rem, 20vw, 20rem)",
-                fontStretch: "112%",
+                fontSize: size[n] ? `${size[n]}px` : undefined,
+                // Hold the word back until it has been measured, so it never
+                // flashes at the fallback face's width.
+                visibility: size[n] ? "visible" : "hidden",
                 // Type trails the subject: slower, and it fades rather than flies.
                 transform: `translate3d(${(n - i) * 26}%, -50%, 0)`,
                 opacity: n === i ? 1 : 0,
@@ -171,7 +251,14 @@ export function Hero() {
         {SLIDES.map((s, n) => (
           <div
             key={s.slug}
-            className="absolute inset-y-[6%] left-[46%] w-[clamp(15rem,34vw,30rem)] lg:left-[38%]"
+            /* A phone has no spare vertical budget: at full height the garment
+               sat directly behind the lede and the buttons, and the scrim that
+               made the copy readable flattened the garment to a silhouette. So
+               on narrow viewports the subject gets the upper band and the copy
+               gets the lower one, and neither has to be dimmed for the other.
+               The wide layout keeps the full-height subject — there the split
+               already separates them horizontally. */
+            className="absolute bottom-[34%] left-[46%] top-[8%] w-[clamp(12rem,34vw,30rem)] lg:inset-y-[6%] lg:left-[38%]"
             style={{
               // Subject leads: further and faster than the word behind it.
               transform: `translate3d(calc(-50% + ${(n - i) * 62}%), 0, 0)`,
@@ -182,7 +269,7 @@ export function Hero() {
             }}
           >
             <Image
-              src={`/media/cutout/${s.cutout}.webp`}
+              src={`/media/product/${s.cutout}.webp`}
               alt=""
               fill
               sizes="(min-width: 1024px) 34vw, 70vw"
@@ -193,8 +280,16 @@ export function Hero() {
         ))}
       </div>
 
-      {/* ---------- 4. Numbered index, down the right ---------- */}
-      <div className="absolute right-[var(--gutter)] top-1/2 z-[7] hidden -translate-y-1/2 flex-col gap-4 lg:flex">
+      {/* ---------- 4. Numbered index, down the right ----------
+          The oversized word passes behind this column, so a fixed ink colour
+          is legible against one of them and invisible against the other —
+          "01" disappeared entirely where it sat on the white of SCARRED.
+          Difference blending resolves it against whatever is actually behind:
+          white over black, black over white. */}
+      <div
+        className="absolute right-[var(--gutter)] top-1/2 z-[7] hidden -translate-y-1/2 flex-col gap-4 lg:flex"
+        style={{ mixBlendMode: "difference" }}
+      >
         {SLIDES.map((s, n) => (
           <button
             key={s.slug}
@@ -206,23 +301,37 @@ export function Hero() {
           >
             <span
               className={[
-                "numeric text-micro transition-colors duration-400",
-                n === i ? "text-bone" : "text-ash group-hover:text-fog",
+                "numeric text-micro text-white transition-opacity duration-400",
+                n === i ? "opacity-100" : "opacity-45 group-hover:opacity-75",
               ].join(" ")}
             >
               0{n + 1}
             </span>
             <span
               className={[
-                "h-px transition-all duration-[600ms] ease-[var(--ease-out-expo)]",
-                n === i ? "w-9 bg-bone" : "w-4 bg-ash group-hover:w-6 group-hover:bg-fog",
+                "h-px bg-white transition-all duration-[600ms] ease-[var(--ease-out-expo)]",
+                n === i ? "w-9 opacity-100" : "w-4 opacity-45 group-hover:w-6 group-hover:opacity-75",
               ].join(" ")}
             />
           </button>
         ))}
       </div>
 
-      {/* ---------- 5. Copy and CTA ---------- */}
+      {/* ---------- 5. Copy and CTA ----------
+          On a narrow viewport the subject and the copy occupy the same band,
+          so the lede and the buttons landed on top of the hoodie. This floor
+          sits above the subject and below the copy and buys the contrast back
+          without dimming the garment across the whole frame. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[46%]"
+        style={{
+          background:
+            "linear-gradient(to top, color-mix(in oklab, var(--color-ink) 78%, transparent), color-mix(in oklab, var(--color-ink) 38%, transparent) 52%, transparent 100%)",
+        }}
+      />
+
+
       <div
         className="shell pointer-events-none relative z-[6] pb-[clamp(2rem,5vw,4rem)] pt-[calc(var(--nav-h)+3rem)]"
         style={{
