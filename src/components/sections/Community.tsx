@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ATHLETES } from "@/lib/catalog";
 import { Sculpture } from "@/components/primitives/Visual";
+import { EditorialImage } from "@/components/primitives/EditorialImage";
 import { ArrowMark } from "@/components/primitives/Marks";
 
 export function Community({ heading = true }: { heading?: boolean }) {
@@ -44,14 +45,23 @@ export function Community({ heading = true }: { heading?: boolean }) {
               data-reveal
               style={{ "--reveal-delay": `${i * 90}ms` } as React.CSSProperties}
             >
-              <Sculpture
-                seed={`athlete-${a.slug}`}
-                tone={a.tone}
-                pose={a.pose}
-                anchor={0.5}
-                scale={0.94}
-                className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
-              />
+              {a.photo ? (
+                <EditorialImage
+                  src={a.photo}
+                  alt={`${a.name}, ${a.role}`}
+                  sizes="(min-width: 1024px) 25vw, 50vw"
+                  className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
+                />
+              ) : (
+                <Sculpture
+                  seed={`athlete-${a.slug}`}
+                  tone={a.tone}
+                  pose={a.pose}
+                  anchor={0.5}
+                  scale={0.94}
+                  className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
+                />
+              )}
               <span
                 aria-hidden
                 className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/35 to-transparent"

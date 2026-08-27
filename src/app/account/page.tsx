@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { PROGRAMS } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
@@ -50,6 +51,11 @@ export default function AccountPage() {
 
           {/* --- Loyalty --- */}
           <section aria-labelledby="loyalty-heading" className="mb-14">
+            <div className="mb-7 flex flex-wrap items-start gap-7">
+              <div className="w-full max-w-[13rem] shrink-0 overflow-hidden border border-purple/25">
+                <BrandVideo role="loyalty" fit="cover" grade="signal" className="aspect-[9/16] w-full" />
+              </div>
+              <div className="min-w-[16rem] flex-1">
             <h2 id="loyalty-heading" className="display-sm mb-3 text-bone">
               The Chisseled Programme
             </h2>
@@ -57,6 +63,8 @@ export default function AccountPage() {
               Points on every order and every referral. Tiers are lifetime, not annual — we are
               not going to reset your standing because a calendar turned over.
             </p>
+              </div>
+            </div>
 
             <ol className="grid gap-px border border-bone/10 bg-bone/10 sm:grid-cols-3">
               {TIERS.map((t, i) => (

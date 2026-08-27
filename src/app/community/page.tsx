@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ARTICLES, ATHLETES } from "@/lib/catalog";
 import { formatDate } from "@/lib/format";
+import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { Community } from "@/components/sections/Community";
 import { Sculpture } from "@/components/primitives/Visual";
@@ -120,11 +121,16 @@ export default function CommunityPage() {
         aria-labelledby="events-heading"
       >
         <div className="shell">
-          <div className="mb-12 max-w-[44rem]">
-            <p className="eyebrow mb-5">Events</p>
-            <h2 id="events-heading" className="display-lg text-bone">
-              Show up in person.
-            </h2>
+          <div className="mb-12 grid items-end gap-10 lg:grid-cols-[1fr_auto]">
+            <div className="max-w-[44rem]">
+              <p className="eyebrow mb-5">Events</p>
+              <h2 id="events-heading" className="display-lg text-bone">
+                Show up in person.
+              </h2>
+            </div>
+            <div className="w-full max-w-[22rem] overflow-hidden border border-bone/10 lg:w-[22rem]">
+              <BrandVideo role="community" fit="cover" grade="signal" className="aspect-[9/10] w-full" />
+            </div>
           </div>
 
           <ul className="divide-y divide-bone/10 border-y border-bone/10">

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { COLORWAYS } from "@/lib/art";
 import { getBundle, getProduct } from "@/lib/catalog";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
+import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { Flat } from "@/components/primitives/Visual";
 import {
   ArrowMark,
@@ -448,9 +449,71 @@ function Row({
   );
 }
 
+/**
+ * The envelope plays once, here and nowhere else: it is the reward for having
+ * paid, so it must not be reachable before the order is placed. It is graded
+ * into the brand purple, and the message underneath resolves as it finishes —
+ * a viewer on reduced motion gets the message immediately instead.
+ */
 function Confirmation() {
+  const [opened, setOpened] = useState(false);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setOpened(true);
+      return;
+    }
+    // The confirmation is the whole point of this screen, so it can never be
+    // gated on a video playing. If the clip stalls, fails to decode, or is
+    // blocked, the message resolves anyway a beat after it would have.
+    const t = setTimeout(() => setOpened(true), 7200);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="shell flex min-h-[78svh] flex-col items-center justify-center py-20 text-center">
+      <div className="relative mb-10 w-[clamp(13rem,26vw,17rem)]">
+        <div className="relative aspect-[9/16] overflow-hidden border border-purple/30">
+          <BrandVideo
+            role="envelope"
+            fit="cover"
+            grade="none"
+            lazy={false}
+            loop={false}
+            onEnded={() => setOpened(true)}
+            onError={() => setOpened(true)}
+            className="size-full"
+          />
+          {/* The purple the brief asked for, laid over the envelope itself. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(150deg, color-mix(in oklab, var(--color-purple) 62%, transparent), color-mix(in oklab, var(--color-purple-dim) 46%, transparent))",
+              mixBlendMode: "color",
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(60% 55% at 50% 42%, color-mix(in oklab, var(--color-purple-bright) 40%, transparent), transparent 70%)",
+              mixBlendMode: "screen",
+              opacity: 0.5,
+            }}
+          />
+        </div>
+      </div>
+
+      <div
+        className="flex flex-col items-center transition-all duration-[900ms] ease-[var(--ease-out-expo)]"
+        style={{
+          opacity: opened ? 1 : 0,
+          transform: opened ? "translate3d(0,0,0)" : "translate3d(0,14px,0)",
+        }}
+      >
       <span className="mb-8 flex size-16 items-center justify-center border border-purple text-purple-bright">
         <CheckMark className="size-8" />
       </span>
@@ -468,6 +531,7 @@ function Confirmation() {
         <Link href="/shop" className="btn btn-ghost">
           Keep shopping
         </Link>
+      </div>
       </div>
     </div>
   );

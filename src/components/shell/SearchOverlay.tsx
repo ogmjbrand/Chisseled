@@ -13,7 +13,7 @@ type Result =
   | { kind: "product"; slug: string; title: string; meta: string; href: string; price: number }
   | { kind: "collection" | "programme" | "article"; slug: string; title: string; meta: string; href: string };
 
-const SUGGESTED = ["Leggings", "Compression", "Protein", "Sports bra", "Recovery", "Bundles"];
+const SUGGESTED = ["Scarred", "Hoodies", "Training sets", "Sports bras", "Creatine", "Bundles"];
 
 export function SearchOverlay() {
   const { searchOpen, setSearchOpen, currency } = useStore();

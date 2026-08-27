@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getNutritionProducts, getProduct } from "@/lib/catalog";
+import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Flat, Specimen } from "@/components/primitives/Visual";
@@ -209,7 +210,8 @@ export default function FuelPage() {
       {/* --- Stack recommendations --- */}
       <section className="bg-ink section-pad" aria-labelledby="stacks-heading">
         <div className="shell">
-          <div className="mb-14 max-w-[44rem]">
+          <div className="mb-14 grid items-end gap-10 lg:grid-cols-[1fr_auto]">
+            <div className="max-w-[44rem]">
             <p className="eyebrow mb-5">Recommended combinations</p>
             <h2 id="stacks-heading" className="display-lg mb-5 text-bone">
               What actually pairs.
@@ -218,24 +220,28 @@ export default function FuelPage() {
               These are not upsells. They are the combinations where one product covers what
               another leaves open.
             </p>
+            </div>
+            <div className="w-full max-w-[18rem] overflow-hidden border border-bone/10">
+              <BrandVideo role="fuel" fit="cover" grade="signal" className="aspect-[9/16] w-full" />
+            </div>
           </div>
 
           <div className="grid gap-3 lg:grid-cols-3">
             {[
               {
                 title: "The training stack",
-                items: ["drive-pre-training", "base-whey-isolate"],
-                why: "Output before the session, material to rebuild with after it. The two ends of the same workout.",
+                items: ["creatine-monohydrate", "performance-crew-sock"],
+                why: "The one supplement the evidence agrees on, and cushioning where the load lands. Both are daily, neither is exciting.",
               },
               {
                 title: "The recovery stack",
-                items: ["recover-magnesium", "recovery-roller"],
-                why: "Sleep quality and tissue quality. Between them they cover most of what makes tomorrow's session possible.",
+                items: ["detox-tea", "heavyweight-hoodie-set"],
+                why: "A warm evening habit and something to stay warm in. Recovery is mostly the boring hours between sessions.",
               },
               {
-                title: "The everything stack",
-                items: ["daily-foundation", "base-whey-isolate", "recover-magnesium"],
-                why: "Baseline nutrients, daily protein, and the night formula. Nothing acute, everything cumulative.",
+                title: "The carry stack",
+                items: ["chisseled-sling-bag", "creatine-monohydrate", "performance-crew-sock"],
+                why: "What a session actually needs, sized so nothing else fits. Pack it once and stop deciding.",
               },
             ].map((stack, i) => (
               <article

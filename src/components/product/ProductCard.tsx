@@ -6,7 +6,7 @@ import { COLORWAYS } from "@/lib/art";
 import { stockLevel } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
-import { Flat } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import { CheckMark, StarMark, WishMark } from "@/components/primitives/Marks";
 import type { Product } from "@/lib/types";
 
@@ -50,20 +50,26 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
         >
           <div className={feature ? "aspect-[3/4]" : "aspect-[4/5]"}>
             {/* Primary view */}
-            <Flat
+            <ProductMedia
+              media={product.media}
               flat={product.flat}
               colorway={variant.colorway}
               seed={`${product.slug}-${variant.colorway}`}
               view="front"
-              className="absolute inset-0 size-full transition-opacity duration-[700ms] ease-[var(--ease-out-expo)] group-hover:opacity-0"
+              name={product.name}
+              sizes="(min-width: 1280px) 22vw, (min-width: 768px) 33vw, 50vw"
+              className="absolute inset-0 transition-opacity duration-[700ms] ease-[var(--ease-out-expo)] group-hover:opacity-0"
             />
             {/* Alternate view, revealed on hover — the merchandising standard */}
-            <Flat
+            <ProductMedia
+              media={product.media}
               flat={product.flat}
               colorway={variant.colorway}
               seed={`${product.slug}-${variant.colorway}`}
               view="detail"
-              className="absolute inset-0 size-full scale-[1.03] opacity-0 transition-all duration-[700ms] ease-[var(--ease-out-expo)] group-hover:scale-100 group-hover:opacity-100"
+              name={product.name}
+              sizes="(min-width: 1280px) 22vw, (min-width: 768px) 33vw, 50vw"
+              className="absolute inset-0 scale-[1.03] opacity-0 transition-all duration-[700ms] ease-[var(--ease-out-expo)] group-hover:scale-100 group-hover:opacity-100"
             />
           </div>
         </Link>

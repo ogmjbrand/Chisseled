@@ -132,6 +132,8 @@ export interface Athlete {
   location: string;
   quote: string;
   story: string;
+  /** Slug under /media/editorial. Absent falls back to the procedural figure. */
+  photo?: string;
   stats: { label: string; value: string }[];
   tone: Tone;
   pose: "front" | "back";

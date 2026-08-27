@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { useScrollProgress } from "@/lib/motion";
-import { Sculpture } from "@/components/primitives/Visual";
+import { EditorialImage } from "@/components/primitives/EditorialImage";
+import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { ArrowMark } from "@/components/primitives/Marks";
 
 /**
@@ -24,7 +25,13 @@ export function Hero() {
       className="relative grain vignette flex min-h-[100svh] flex-col justify-end overflow-hidden bg-ink"
       aria-labelledby="hero-heading"
     >
-      {/* --- Campaign visual --- */}
+      {/*
+        The race film is 9:16 phone video. Covering a landscape viewport with
+        it would show 35% of the frame and upscale 720p by 2x, so it plays
+        full-bleed only where the viewport is itself portrait. On landscape
+        the still carries the ground and the film runs at native aspect in
+        the composed column below — downscaled, which is where it looks best.
+      */}
       <div
         className="absolute inset-0"
         style={{
@@ -33,14 +40,21 @@ export function Hero() {
           willChange: "transform, opacity",
         }}
       >
-        <Sculpture
-          seed="chisseled-hero-01"
-          tone="apparel"
-          pose="front"
-          anchor={0.66}
-          scale={1.12}
-          className="size-full"
-          label="A figure rendered as chiselled planes under a single shaft of light."
+        <BrandVideo
+          role="hero"
+          fit="cover"
+          grade="deep"
+          lazy={false}
+          className="size-full lg:hidden"
+        />
+        <EditorialImage
+          src="push-up"
+          alt="An athlete holding a one-arm push-up at the bottom of the rep, outdoors at first light."
+          sizes="100vw"
+          priority
+          grade="deep"
+          position="72% center"
+          className="hidden size-full lg:block"
         />
       </div>
 
@@ -53,6 +67,24 @@ export function Hero() {
         aria-hidden
         className="absolute inset-0 z-[2] bg-gradient-to-r from-ink/85 via-ink/25 to-transparent"
       />
+
+      {/* The film itself, at native aspect, on viewports too wide to wear it. */}
+      <div
+        /* No -translate-y-1/2 here: Tailwind v4 compiles it to the standalone
+           `translate` property, which composes with the inline `transform`
+           below instead of being overridden by it — the centring would apply
+           twice. The -50% lives in the transform only. */
+        className="absolute right-[var(--gutter)] top-1/2 z-[3] hidden w-[clamp(16rem,22vw,22rem)] lg:block"
+        style={{
+          transform: `translate3d(0, calc(-50% + ${exit * -40}px), 0)`,
+          opacity: 1 - exit * 1.2,
+        }}
+      >
+        <div className="relative aspect-[9/16] overflow-hidden border border-bone/12">
+          <BrandVideo role="hero" fit="cover" grade="signal" lazy={false} className="size-full" />
+        </div>
+        <p className="eyebrow mt-3 text-ash">The 2026 campaign film</p>
+      </div>
 
       {/* --- Content --- */}
       <div
@@ -68,20 +100,20 @@ export function Hero() {
 
         <h1 id="hero-heading" className="display-mega text-bone">
           <span className="sr-only">
-            CHISSELED — built for the disciplined. Premium performance apparel, training,
+            CHISSELED — built different. Premium performance apparel, training,
             nutrition and essentials.
           </span>
 
           <span aria-hidden className="block">
             <span data-reveal-line>
-              <span>Built for</span>
+              <span>Built</span>
             </span>
             <span
               data-reveal-line
               style={{ "--reveal-delay": "110ms" } as React.CSSProperties}
             >
               <span>
-                the <em className="not-italic text-purple-bright">disciplined.</em>
+                <em className="not-italic text-purple-bright">different.</em>
               </span>
             </span>
           </span>

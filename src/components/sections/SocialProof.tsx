@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ATHLETES, PRODUCTS } from "@/lib/catalog";
 import { Sculpture } from "@/components/primitives/Visual";
+import { EditorialImage } from "@/components/primitives/EditorialImage";
 import { ArrowMark, StarMark } from "@/components/primitives/Marks";
 
 /**
@@ -60,14 +61,23 @@ export function SocialProof() {
             className="group relative grain vignette row-span-2 hidden min-h-[30rem] overflow-hidden bg-ink lg:block"
             data-reveal
           >
-            <Sculpture
-              seed={`proof-${ATHLETES[3].slug}`}
-              tone={ATHLETES[3].tone}
-              pose={ATHLETES[3].pose}
-              anchor={0.5}
-              scale={0.98}
-              className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
-            />
+            {ATHLETES[3].photo ? (
+              <EditorialImage
+                src={ATHLETES[3].photo}
+                alt={`${ATHLETES[3].name}, ${ATHLETES[3].role}`}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+                className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
+              />
+            ) : (
+              <Sculpture
+                seed={`proof-${ATHLETES[3].slug}`}
+                tone={ATHLETES[3].tone}
+                pose={ATHLETES[3].pose}
+                anchor={0.5}
+                scale={0.98}
+                className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
+              />
+            )}
             <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/30 to-transparent" />
 
             <div className="relative z-[3] flex h-full flex-col justify-end p-7">

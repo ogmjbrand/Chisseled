@@ -12,6 +12,7 @@ import {
 } from "react";
 import { getProduct } from "@/lib/catalog";
 import type { CurrencyCode } from "@/lib/format";
+import { BUNDLES } from "@/lib/catalog";
 import type { ColorwayKey } from "@/lib/art";
 
 /* ==================================================================
@@ -251,10 +252,11 @@ export function useStore(): StoreValue {
   return ctx;
 }
 
-/** Bundle prices are duplicated here to keep the reducer synchronous. */
-const BUNDLE_PRICES: Record<string, number> = {
-  "the-starter": 74000,
-  "the-performance": 138000,
-  "the-complete-chisseled": 298000,
-  "the-womens-performance": 168000,
-};
+/**
+ * Derived from the catalogue rather than duplicated. The previous hardcoded
+ * table had drifted: two of its four slugs no longer existed, so those lines
+ * priced at zero, and the values were still in naira.
+ */
+const BUNDLE_PRICES: Record<string, number> = Object.fromEntries(
+  BUNDLES.map((b) => [b.slug, b.price]),
+);

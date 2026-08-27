@@ -7,6 +7,7 @@ import { stockLevel } from "@/lib/catalog";
 import { formatDate, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { Flat, Sculpture } from "@/components/primitives/Visual";
+import { ProductMedia, MediaNote } from "@/components/product/ProductMedia";
 import {
   ArrowMark,
   CheckMark,
@@ -72,13 +73,14 @@ export function ProductDetail({ product }: { product: Product }) {
         {/* ============ MEDIA ============ */}
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:h-fit">
           <div className="relative grain aspect-square overflow-hidden bg-graphite">
-            <Flat
+            <ProductMedia
+              media={product.media}
               flat={product.flat}
               colorway={variant.colorway}
               seed={`pdp-${product.slug}-${variant.colorway}`}
               view={view}
-              className="size-full"
-              label={`${product.name} in ${COLORWAYS[variant.colorway]?.name}, ${view} view`}
+              name={product.name}
+              priority
             />
 
             <div className="pointer-events-none absolute left-4 top-4 flex flex-col items-start gap-1.5">
@@ -105,12 +107,14 @@ export function ProductDetail({ product }: { product: Product }) {
                   view === v ? "border-bone" : "border-transparent hover:border-bone/35",
                 ].join(" ")}
               >
-                <Flat
+                <ProductMedia
+                  media={product.media}
                   flat={product.flat}
                   colorway={variant.colorway}
                   seed={`pdp-${product.slug}-${variant.colorway}`}
                   view={v}
-                  className="size-full"
+                  name={product.name}
+                  sizes="120px"
                 />
               </button>
             ))}
@@ -126,6 +130,8 @@ export function ProductDetail({ product }: { product: Product }) {
               />
             </div>
           </div>
+
+          {!product.media && <MediaNote />}
         </div>
 
         {/* ============ PURCHASE ============ */}

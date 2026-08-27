@@ -742,6 +742,7 @@ export const PROGRAMS: Program[] = [
 export const ATHLETES: Athlete[] = [
   {
     slug: "dami-adeyemi",
+    photo: "rope-climb",
     name: "Dami Adeyemi",
     role: "Head Coach, Strength",
     discipline: "Powerlifting",
@@ -759,6 +760,7 @@ export const ATHLETES: Athlete[] = [
   },
   {
     slug: "amina-bello",
+    photo: "swim",
     name: "Amina Bello",
     role: "Coach, Conditioning & Recovery",
     discipline: "Endurance",
@@ -776,6 +778,7 @@ export const ATHLETES: Athlete[] = [
   },
   {
     slug: "tobi-okonkwo",
+    photo: "mountain",
     name: "Tobi Okonkwo",
     role: "Coach, Physique",
     discipline: "Bodybuilding",
@@ -793,6 +796,7 @@ export const ATHLETES: Athlete[] = [
   },
   {
     slug: "chidera-nwosu",
+    photo: "trail",
     name: "Chidera Nwosu",
     role: "CHISSELED Athlete",
     discipline: "Olympic Weightlifting",
