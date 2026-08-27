@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { useScrollProgress } from "@/lib/motion";
-import { EditorialImage } from "@/components/primitives/EditorialImage";
+import { BrandVideo } from "@/components/primitives/BrandVideo";
 import { ArrowMark } from "@/components/primitives/Marks";
 
 /**
@@ -39,13 +39,11 @@ export function Hero() {
           willChange: "transform, opacity",
         }}
       >
-        <EditorialImage
-          src="push-up"
-          alt="An athlete holding a one-arm push-up at the bottom of the rep, outdoors at first light."
-          sizes="100vw"
-          priority
+        <BrandVideo
+          role="hero"
+          fit="cover"
           grade="deep"
-          position="72% center"
+          lazy={false}
           className="size-full"
         />
       </div>
@@ -59,14 +57,6 @@ export function Hero() {
         aria-hidden
         className="absolute inset-0 z-[2] bg-gradient-to-r from-ink/85 via-ink/25 to-transparent"
       />
-
-      {/*
-        The hero film column lived here. It was wired to the car-race brief but
-        pointed at the envelope clip, which belongs on the order confirmation.
-        Restore it once the race film is identified: drop a `hero` entry into
-        FILMS and render <BrandVideo role="hero" /> in a 9:16 frame — the clip
-        is phone video, so it must not be stretched across a landscape hero.
-      */}
 
       {/* --- Content --- */}
       <div

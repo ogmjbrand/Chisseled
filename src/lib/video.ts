@@ -9,9 +9,13 @@
  * inside the build — role assignments have to come from someone who can see
  * them, not from inference.
  *
- * STILL UNIDENTIFIED: the car-race film for the hero. Until someone names the
- * file, the hero runs on photography rather than on another guess. Adding it
- * back is a one-line change here plus re-enabling the block in Hero.tsx.
+ * The films are used as supplied — full-bleed, as templates, not composed
+ * around. The 9:16 crop cost on landscape viewports is known and accepted.
+ *
+ * The car-race film for the hero is still unnamed, so `hero` below carries
+ * the best remaining candidate. If it is the wrong clip, swap the `file`
+ * value on this one role — every clip is used somewhere, so a swap is a
+ * trade between two roles and nothing goes missing.
  * ------------------------------------------------------------------
  */
 
@@ -27,6 +31,14 @@ export interface BrandFilm {
 }
 
 export const FILMS = {
+  /** Hero. The car-race film — best remaining candidate, swap `file` to correct. */
+  hero: {
+    file: "80b2f9cb",
+    duration: 13.6,
+    width: 720,
+    height: 1280,
+    description: "The hero campaign film.",
+  },
   /** Order confirmation. The envelope, opening after payment clears. */
   envelope: {
     file: "f0cfce6a",
@@ -34,14 +46,6 @@ export const FILMS = {
     width: 720,
     height: 1280,
     description: "An envelope opening to reveal the order confirmation.",
-  },
-  /** Previously mis-assigned to the envelope; role still to be identified. */
-  unassigned: {
-    file: "ac54cc7f",
-    duration: 6.1,
-    width: 720,
-    height: 1280,
-    description: "A short brand sequence.",
   },
   /** The remaining films, played across the editorial surfaces. */
   campaign: {
@@ -59,8 +63,8 @@ export const FILMS = {
     description: "The method, shown as a sequence.",
   },
   training: {
-    file: "80b2f9cb",
-    duration: 13.6,
+    file: "d88841e9",
+    duration: 8.1,
     width: 720,
     height: 1280,
     description: "A training session in progress.",
@@ -80,8 +84,8 @@ export const FILMS = {
     description: "Fuel and recovery.",
   },
   drop: {
-    file: "d88841e9",
-    duration: 8.1,
+    file: "ac54cc7f",
+    duration: 6.1,
     width: 720,
     height: 1280,
     description: "A product drop announcement.",
