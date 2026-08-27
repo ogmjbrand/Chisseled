@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ATHLETES, PROGRAMS } from "@/lib/catalog";
+import { CoachDeck } from "@/components/sections/CoachDeck";
 import { formatPrice } from "@/lib/format";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { TrainingPlatform } from "@/components/sections/TrainingPlatform";
-import { Sculpture, Specimen } from "@/components/primitives/Visual";
+import { Specimen } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
@@ -69,6 +70,9 @@ const CHALLENGES = [
   { name: "The Winter Base", live: true, entrants: 3190, ends: "12 days left" },
   { name: "Squat Every Day", live: false, entrants: 5610, ends: "Opens 1 October" },
 ];
+
+/** Everyone on the bench who writes or reviews programmes. */
+const COACHES = ATHLETES.filter((a) => a.role.includes("Coach"));
 
 export default function TrainPage() {
   return (
@@ -285,37 +289,7 @@ export default function TrainPage() {
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {ATHLETES.filter((a) => a.role.startsWith("Coach") || a.role.includes("Coach")).map(
-              (coach, i) => (
-                <article
-                  key={coach.slug}
-                  className="group relative grain vignette aspect-[3/4] overflow-hidden bg-ink"
-                  data-reveal
-                  style={{ "--reveal-delay": `${i * 90}ms` } as React.CSSProperties}
-                >
-                  <Sculpture
-                    seed={`coach-${coach.slug}`}
-                    tone={coach.tone}
-                    pose={coach.pose}
-                    anchor={0.5}
-                    scale={0.92}
-                    className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
-                  />
-                  <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/40 to-transparent" />
-
-                  <div className="relative z-[3] flex h-full flex-col justify-end p-6">
-                    <p className="eyebrow mb-2.5 text-purple-bright">{coach.discipline}</p>
-                    <h3 className="display-sm mb-1.5 text-bone">{coach.name}</h3>
-                    <p className="mb-4 font-mono text-micro uppercase tracking-[0.12em] text-smoke">
-                      {coach.role}
-                    </p>
-                    <p className="text-body-sm italic leading-relaxed text-fog">“{coach.quote}”</p>
-                  </div>
-                </article>
-              ),
-            )}
-          </div>
+          <CoachDeck coaches={COACHES} />
         </div>
       </section>
 

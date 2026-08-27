@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PROGRAMS } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
+import { SignInPanel } from "@/components/account/SignInPanel";
 
 export const metadata = {
   ...pageMetadata({
@@ -122,52 +123,7 @@ export default function AccountPage() {
 
         {/* --- Sign in --- */}
         <aside id="signin" className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:h-fit">
-          <div className="border border-bone/10 bg-carbon p-7">
-            <h2 className="display-sm mb-6 text-bone">Sign in</h2>
-
-            <form className="space-y-4">
-              <div>
-                <label htmlFor="account-email" className="eyebrow mb-2 block">
-                  Email
-                </label>
-                <input
-                  id="account-email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="field"
-                />
-              </div>
-              <div>
-                <label htmlFor="account-password" className="eyebrow mb-2 block">
-                  Password
-                </label>
-                <input
-                  id="account-password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="field"
-                />
-              </div>
-
-              <button type="submit" className="btn btn-primary btn-block">
-                Sign in
-              </button>
-            </form>
-
-            <p className="mt-5 text-caption text-smoke">
-              New here?{" "}
-              <Link href="#signin" className="link-rule text-bone">
-                Create an account
-              </Link>
-            </p>
-
-            <p className="mt-6 border-t border-bone/10 pt-5 text-micro leading-relaxed text-ash">
-              Demonstration storefront — authentication is not connected. Guest checkout works
-              throughout without an account.
-            </p>
-          </div>
+          <SignInPanel />
 
           <div className="mt-4 border border-bone/10 bg-ink p-6">
             <p className="eyebrow mb-4">Continue training</p>

@@ -3,6 +3,7 @@ import { ARTICLES, ATHLETES } from "@/lib/catalog";
 import { formatDate } from "@/lib/format";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { Community } from "@/components/sections/Community";
+import { EditorialImage } from "@/components/primitives/EditorialImage";
 import { Sculpture } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
@@ -68,15 +69,29 @@ export default function CommunityPage() {
                 data-reveal
                 style={{ "--reveal-delay": `${(i % 2) * 90}ms` } as React.CSSProperties}
               >
+                {/* The same athlete shows a real photograph on the homepage,
+                    so showing a procedural figure on their own story card read
+                    as two different people. Photography wins wherever it
+                    exists; the figure stays as the fallback for athletes who
+                    have none, because inventing one is not an option. */}
                 <div className="relative grain vignette aspect-[3/4] overflow-hidden bg-carbon">
-                  <Sculpture
-                    seed={`story-${a.slug}`}
-                    tone={a.tone}
-                    pose={a.pose}
-                    anchor={0.5}
-                    scale={0.9}
-                    className="size-full"
-                  />
+                  {a.photo ? (
+                    <EditorialImage
+                      src={a.photo}
+                      alt={`${a.name}, ${a.role}`}
+                      sizes="(min-width: 1024px) 16rem, 100vw"
+                      className="size-full"
+                    />
+                  ) : (
+                    <Sculpture
+                      seed={`story-${a.slug}`}
+                      tone={a.tone}
+                      pose={a.pose}
+                      anchor={0.5}
+                      scale={0.9}
+                      className="size-full"
+                    />
+                  )}
                 </div>
 
                 <div className="flex flex-col justify-center">
