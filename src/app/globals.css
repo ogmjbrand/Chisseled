@@ -354,6 +354,12 @@
 }
 
 /* Film grain — the single most effective "expensive" tell */
+/* NOTE: `grain` and `vignette` need a positioned box for their ::after and
+   ::before, so they set position themselves — which means they OVERRIDE an
+   unprefixed `absolute`, `fixed` or `sticky` class on the same element. That
+   silently un-pinned the homepage sequence and collapsed the coach deck. A
+   responsive variant (`lg:sticky`) still wins, but an unprefixed one does not:
+   if an element needs both, set position in the style attribute. */
 @utility grain {
   position: relative;
   isolation: isolate;

@@ -76,6 +76,21 @@ const STAGES: Stage[] = [
   },
 ];
 
+/**
+ * Type needs a sharper curve than the figure does.
+ *
+ * The triangular falloff crossfades beautifully for a photograph — at the
+ * handover both stages sit at 0.5 and read as one dissolving image. Words do
+ * not dissolve; two headlines and two paragraphs at 0.5 stack into a double
+ * exposure that neither can be read through, which is what "Live it." over
+ * "Train in it." was doing at the midpoint. So the copy holds back until its
+ * stage is actually dominant and then arrives quickly, leaving a brief clean
+ * gap at the handover instead of an illegible overlap.
+ */
+function typeWeight(w: number) {
+  return Math.max(0, Math.min(1, (w - 0.46) / 0.34));
+}
+
 /** Triangular falloff — 1 at the stage centre, 0 at its neighbours. */
 function stageWeight(p: number, index: number, count: number) {
   const centre = (index + 0.5) / count;
@@ -94,6 +109,12 @@ export function Sequence() {
   // trailing thirds are entry and exit, so remap to the pinned window.
   const p = Math.min(1, Math.max(0, (raw - 0.15) / 0.7));
   const resolve = Math.min(1, Math.max(0, (p - 0.82) / 0.18));
+  // The resolve panel and the last stage's copy are both type in the same
+  // place, so they must hand over rather than cross-fade: the stage clears
+  // out over the first half of the resolve, and the panel arrives over the
+  // second. Cross-fading them stacked "Live it." under "Become Chisseled."
+  const typeOut = Math.min(1, resolve * 2);
+  const panelIn = Math.max(0, (resolve - 0.45) / 0.55);
 
   // Blend the environment colour between adjacent stages.
   const idx = Math.min(STAGES.length - 1, Math.floor(p * STAGES.length));
@@ -111,8 +132,16 @@ export function Sequence() {
       </h2>
 
       <div
-        className="sticky top-0 grain vignette flex h-[100svh] items-center overflow-hidden"
+        className="grain vignette flex h-[100svh] items-center overflow-hidden"
         style={{
+          // `grain` and `vignette` are utilities that set position: relative,
+          // and they beat Tailwind's `sticky` class — so this viewport never
+          // pinned. It scrolled away and left the section's four screens of
+          // travel showing nothing at all, which is why the homepage's
+          // centrepiece read as blank. The pin is the whole mechanism, so it
+          // is set where no utility can override it.
+          position: "sticky",
+          top: 0,
           backgroundColor: bg,
           transition: "background-color 900ms var(--ease-brand)",
         }}
@@ -184,12 +213,16 @@ export function Sequence() {
           <div className="relative">
             {STAGES.map((stage, i) => {
               const w = stageWeight(p, i, STAGES.length);
+              const t = typeWeight(w);
               return (
                 <div
                   key={`type-${stage.id}`}
                   className={i === 0 ? "relative" : "absolute inset-0"}
                   style={{
-                    opacity: w * (1 - resolve),
+                    opacity: t * (1 - typeOut),
+                    // Nothing below the fade threshold should intercept a
+                    // pointer or be read out mid-handover.
+                    visibility: t > 0.02 ? "visible" : "hidden",
                     transform: `translate3d(0, ${(1 - w) * 40}px, 0) scale(${0.9 + w * 0.1})`,
                     transformOrigin: "left center",
                     willChange: "opacity, transform",
@@ -209,8 +242,8 @@ export function Sequence() {
             <div
               className="absolute inset-0 flex flex-col justify-center"
               style={{
-                opacity: resolve,
-                transform: `scale(${0.94 + resolve * 0.06})`,
+                opacity: panelIn,
+                transform: `scale(${0.94 + panelIn * 0.06})`,
                 transformOrigin: "left center",
                 pointerEvents: resolve > 0.5 ? "auto" : "none",
               }}
