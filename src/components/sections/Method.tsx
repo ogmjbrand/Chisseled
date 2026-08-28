@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { Specimen } from "@/components/primitives/Visual";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { Tone } from "@/lib/art";
@@ -57,6 +58,8 @@ export function Method({ compact = false }: { compact?: boolean }) {
       className="relative grain border-t border-bone/10 bg-carbon section-pad"
       aria-labelledby="method-heading"
     >
+      <SectionBackdrop src="push-up" strength="whisper" />
+
       <div className="shell relative z-[3]">
         <div className="mb-16 max-w-[62rem]">
           {!compact && <p className="eyebrow mb-5">06 — The Method</p>}

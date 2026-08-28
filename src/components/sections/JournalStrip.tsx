@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { ARTICLES } from "@/lib/catalog";
 import { formatDate } from "@/lib/format";
 import { Specimen } from "@/components/primitives/Visual";
@@ -9,10 +10,12 @@ export function JournalStrip() {
 
   return (
     <section
-      className="border-t border-bone/10 bg-carbon section-pad"
+      className="relative border-t border-bone/10 bg-carbon section-pad"
       aria-labelledby="journal-heading"
     >
-      <div className="shell">
+      <SectionBackdrop src="swim" strength="whisper" position="center 40%" />
+
+      <div className="relative z-[1] shell">
         <div className="mb-14 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <p className="eyebrow mb-5">12 — Journal</p>

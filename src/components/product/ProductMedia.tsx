@@ -3,6 +3,16 @@ import { Flat } from "@/components/primitives/Visual";
 import { COLORWAYS } from "@/lib/art";
 import type { FlatKey, ColorwayKey } from "@/lib/art";
 
+/**
+ * Which of the three brand gradients a product sits on. Derived from the slug
+ * so it is stable across renders and spreads neighbouring cards apart.
+ */
+function backdropFor(slug: string) {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
+  return `grad-${(h % 3) + 1}`;
+}
+
 interface ProductMediaProps {
   /** One shot, or a shot per colourway. */
   media?: string | Partial<Record<string, string>>;
@@ -49,15 +59,43 @@ export function ProductMedia({
 
   if (shot && view === "front") {
     return (
-      <Image
-        src={`/media/product/${shot}.webp`}
-        alt={`${name} in ${colourName}`}
-        width={1400}
-        height={1400}
-        sizes={sizes}
-        priority={priority}
-        className={`size-full object-contain ${className}`}
-      />
+      <span className={`relative block size-full overflow-hidden ${className}`}>
+        {/* The garments are cut out on transparency, and most of them are
+            black. On a black pane a black hoodie has nothing to sit against —
+            the silhouette dissolves into the surface. The brand gradient gives
+            the cutout a ground to read against, and which of the three a
+            product gets is derived from its own slug so a card looks the same
+            on every visit and adjacent cards do not land on the same one. */}
+        <Image
+          src={`/media/backdrop/${backdropFor(shot)}.webp`}
+          alt=""
+          aria-hidden
+          fill
+          sizes={sizes}
+          className="object-cover"
+          style={{ opacity: 0.85 }}
+        />
+        {/* Settles the gradient into the page: dark at the base so the garment
+            has weight, and never so bright at the top that a light colourway
+            loses its edge. */}
+        <span
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, color-mix(in oklab, var(--color-ink) 82%, transparent), color-mix(in oklab, var(--color-ink) 26%, transparent) 55%, color-mix(in oklab, var(--color-ink) 42%, transparent) 100%)",
+          }}
+        />
+        <Image
+          src={`/media/product/${shot}.webp`}
+          alt={`${name} in ${colourName}`}
+          width={1400}
+          height={1400}
+          sizes={sizes}
+          priority={priority}
+          className="relative size-full object-contain"
+        />
+      </span>
     );
   }
 

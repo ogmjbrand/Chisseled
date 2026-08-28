@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { BUNDLES, getProduct } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -13,10 +14,12 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
   return (
     <section
       id="bundles"
-      className="border-t border-bone/10 bg-ink section-pad"
+      className="relative border-t border-bone/10 bg-ink section-pad"
       aria-labelledby="bundles-heading"
     >
-      <div className="shell">
+      <SectionBackdrop src="trail" strength="quiet" position="center 40%" />
+
+      <div className="relative z-[1] shell">
         {heading && (
           <div className="mb-14 max-w-[52rem]">
             <p className="eyebrow mb-5">09 — Systems</p>

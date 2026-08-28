@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { ATHLETES } from "@/lib/catalog";
 import { Sculpture } from "@/components/primitives/Visual";
 import { EditorialImage } from "@/components/primitives/EditorialImage";
@@ -8,10 +9,12 @@ export function Community({ heading = true }: { heading?: boolean }) {
   return (
     <section
       id="athletes"
-      className="border-t border-bone/10 bg-ink section-pad"
+      className="relative border-t border-bone/10 bg-ink section-pad"
       aria-labelledby="community-heading"
     >
-      <div className="shell">
+      <SectionBackdrop src="rope-climb" strength="quiet" />
+
+      <div className="relative z-[1] shell">
         {heading && (
           <div className="mb-14 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>

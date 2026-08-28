@@ -488,6 +488,10 @@ export const COLORWAYS: Record<string, Colorway> = {
   rust: { name: "Rust", hex: "#9a5424", seam: "#c98450" },
   violet: { name: "Violet", hex: "#6d28d9", seam: "#8b5cf6" },
   sand: { name: "Sand", hex: "#c9b39b", seam: "#e0cfbd" },
+  // Sampled from the Actively crest tees, not chosen from a palette.
+  forest: { name: "Forest", hex: "#184038", seam: "#2f6555" },
+  cobalt: { name: "Cobalt", hex: "#203070", seam: "#3c52a4" },
+  crimson: { name: "Crimson", hex: "#800018", seam: "#b03040" },
   red: { name: "Signal Red", hex: "#ba454a", seam: "#d97b7f" },
   deer: { name: "Woodland — Deer", hex: "#685b4c", seam: "#8f8271" },
   boar: { name: "Woodland — Boar", hex: "#5f5144", seam: "#877868" },

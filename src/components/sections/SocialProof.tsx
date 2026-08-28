@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { ATHLETES, PRODUCTS } from "@/lib/catalog";
 import { Sculpture } from "@/components/primitives/Visual";
 import { EditorialImage } from "@/components/primitives/EditorialImage";
@@ -30,6 +31,8 @@ export function SocialProof() {
       className="relative grain border-t border-bone/10 bg-carbon section-pad"
       aria-labelledby="proof-heading"
     >
+      <SectionBackdrop src="push-up" strength="whisper" position="center 20%" />
+
       <div className="shell relative z-[3]">
         <div className="mb-14 max-w-[46rem]">
           <p className="eyebrow mb-5">10 — Proof</p>

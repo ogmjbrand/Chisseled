@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { getFeatured } from "@/lib/catalog";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ArrowMark } from "@/components/primitives/Marks";
@@ -9,10 +10,12 @@ export function FeaturedCollection() {
   return (
     <section
       id="collection"
-      className="border-t border-bone/10 bg-carbon section-pad"
+      className="relative border-t border-bone/10 bg-carbon section-pad"
       aria-labelledby="featured-heading"
     >
-      <div className="shell mb-14 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+      <SectionBackdrop src="rope-climb" strength="quiet" position="center 30%" />
+
+      <div className="relative z-[1] shell mb-14 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <p className="eyebrow mb-5">03 — New Collection</p>
           <h2 id="featured-heading" className="display-lg mb-5 max-w-[14ch] text-bone" data-reveal>

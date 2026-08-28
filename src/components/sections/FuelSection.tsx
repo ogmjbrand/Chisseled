@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { getNutritionProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { Flat, Specimen } from "@/components/primitives/Visual";
@@ -20,6 +21,8 @@ export function FuelSection() {
       className="relative grain border-t border-bone/10 bg-carbon section-pad"
       aria-labelledby="fuel-heading"
     >
+      <SectionBackdrop src="mountain" strength="whisper" position="center 60%" />
+
       {/* A single steel plane — the one neutral warm-up on the homepage */}
       <div
         aria-hidden

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { useState } from "react";
 import { Meter, WeekBars, MetaPills } from "@/components/primitives/Stats";
 import { PROGRAMS } from "@/lib/catalog";
@@ -76,7 +77,9 @@ export function TrainingPlatform() {
       className="relative border-t border-bone/10 bg-ink section-pad"
       aria-labelledby="platform-heading"
     >
-      <div className="shell">
+      <SectionBackdrop src="swim" strength="whisper" />
+
+      <div className="relative z-[1] shell">
         <div className="mb-14 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <p className="eyebrow mb-5">07 — The Platform</p>

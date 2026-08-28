@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { COLLECTIONS, getProductsByCollection } from "@/lib/catalog";
 import { Sculpture } from "@/components/primitives/Visual";
 import { ArrowMark } from "@/components/primitives/Marks";
@@ -10,8 +11,10 @@ import { ArrowMark } from "@/components/primitives/Marks";
  */
 export function ShopByCollection() {
   return (
-    <section className="bg-ink section-pad" aria-labelledby="collections-heading">
-      <div className="shell mb-14 flex flex-wrap items-end justify-between gap-6">
+    <section className="relative bg-ink section-pad" aria-labelledby="collections-heading">
+      <SectionBackdrop src="trail" strength="quiet" />
+
+      <div className="relative z-[1] shell mb-14 flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="eyebrow mb-5">02 — Navigate</p>
           <h2 id="collections-heading" className="display-lg text-bone" data-reveal>

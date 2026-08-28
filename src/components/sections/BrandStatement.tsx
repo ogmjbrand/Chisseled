@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { useRef } from "react";
 import { useScrollProgress } from "@/lib/motion";
 
@@ -20,6 +21,8 @@ export function BrandStatement() {
       className="relative grain overflow-hidden border-y border-bone/10 bg-ink section-pad"
       aria-labelledby="statement-heading"
     >
+      <SectionBackdrop src="mountain" strength="quiet" />
+
       {/* A single purple plane, barely there */}
       <div
         aria-hidden
