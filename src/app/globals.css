@@ -402,6 +402,15 @@
    ============================================================ */
 
 @layer components {
+  /* No `will-change` here, deliberately.
+     `will-change` is a promise to the compositor that costs a GPU layer for
+     as long as it is set, and this selector matches every element that has
+     not been revealed yet — on the homepage that was dozens of layers held
+     simultaneously, most of them off-screen and none of them animating.
+     Measured at 1440x900 it was 73 layers and ~69MB of texture memory, which
+     on integrated graphics sharing system RAM is enough to lose the GPU
+     process and take the tab with it. Chrome promotes an element while its
+     transition actually runs, which is the moment the hint was meant for. */
   [data-reveal] {
     opacity: 0;
     transform: translate3d(0, var(--reveal-y, 24px), 0);
@@ -409,13 +418,11 @@
       opacity 900ms var(--ease-out-expo),
       transform 1100ms var(--ease-out-expo);
     transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
   }
 
   [data-reveal="in"] {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    will-change: auto;
   }
 
   /* Line-by-line typographic reveal for editorial headlines */

@@ -7,6 +7,7 @@ import { Footer } from "@/components/shell/Footer";
 import { CartDrawer } from "@/components/shell/CartDrawer";
 import { SearchOverlay } from "@/components/shell/SearchOverlay";
 import { RevealRoot } from "@/components/shell/RevealRoot";
+import { GrainDefs } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { StoreProvider } from "@/lib/store";
 import { SITE, organizationSchema, websiteSchema } from "@/lib/seo";
@@ -92,6 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <StoreProvider>
           <RevealRoot />
+          <GrainDefs />
           <Header />
           <main id="main">{children}</main>
           <Footer />

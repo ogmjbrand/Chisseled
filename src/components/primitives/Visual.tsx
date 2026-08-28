@@ -3,24 +3,65 @@ import type { ColorwayKey, FlatKey, Pose, Tone } from "@/lib/art";
 
 /* ==================================================================
    GRAIN — the single most effective "expensive" tell.
-   Rendered as an inline filter so it never costs a network request.
+
+   This used to emit a `feTurbulence` filter per instance and run it over
+   the full area of the element. With 37 pieces of procedural art on the
+   site that put 139 four-octave Perlin-noise generators into the homepage
+   alone, each evaluated per pixel, per octave, over its whole frame. On
+   integrated graphics sharing system memory that is enough to lose the GPU
+   process, which Chrome reports to the user as "This page couldn't load".
+
+   The fix is the one the CSS grain overlay already used: generate the noise
+   ONCE into a small tile and repeat it. The tile below is the same 180x180
+   source as `--grain-url` in globals.css — its turbulence is evaluated over
+   32,400 pixels, once, and the decoded result is cached by URL and reused by
+   every instance. The look is unchanged; the cost is not comparable.
    ================================================================== */
 
-export function Grain({ id, opacity = 0.34 }: { id: string; opacity?: number }) {
+/** Pre-rasterised noise tile. Kept byte-identical to `--grain-url`. */
+const GRAIN_TILE =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E";
+
+/** The one id every piece of art points at. */
+export const GRAIN_PATTERN_ID = "ch-grain";
+
+/**
+ * The single grain tile for the whole document.
+ *
+ * SVG `url(#id)` references resolve across the document in HTML, so one
+ * definition serves every piece of art on the page. Rendered once in the
+ * root layout; it carries no visual output of its own. It is sized 0x0 and
+ * positioned out of flow rather than `display: none`, because a display-none
+ * subtree is not a reliable reference target in every engine.
+ */
+export function GrainDefs() {
   return (
-    <>
-      <filter id={`grain-${id}`} x="0" y="0" width="100%" height="100%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="4" stitchTiles="stitch" />
-        <feColorMatrix type="saturate" values="0" />
-      </filter>
-      <rect
-        width="100%"
-        height="100%"
-        filter={`url(#grain-${id})`}
-        opacity={opacity}
-        style={{ mixBlendMode: "overlay" }}
-      />
-    </>
+    <svg
+      width="0"
+      height="0"
+      aria-hidden
+      focusable="false"
+      style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
+    >
+      <defs>
+        <pattern id={GRAIN_PATTERN_ID} width="180" height="180" patternUnits="userSpaceOnUse">
+          <image href={GRAIN_TILE} width="180" height="180" preserveAspectRatio="none" />
+        </pattern>
+      </defs>
+    </svg>
+  );
+}
+
+/** A grain wash over the current frame, drawn from the shared tile. */
+export function Grain({ opacity = 0.34 }: { id?: string; opacity?: number }) {
+  return (
+    <rect
+      width="100%"
+      height="100%"
+      fill={`url(#${GRAIN_PATTERN_ID})`}
+      opacity={opacity}
+      style={{ mixBlendMode: "overlay" }}
+    />
   );
 }
 

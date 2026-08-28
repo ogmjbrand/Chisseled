@@ -157,7 +157,10 @@ export function Sequence() {
               style={{
                 opacity: w * (1 - resolve),
                 transform: `scale(${1.16 - w * 0.14}) translate3d(${(1 - w) * (i % 2 ? 5 : -5)}%, 0, 0)`,
-                willChange: "opacity, transform",
+                // Promote only while this layer is actually on screen. Three
+                // full-screen layers at 1670x1044 held ~7MB of GPU texture each,
+                // permanently, whether or not they were the visible one.
+                willChange: w > 0.01 ? "opacity, transform" : "auto",
               }}
             >
               <Sculpture
@@ -190,7 +193,10 @@ export function Sequence() {
               style={{
                 opacity: w * (1 - resolve),
                 transform: `translate3d(0, calc(-50% + ${(0.5 - local) * 34}vh), 0) rotate(${(local - 0.5) * 10}deg)`,
-                willChange: "opacity, transform",
+                // Promote only while this layer is actually on screen. Three
+                // full-screen layers at 1670x1044 held ~7MB of GPU texture each,
+                // permanently, whether or not they were the visible one.
+                willChange: w > 0.01 ? "opacity, transform" : "auto",
               }}
             >
               <div className="border border-bone/12 bg-black/40 p-3 backdrop-blur-md">
@@ -225,7 +231,10 @@ export function Sequence() {
                     visibility: t > 0.02 ? "visible" : "hidden",
                     transform: `translate3d(0, ${(1 - w) * 40}px, 0) scale(${0.9 + w * 0.1})`,
                     transformOrigin: "left center",
-                    willChange: "opacity, transform",
+                    // Promote only while this layer is actually on screen. Three
+                // full-screen layers at 1670x1044 held ~7MB of GPU texture each,
+                // permanently, whether or not they were the visible one.
+                willChange: w > 0.01 ? "opacity, transform" : "auto",
                   }}
                   aria-hidden
                 >
