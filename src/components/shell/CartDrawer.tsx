@@ -75,7 +75,7 @@ export function CartDrawer() {
           "fixed inset-y-0 right-0 z-[71] flex w-full max-w-[30rem] flex-col border-l border-bone/10 bg-carbon transition-transform duration-[620ms] ease-[var(--ease-out-expo)]",
           cartOpen ? "translate-x-0" : "translate-x-full",
         ].join(" ")}
-        {...(!cartOpen ? { inert: "" as unknown as boolean } : {})}
+        inert={!cartOpen}
       >
         {/* --- Head --- */}
         <div className="flex shrink-0 items-center justify-between border-b border-bone/10 px-6 py-5">

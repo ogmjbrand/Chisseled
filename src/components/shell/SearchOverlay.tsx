@@ -129,7 +129,7 @@ export function SearchOverlay() {
           "fixed inset-x-0 top-0 z-[81] border-b border-bone/10 bg-ink transition-transform duration-[560ms] ease-[var(--ease-out-expo)]",
           searchOpen ? "translate-y-0" : "-translate-y-full",
         ].join(" ")}
-        {...(!searchOpen ? { inert: "" as unknown as boolean } : {})}
+        inert={!searchOpen}
       >
         <div className="shell py-6">
           {/* --- Input --- */}

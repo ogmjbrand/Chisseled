@@ -217,7 +217,7 @@ function MegaPanel({
       onMouseLeave={onLeave}
       // Hidden from assistive tech when closed; the top-level links still work.
       aria-hidden={!open}
-      {...(!open ? { inert: "" as unknown as boolean } : {})}
+      inert={!open}
     >
       <div className="shell grid grid-cols-12 gap-x-10 py-12">
         <div className="col-span-7 grid grid-cols-3 gap-x-8">
