@@ -7,6 +7,7 @@ import { getBundle, getProduct } from "@/lib/catalog";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { OrderCelebration } from "@/components/shell/OrderCelebration";
+import { PaymentCard } from "@/components/shell/PaymentCard";
 import { Flat } from "@/components/primitives/Visual";
 import {
   ArrowMark,
@@ -204,11 +205,15 @@ export function CheckoutFlow() {
               </fieldset>
 
               {payment === "card" && (
-                <p className="mt-6 flex items-start gap-2.5 border border-bone/10 bg-carbon p-4 text-body-sm text-smoke">
-                  <ShieldMark className="mt-0.5 size-4 shrink-0 text-purple-bright" />
-                  Card details are collected by our payment provider on their own secure form.
-                  CHISSELED never sees or stores your card number.
-                </p>
+                <>
+                  <PaymentCard />
+                  <p className="mt-6 flex items-start gap-2.5 border border-bone/10 bg-carbon p-4 text-body-sm text-smoke">
+                    <ShieldMark className="mt-0.5 size-4 shrink-0 text-purple-bright" />
+                    In production these fields are replaced by the payment provider&rsquo;s own
+                    hosted form, so CHISSELED never sees or stores a card number. Nothing you
+                    type here is transmitted or saved.
+                  </p>
+                </>
               )}
 
               {payment === "transfer" && (
