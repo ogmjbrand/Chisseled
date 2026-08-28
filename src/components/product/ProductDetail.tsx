@@ -8,6 +8,7 @@ import { formatDate, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { Flat, Sculpture } from "@/components/primitives/Visual";
 import { ProductMedia, MediaNote } from "@/components/product/ProductMedia";
+import { SizeChart } from "@/components/product/SizeChart";
 import {
   ArrowMark,
   CheckMark,
@@ -470,7 +471,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 ))}
               </dl>
 
-              {!isNutrition && <SizeTable sizes={product.sizes} />}
+              {!isNutrition && <SizeChart category={product.category} />}
             </Panel>
 
             <Panel
@@ -566,59 +567,6 @@ function Panel({
   );
 }
 
-function SizeTable({ sizes }: { sizes: string[] }) {
-  // Illustrative measurements; production must publish the real spec sheet.
-  const ROWS: Record<string, [string, string, string]> = {
-    XS: ["78–83", "60–65", "86–91"],
-    S: ["83–88", "65–70", "91–96"],
-    M: ["88–96", "70–78", "96–104"],
-    L: ["96–104", "78–86", "104–112"],
-    XL: ["104–112", "86–94", "112–120"],
-    XXL: ["112–120", "94–102", "120–128"],
-  };
-
-  const rows = sizes.filter((s) => s in ROWS);
-  if (rows.length === 0) return null;
-
-  return (
-    <div className="mt-8 overflow-x-auto">
-      <h3 className="eyebrow mb-3">Measurements (cm)</h3>
-      <table className="w-full min-w-[24rem] text-left">
-        <thead>
-          <tr className="border-b border-bone/10">
-            {["Size", "Chest", "Waist", "Hip"].map((h) => (
-              <th
-                key={h}
-                scope="col"
-                className="py-2 font-mono text-micro uppercase tracking-[0.12em] text-ash"
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-bone/8">
-          {rows.map((s) => (
-            <tr key={s}>
-              <th scope="row" className="py-2.5 font-mono text-caption text-bone">
-                {s}
-              </th>
-              {ROWS[s].map((v, i) => (
-                <td key={i} className="numeric py-2.5 text-caption text-smoke">
-                  {v}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="mt-3 text-micro text-ash">
-        Between sizes? Compression and sculpt fits run close — take the larger size for comfort,
-        the smaller for hold.
-      </p>
-    </div>
-  );
-}
 
 /** Appears once the primary CTA has scrolled away. */
 function StickyBar({

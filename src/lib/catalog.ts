@@ -577,7 +577,10 @@ export const PRODUCTS: Product[] = [
     category: "Tops",
     price: 4800,
     flat: "crop",
-    media: { onyx: "cropped-long-sleeve--onyx" },
+    media: {
+      onyx: "cropped-long-sleeve--onyx",
+      royal: "cropped-long-sleeve--royal",
+    },
     sizes: APPAREL_SIZES,
     variants: [
       { colorway: "onyx", inStock: ["XS", "S", "M", "L"], low: [] },
