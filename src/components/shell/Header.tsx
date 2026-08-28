@@ -14,10 +14,10 @@ import {
   ChevronMark,
   CloseMark,
   MenuMark,
-  Monogram,
   SearchMark,
   WishMark,
 } from "@/components/primitives/Marks";
+import { BrandMark } from "@/components/primitives/BrandMark";
 
 export function Header() {
   const pathname = usePathname();
@@ -90,7 +90,10 @@ export function Header() {
             className="group flex items-center gap-2.5 lg:flex-none"
             aria-label="CHISSELED — home"
           >
-            <Monogram className="size-6 text-bone transition-colors duration-500 group-hover:text-purple-bright" />
+            <BrandMark
+              priority
+              className="h-7 w-auto transition-opacity duration-500 group-hover:opacity-80"
+            />
             <span className="font-display text-[1.0625rem] font-black uppercase leading-none tracking-[0.3em] text-bone">
               Chisseled
             </span>

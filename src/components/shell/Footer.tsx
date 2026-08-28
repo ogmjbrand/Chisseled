@@ -5,7 +5,8 @@ import { useState } from "react";
 import { FOOTER_COLUMNS } from "@/lib/nav";
 import { CURRENCIES, type CurrencyCode } from "@/lib/format";
 import { useStore } from "@/lib/store";
-import { ArrowMark, CheckMark, Monogram } from "@/components/primitives/Marks";
+import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
+import { BrandMark } from "@/components/primitives/BrandMark";
 
 export function Footer() {
   return (
@@ -50,7 +51,7 @@ export function Footer() {
       {/* --- Legal bar --- */}
       <div className="shell relative z-[3] flex flex-col gap-6 border-t border-bone/10 py-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
-          <Monogram className="size-5 text-bone" />
+          <BrandMark className="h-6 w-auto" />
           <p className="font-mono text-micro uppercase tracking-[0.18em] text-ash">
             © {new Date().getFullYear()} Chisseled ·{" "}
             <span className="text-smoke">Built different.</span>
@@ -167,7 +168,9 @@ function RegionSelect() {
 
 function PaymentMarks() {
   // Drawn rather than imported, so the footer carries no third-party assets.
-  const marks = ["Visa", "Mastercard", "Verve", "Transfer", "Apple Pay", "Google Pay"];
+  // US rails. Verve, a Nigerian domestic scheme, was a leftover from before
+  // the storefront moved to Florida — it is not accepted anywhere in the US.
+  const marks = ["Visa", "Mastercard", "Amex", "Discover", "Apple Pay", "Google Pay"];
   return (
     <ul className="flex flex-wrap items-center gap-1.5" aria-label="Accepted payment methods">
       {marks.map((m) => (

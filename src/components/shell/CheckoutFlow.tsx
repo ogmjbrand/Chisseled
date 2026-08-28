@@ -23,16 +23,16 @@ import {
  * default because forcing an account is the single most reliable way to
  * lose a first order.
  *
- * PRODUCTION NOTE: this is the interface only. Wire the payment step to
- * the PSP (Paystack / Flutterwave for local rails, Stripe for
- * international) and never handle raw card data in this component.
+ * PRODUCTION NOTE: this is the interface only. Wire the payment step to a
+ * PSP — Stripe, Adyen or Braintree all serve US card rails — using their
+ * hosted fields, and never let a raw card number reach this component.
  */
 
-type PaymentMethod = "card" | "transfer" | "wallet";
+type PaymentMethod = "card" | "installments" | "wallet";
 
 const PAYMENTS: { id: PaymentMethod; label: string; note: string }[] = [
   { id: "card", label: "Card", note: "Visa, Mastercard, Amex, Discover" },
-  { id: "transfer", label: "Pay later", note: "4 interest-free installments" },
+  { id: "installments", label: "Pay later", note: "4 interest-free payments" },
   { id: "wallet", label: "Apple Pay / Google Pay", note: "Where available on your device" },
 ];
 
@@ -216,10 +216,11 @@ export function CheckoutFlow() {
                 </>
               )}
 
-              {payment === "transfer" && (
+              {payment === "installments" && (
                 <p className="mt-6 border border-bone/10 bg-carbon p-4 text-body-sm text-smoke">
-                  You&apos;ll receive a one-time account number after placing the order. Your
-                  order ships as soon as the transfer clears — usually within minutes.
+                  Four equal payments, the first taken today and the rest every two weeks. No
+                  interest and no fee if they are paid on schedule. Your order ships with the
+                  first payment, not the last.
                 </p>
               )}
 

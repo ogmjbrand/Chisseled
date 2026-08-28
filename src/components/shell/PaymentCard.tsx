@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { BrandMark } from "@/components/primitives/BrandMark";
 import { useCallback, useEffect, useId, useState } from "react";
 
 /**
@@ -79,17 +79,9 @@ export function PaymentCard() {
               "linear-gradient(135deg, color-mix(in oklab, var(--color-bone) 62%, transparent), color-mix(in oklab, var(--color-bone) 22%, transparent))",
           }}
         />
-        <Image
-          src="/media/brand/ch-shield.webp"
-          alt=""
-          width={512}
-          height={536}
-          className="h-9 w-auto"
-          // The mark is supplied on black; screening it drops that ground into
-          // the card rather than sitting a black square on top of it. One
-          // element, so the blend costs nothing measurable.
-          style={{ mixBlendMode: "screen" }}
-        />
+        {/* The shield is keyed on its own luminance, so it composites with
+            plain alpha — no blend mode needed to hide the black it ships on. */}
+        <BrandMark tone="colour" className="h-9 w-auto" />
       </div>
 
       {/* The number.

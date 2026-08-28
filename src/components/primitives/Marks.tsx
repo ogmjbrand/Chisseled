@@ -146,16 +146,3 @@ export function ReturnMark({ className, strokeWidth = 1.4 }: MarkProps) {
     </svg>
   );
 }
-
-/** The CHISSELED monogram — a chiselled C cut from a square. */
-export function Monogram({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 32 32" className={className} aria-hidden="true" focusable="false">
-      <path
-        d="M4 4h24v7.5h-6.2V10H10.2v12h11.6v-1.5H28V28H4z"
-        fill="currentColor"
-      />
-      <path d="M28 13.5v5h-6.2v-5z" fill="currentColor" opacity="0.45" />
-    </svg>
-  );
-}

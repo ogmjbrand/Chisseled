@@ -25,6 +25,7 @@ npm run typecheck
 | Catalogue | 20 products across 6 collections, 4 bundles, 6 programmes, 6 articles |
 | Components | 38, all first-party |
 | Photography | 27 matted product shots, 5 editorial frames, 3 manufacturer size sheets |
+| Identity | Brand lockup and shield, keyed to alpha; favicon, apple icon and OG card generated from them |
 | Source | ~13,400 lines of TypeScript/TSX |
 
 Commerce runs end to end in the browser: catalogue → filtering → product detail
@@ -197,6 +198,10 @@ This is a front-end demonstration, and it does not pretend otherwise on screen:
 - Currency conversion uses fixed rates for USD, GBP, EUR and CAD. Prices are a
   USD MSRP architecture, not exchange-rate conversions from another market.
   Multi-language is not implemented — only the currency selector ships.
+- The card form on the payment step is interface only. Its inputs deliberately
+  carry no `cc-*` autocomplete hints, so no browser is invited to autofill a
+  real card into a demonstration form, and nothing typed is transmitted or
+  stored. In production it is replaced by the PSP's hosted fields.
 - Headline social-proof figures are marked in the source as requiring
   verified values before launch.
 

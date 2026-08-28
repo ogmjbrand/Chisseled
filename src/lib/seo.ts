@@ -8,7 +8,7 @@ export const SITE = {
   description:
     "Premium performance apparel, training, nutrition and essentials engineered for people committed to becoming more.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://chisseled.com",
-  locale: "en_NG",
+  locale: "en_US",
 } as const;
 
 export function pageMetadata({
