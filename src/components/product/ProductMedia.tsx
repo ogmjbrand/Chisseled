@@ -65,7 +65,13 @@ export function ProductMedia({
             the silhouette dissolves into the surface. The brand gradient gives
             the cutout a ground to read against, and which of the three a
             product gets is derived from its own slug so a card looks the same
-            on every visit and adjacent cards do not land on the same one. */}
+            on every visit and adjacent cards do not land on the same one.
+
+            Held well back. The gradient's job is to separate a black garment
+            from a black page, and that only needs the ground to stop being
+            the same colour as the product — past that it starts competing
+            with the merchandise, which on a shop page is backwards. At 0.5
+            the magenta reads as a lit wall rather than as artwork. */}
         <Image
           src={`/media/backdrop/${backdropFor(shot)}.webp`}
           alt=""
@@ -73,17 +79,19 @@ export function ProductMedia({
           fill
           sizes={sizes}
           className="object-cover"
-          style={{ opacity: 0.85 }}
+          style={{ opacity: 0.5 }}
         />
         {/* Settles the gradient into the page: dark at the base so the garment
             has weight, and never so bright at the top that a light colourway
-            loses its edge. */}
+            loses its edge. Eased along with the gradient — two layers pulled
+            down at once would have taken the middle of the pane back to the
+            flat black the gradient exists to break up. */}
         <span
           aria-hidden
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to top, color-mix(in oklab, var(--color-ink) 82%, transparent), color-mix(in oklab, var(--color-ink) 26%, transparent) 55%, color-mix(in oklab, var(--color-ink) 42%, transparent) 100%)",
+              "linear-gradient(to top, color-mix(in oklab, var(--color-ink) 72%, transparent), color-mix(in oklab, var(--color-ink) 14%, transparent) 55%, color-mix(in oklab, var(--color-ink) 30%, transparent) 100%)",
           }}
         />
         <Image

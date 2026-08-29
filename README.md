@@ -173,8 +173,9 @@ clean gap instead of an illegible overlap.
 
 Checked by looking, not by trusting the code:
 
-- All 17 primary routes crawled at 390px and 1440px — no 4xx, no console errors,
-  no horizontal scroll.
+- All 20 primary routes crawled at 390px and 1440px — no 4xx, no console errors,
+  no failed subresources, no horizontal scroll. The harness is
+  `scripts/crawl.mjs`, so the claim is re-runnable rather than a note.
 - Every product matte rendered over a checkerboard and reviewed by eye.
 - Contrast ratios computed from relative luminance, not judged.
 - Keyboard paths walked: tab order, focus-visible, the closed cart drawer and
