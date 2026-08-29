@@ -36,6 +36,24 @@ TOL = 52
 # 255 minus it. Anything looser is eating the product.
 TOL_BY_SLUG = {
     "realtree-joggers--blush": 4,   # palest garment pixel #fcfbf9 -> limit 6
+    # The half-zip set is shot on pure white with light garments and bare skin
+    # in frame; every one of the four colourways measures a palest interior
+    # pixel at min-channel 249, so the same limit of 6 applies to all of them.
+    # At the default the flood came in through the highlights and took bites
+    # out of a sleeve and a trouser leg.
+    "half-zip-set--onyx": 4,
+    "half-zip-set--royal": 4,
+    "half-zip-set--heather": 4,
+    "half-zip-set--sage": 4,
+    "three-piece-set--cobalt": 4,
+    # A cream sweatshirt on white. Same story as the joggers.
+    "ch-crop-sweat--bone": 3,
+    "crop-hoodie--cobalt": 4,
+    # Shot on a light grey seamless (#eceeee) rather than white, so this one
+    # needs a LOOSER tolerance, not a tighter one. The garment is saturated
+    # royal blue and the skin is far darker than the ground, so 34 clears the
+    # backdrop without reaching either.
+    "zip-crop-set--royal": 34,
 }
 
 # Enclosed background — the triangle between an arm and the torso, the opening

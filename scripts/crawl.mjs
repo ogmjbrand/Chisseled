@@ -16,7 +16,8 @@
 // Playwright is not a dependency of the app; point at wherever it is installed.
 const { chromium } = await import(process.env.PLAYWRIGHT_PATH ?? "playwright");
 const ROUTES = ["/", "/shop", "/shop/scarred", "/shop/statement", "/product/scarred-hoodie", "/product/actively-tee",
-  "/product/c4-pre-workout", "/product/whey-protein", "/product/lifting-belt", "/product/waist-trainer",
+  "/product/c4-pre-workout", "/product/whey-protein", "/product/half-zip-set", "/product/zip-crop-set", "/product/ch-crop-sweat",
+  "/product/three-piece-set", "/product/chisseled-sling-bag", "/product/lifting-belt", "/product/waist-trainer",
   "/product/ch-cap", "/product/strappy-bra", "/product/realtree-joggers", "/product/creatine-monohydrate", "/product/ch-crop-set", "/bundles", "/checkout", "/method", "/train", "/fuel",
   "/community", "/journal", "/journal/sleep-is-the-training-variable", "/fit", "/wishlist", "/account", "/about"];
 const b = await chromium.launch(
