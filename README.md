@@ -11,7 +11,7 @@ Three runtime dependencies — `next`, `react`, `react-dom`.
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm run build      # 47 static pages
+npm run build      # 72 static pages
 npm run typecheck
 ```
 
@@ -21,10 +21,10 @@ npm run typecheck
 
 | | |
 |---|---|
-| Routes | 16 pages, 47 prerendered URLs |
-| Catalogue | 20 products across 6 collections, 4 bundles, 6 programmes, 6 articles |
+| Routes | 16 pages, 72 prerendered URLs |
+| Catalogue | 41 products across 6 collections, 4 bundles, 6 programmes, 6 articles |
 | Components | 38, all first-party |
-| Photography | 27 matted product shots, 5 editorial frames, 3 manufacturer size sheets |
+| Photography | 52 matted product shots, 5 editorial frames, 3 manufacturer size sheets |
 | Identity | Brand lockup and shield, keyed to alpha; favicon, apple icon and OG card generated from them |
 | Source | ~13,400 lines of TypeScript/TSX |
 
@@ -154,6 +154,20 @@ loose enough to catch them also ate the white SCARRED print off a hoodie and 48k
 pixels out of a training set, because a white print and a white backdrop are the
 same colour. Nothing in the pixels separates them. They are named instead, one
 seed point each.
+
+A per-slug tolerance sits beside the named holes for the same reason. The
+default flood tolerance is 52 levels, which is fine until a garment is nearly
+white: the pale Realtree joggers photograph at `#fcfbf9` against a `#ffffff`
+backdrop — six levels of separation — and at the default the flood walked
+through the waistband and tore the legs open. That number is now measured off
+the source and named per slug, not guessed.
+
+`--repair` was removed rather than left broken. It re-punched holes on the
+already-keyed *outputs*, but the seeds are in source coordinates and every
+output is cropped to its bounding box, so the two frames disagreed by the size
+of the trimmed margin. It also could not run twice: the second run found the
+hole it had itself opened and called that an error. Re-running the normal
+command re-mattes from the source, which is the only sound way to apply one.
 
 Every matte was checked by rendering all of them over a transparency
 checkerboard and looking, which is how a shot mapped to the wrong colourway was
