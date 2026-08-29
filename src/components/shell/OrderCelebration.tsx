@@ -121,7 +121,7 @@ export function OrderCelebration({ onSettled }: { onSettled?: () => void } = {})
         const px = p.x * w;
         const py = p.y * h;
         // Brand purple through bright purple, so the field has depth.
-        const c = p.tint < 0.62 ? "109,40,217" : "139,92,246";
+        const c = p.tint < 0.62 ? "150,48,252" : "178,104,253";
         ctx.fillStyle = `rgba(${c},${p.alpha})`;
         chevron(ctx, px, py, p.size, p.rot);
       }

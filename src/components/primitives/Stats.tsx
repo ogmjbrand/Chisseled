@@ -13,16 +13,18 @@ import { useId, useState } from "react";
  * drops the donut.
  *
  * Colour is settled by measurement, not taste. On the carbon card surface
- * (#0f0f12) the brand purple #6d28d9 reaches only 2.69:1 — below the 3:1 a data
- * mark needs — so it stays a surface here and #8b5cf6 (4.52:1) carries the
- * marks. The ramp is lightness-monotonic, which is the correct check for a
- * single hue.
+ * (#0f0f12) the brand purple #9630fc reaches 3.76:1 — over the 3:1 a data mark
+ * needs, so unlike the violet it replaces it would now be legal here. The
+ * bright step still carries the marks at 5.73:1, because a chart wants headroom
+ * rather than the minimum, and because the brand colour reads as a surface
+ * everywhere else on the site and should not start meaning "data" on one card.
+ * The ramp is lightness-monotonic, which is the correct check for a single hue.
  */
 
 /** The one colour a data mark may wear on a dark card. */
-const MARK = "#8b5cf6";
+const MARK = "#b268fd";
 /** Recessive track, one step off the surface. */
-const TRACK = "rgba(139,92,246,0.16)";
+const TRACK = "rgba(178,104,253,0.16)";
 
 /* ==================================================================
    METER — a single ratio against a limit

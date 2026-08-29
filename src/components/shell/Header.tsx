@@ -72,7 +72,39 @@ export function Header() {
         ].join(" ")}
         onMouseLeave={closeWithGrace}
       >
-        <div className="shell flex h-[var(--nav-h)] items-center justify-between gap-6">
+        {/* Top scrim, only while the bar is transparent.
+            The hero puts a flat block of --color-purple behind the top-left
+            corner, and --color-purple is now the mark's own colour — so the
+            shield was sitting on its own hue and measured 1.93:1 against it.
+            Invisible.
+
+            The fix is the ground, not the mark. Repainting a logo to make it
+            legible is fixing the wrong object; the logo is the fixed thing.
+
+            The depth was set by measuring the render, not by modelling it: a
+            first pass computed from flat colours predicted 5.8:1 and actually
+            delivered 3.06:1, because the hero's block is not flat — it carries
+            its own glow and grain, and it is brightest exactly where the mark
+            sits. Sampling the shield's brightest pixel against the ground
+            beside it puts the shipped value at 3.85:1, over the 3:1 a non-text
+            graphic needs, and the mark is decorative anyway — the word
+            CHISSELED is right beside it. Re-measure if the hero changes.
+
+            It also stops the nav links straddling the hero's hard
+            black/purple seam. */}
+        <div
+          aria-hidden
+          className={[
+            "pointer-events-none absolute inset-x-0 top-0 h-[calc(var(--nav-h)*2)] transition-opacity duration-500",
+            solid ? "opacity-0" : "opacity-100",
+          ].join(" ")}
+          style={{
+            background:
+              "linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 82%, transparent) 0%, color-mix(in srgb, var(--color-ink) 74%, transparent) 42%, color-mix(in srgb, var(--color-ink) 38%, transparent) 72%, transparent 100%)",
+          }}
+        />
+
+        <div className="relative shell flex h-[var(--nav-h)] items-center justify-between gap-6">
           {/* --- Mobile menu trigger --- */}
           <button
             type="button"

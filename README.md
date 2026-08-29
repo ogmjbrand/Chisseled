@@ -38,23 +38,59 @@ otherwise assume one.
 
 ## The identity
 
-Black × Purple. Obsidian `#08080A`, Graphite `#17171B`, Brand Purple `#6D28D9`,
-Bright Purple `#8B5CF6`, Light `#F5F5F5`.
+Black × Purple. Obsidian `#08080A`, Graphite `#17171B`, Brand Purple `#9630FC`,
+Bright Purple `#B268FD`, Light `#F5F5F5`.
 
-The interesting constraint is that brand purple is not a legible text colour on
-obsidian, and this was measured rather than eyeballed:
+**The brand purple is measured off the logo, not chosen to sit near it.** The
+supplied artwork is an additive glow — a base colour multiplied by an intensity
+that falls off from the core — so no single pixel in the file *is* the brand
+colour: the bright ones are blown out and the dim ones are half-way to black.
+Every unclipped pixel is normalised to its own max channel to recover the
+chromaticity the glow is made of, and the alpha-weighted mode of that is
+`#9630FC`. The shield and the full lockup are separate files and they agree:
+hue 270.0, saturation 0.97. The whole ramp is cut at that hue, so nothing on
+the page drifts away from the mark.
+
+The palette previously ran at hue 263 / S 0.70, a visibly bluer and greyer
+violet than the logo it was standing in for.
+
+The interesting constraint is that the brand colour is still not a body-text
+colour on obsidian, and this is measured rather than eyeballed:
 
 ```
-#6d28d9 as text on obsidian ......... 2.82:1   FAIL — never type
-#6d28d9 as a surface under #f5f5f5 .. 6.52:1   PASS — this is its job
-#8b5cf6 as text on obsidian ......... 4.73:1   PASS — accent type
+#9630fc as text on obsidian ......... 3.93:1   large type and UI marks only
+#9630fc as a surface under #f5f5f5 .. 4.67:1   PASS — this is its job
+#b268fd as text on obsidian ......... 6.00:1   PASS — accent type
 ```
 
-So the brand colour is a *surface* and the bright tint is the *ink*, and that
-rule is written into `globals.css` next to the tokens so it cannot quietly drift.
-The same discipline applies to data marks: on the carbon card surface `#6d28d9`
-reaches only 2.69:1, below the 3:1 a chart mark needs, so `#8b5cf6` carries every
-mark in the training dashboard.
+So the brand colour is a *surface* and the bright step is the *ink*, and that
+rule is written into `globals.css` next to the tokens so it cannot quietly
+drift. Adopting the logo's own colour trades a little headroom as a surface
+(6.52 → 4.67, still AA) for a lot as a mark (2.82 → 3.93, now over the 3:1 a
+non-text graphic needs). Nothing is permitted to re-tint `#9630FC` to buy
+contrast; where a surface cannot carry it, `--color-purple-dim` is the same hue
+taken down in lightness.
+
+**The mark is never recoloured.** There was briefly a bone monochrome shield,
+introduced because the logo sank into the purple block behind the header on the
+hero — a problem the new palette makes worse, since the block is now literally
+the mark's own colour and the shield measured 1.93:1 against it. Repainting a
+logo to make it legible is fixing the wrong object. The header carries its own
+scrim instead, and the depth of that scrim was set by measuring the render
+rather than modelling it: a first pass computed from flat colours predicted
+5.8:1 and delivered 3.06:1, because the hero's block is not flat and is
+brightest exactly where the mark sits. The shipped value, sampled off the
+render, is 3.85:1. The monochrome file has been deleted so it cannot come back.
+
+The same discipline applies to data marks: on the carbon card surface `#9630FC`
+now reaches 3.76:1 and would be legal, but `#B268FD` still carries every mark in
+the training dashboard at 5.73:1 — a chart wants headroom rather than the
+minimum, and the brand colour reads as a surface everywhere else on the site.
+
+One thing deliberately does *not* track the brand: the `violet` **colourway**
+stays `#6D28D9`, because it describes the purple a garment is actually dyed.
+Repainting merchandise to match a logo would be inventing a colourway that does
+not ship.
 
 ---
 

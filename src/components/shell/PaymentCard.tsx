@@ -81,7 +81,7 @@ export function PaymentCard() {
         />
         {/* The shield is keyed on its own luminance, so it composites with
             plain alpha — no blend mode needed to hide the black it ships on. */}
-        <BrandMark tone="colour" className="h-9 w-auto" />
+        <BrandMark className="h-9 w-auto" />
       </div>
 
       {/* The number.

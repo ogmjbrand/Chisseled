@@ -79,10 +79,10 @@ export const TONES: Record<Tone, TonePalette> = {
   },
   train: {
     base: "#0b0616",
-    mid: "#241344",
-    high: "#6d28d9",
-    key: "#8b5cf6",
-    haze: "#3b1d70",
+    mid: "#25104a",
+    high: "#9630fc",
+    key: "#b268fd",
+    haze: "#45108a",
   },
   fuel: {
     base: "#0a0a0c",
@@ -486,6 +486,10 @@ export const COLORWAYS: Record<string, Colorway> = {
   blush: { name: "Blush", hex: "#b89c9b", seam: "#d6bcbb" },
   camo: { name: "Woodland Camo", hex: "#4a4632", seam: "#7b7455" },
   rust: { name: "Rust", hex: "#9a5424", seam: "#c98450" },
+  // A garment colour, not the brand mark — this is the purple the piece is
+  // actually dyed. It deliberately does NOT track --color-purple: the
+  // catalogue describes merchandise, and repainting a product to match a
+  // logo would be inventing a colourway that does not ship.
   violet: { name: "Violet", hex: "#6d28d9", seam: "#8b5cf6" },
   sand: { name: "Sand", hex: "#c9b39b", seam: "#e0cfbd" },
   // Sampled from the Actively crest tees, not chosen from a palette.

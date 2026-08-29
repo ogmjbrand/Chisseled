@@ -46,7 +46,7 @@ const SLIDES: Slide[] = [
     cutout: "scarred-hoodie--onyx",
     script: "The signature",
     word: "SCARRED",
-    accent: "#6d28d9",
+    accent: "#9630fc",
     onAccent: "#f5f5f5",
     specs: [
       { k: "380 GSM", v: "Brushed fleece" },
