@@ -4,14 +4,46 @@ import { COLORWAYS } from "@/lib/art";
 import type { FlatKey, ColorwayKey } from "@/lib/art";
 
 /**
- * Which of the three brand gradients a product sits on. Derived from the slug
- * so it is stable across renders and spreads neighbouring cards apart.
+ * THE CHISSELED STUDIO.
+ *
+ * Every photographed product is composited into the same set: an obsidian
+ * ground, one purple key from the upper left, a cooler purple bounce opposite
+ * it, a floor the subject stands on, and a contact shadow under it. Same light,
+ * same direction, same falloff on every product in the catalogue, so a page of
+ * them reads as one shoot rather than as forty supplier photographs.
+ *
+ * It replaced three gradients assigned by a hash of the slug. That was the
+ * opposite of a photographic standard: adjacent cards were lit differently for
+ * no reason, which is exactly what stops a grid looking like a campaign.
+ *
+ * WHY THE SET IS DRAWN HERE AND NOT BAKED INTO THE FILES.
+ *   1. The assets stay pure product on transparency, so the look is one file to
+ *      change rather than eighty images to reprocess.
+ *   2. Nothing is ever composited INTO the garment. The product pixels are the
+ *      supplier's, scaled and positioned by scripts/studio.py and otherwise
+ *      untouched — no relighting, no sharpening, no generative fill. At the
+ *      resolutions in this catalogue a generative upscaler has no real detail
+ *      to recover, so it invents seams, logo edges and camouflage. An invented
+ *      seam on a real product is a lie about the merchandise. Soft and true
+ *      beats sharp and wrong.
+ *
+ * Cost: four gradient layers and one image per pane. No filter, no blend mode,
+ * no `will-change` — this site has already lost a GPU process once to
+ * per-element effects, and product cards are the most-repeated element there is.
  */
-function backdropFor(slug: string) {
-  let h = 0;
-  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
-  return `grad-${(h % 3) + 1}`;
-}
+
+const STUDIO = {
+  /* The key. Upper left on every product, so highlights fall the same way. */
+  key: "radial-gradient(58% 48% at 22% 12%, color-mix(in oklab, var(--color-purple) 46%, transparent), transparent 72%)",
+  /* The bounce, opposite and cooler, so the far side is not dead black. */
+  bounce:
+    "radial-gradient(46% 42% at 88% 34%, color-mix(in oklab, var(--color-purple-bright) 20%, transparent), transparent 70%)",
+  /* Haze low in the frame — the drifting smoke a dark studio set is lit through. */
+  haze: "radial-gradient(120% 45% at 50% 96%, color-mix(in oklab, var(--color-purple) 26%, transparent), transparent 68%)",
+  /* The floor. A horizon low in the frame gives the subject somewhere to stand. */
+  floor:
+    "linear-gradient(to top, color-mix(in oklab, var(--color-void) 88%, transparent) 0%, color-mix(in oklab, var(--color-void) 34%, transparent) 16%, transparent 34%)",
+};
 
 interface ProductMediaProps {
   /** One shot, or a shot per colourway. */
@@ -30,14 +62,13 @@ interface ProductMediaProps {
 /**
  * The single decision point for what a product looks like.
  *
- * Where real photography exists at a resolution the pane can carry, it is
- * used. Where it does not, we render the technical flat rather than
- * upscaling a 480px packshot or generating a substitute — a product image
- * that subtly differs from what ships is worse than an honest drawing, both
- * for the customer and for the return rate.
+ * Where real photography exists it is used. Where it does not, we render the
+ * technical flat rather than upscaling a 240px packshot or generating a
+ * substitute — a product image that subtly differs from what ships is worse
+ * than an honest drawing, both for the customer and for the return rate.
  *
- * Photography is front-view only for now, so the detail view falls back to
- * the flat, which is what actually carries construction detail anyway.
+ * Photography is front-view only for now, so the detail view falls back to the
+ * flat, which is what actually carries construction detail anyway.
  */
 export function ProductMedia({
   media,
@@ -59,46 +90,51 @@ export function ProductMedia({
 
   if (shot && view === "front") {
     return (
-      <span className={`relative block size-full overflow-hidden ${className}`}>
-        {/* The garments are cut out on transparency, and most of them are
-            black. On a black pane a black hoodie has nothing to sit against —
-            the silhouette dissolves into the surface. The brand gradient gives
-            the cutout a ground to read against, and which of the three a
-            product gets is derived from its own slug so a card looks the same
-            on every visit and adjacent cards do not land on the same one.
-
-            Held well back. The gradient's job is to separate a black garment
-            from a black page, and that only needs the ground to stop being
-            the same colour as the product — past that it starts competing
-            with the merchandise, which on a shop page is backwards. At 0.5
-            the magenta reads as a lit wall rather than as artwork. */}
-        <Image
-          src={`/media/backdrop/${backdropFor(shot)}.webp`}
-          alt=""
-          aria-hidden
-          fill
-          sizes={sizes}
-          className="object-cover"
-          style={{ opacity: 0.5 }}
-        />
-        {/* Settles the gradient into the page: dark at the base so the garment
-            has weight, and never so bright at the top that a light colourway
-            loses its edge. Eased along with the gradient — two layers pulled
-            down at once would have taken the middle of the pane back to the
-            flat black the gradient exists to break up. */}
+      <span
+        className={`relative block size-full overflow-hidden ${className}`}
+        style={{ backgroundColor: "var(--color-ink)" }}
+      >
         <span
           aria-hidden
           className="absolute inset-0"
+          style={{ background: STUDIO.haze }}
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0"
+          style={{ background: STUDIO.key }}
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0"
+          style={{ background: STUDIO.bounce }}
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0"
+          style={{ background: STUDIO.floor }}
+        />
+
+        {/* The contact shadow. An ellipse under the subject, at the height the
+            floor meets it — without one the cutout hovers, which is the single
+            clearest tell that a product was pasted onto a background rather
+            than photographed on it. scripts/studio.py seats every subject at
+            the same fraction of the frame so this lands correctly on all of
+            them. */}
+        <span
+          aria-hidden
+          className="absolute inset-x-[18%] bottom-[7%] h-[9%]"
           style={{
             background:
-              "linear-gradient(to top, color-mix(in oklab, var(--color-ink) 72%, transparent), color-mix(in oklab, var(--color-ink) 14%, transparent) 55%, color-mix(in oklab, var(--color-ink) 30%, transparent) 100%)",
+              "radial-gradient(50% 50% at 50% 50%, color-mix(in oklab, var(--color-void) 78%, transparent), transparent 72%)",
           }}
         />
+
         <Image
           src={`/media/product/${shot}.webp`}
           alt={`${name} in ${colourName}`}
           width={1400}
-          height={1400}
+          height={1867}
           sizes={sizes}
           priority={priority}
           className="relative size-full object-contain"

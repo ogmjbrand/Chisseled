@@ -1430,8 +1430,13 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: "ch-crop-sweat",
-    name: "CH Crop Sweatshirt",
-    tagline: "The monogram, at full size.",
+    // Named to sit clearly apart from "CH Cropped Sweatshirt" above — same
+    // silhouette, a different graphic treatment (printed full-width shield vs
+    // the embroidered diamond), and until now they read as the same product
+    // typed twice. That collision is exactly the naming problem flagged in
+    // the store audit; this is the fix for it.
+    name: "CH Shield Crop Crewneck",
+    tagline: "The mark, at full size.",
     collection: "statement",
     gender: "women",
     category: "Sweatshirts",
