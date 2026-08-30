@@ -15,9 +15,25 @@ import type { Article, Athlete, Bundle, CollectionSlug, Product, Program } from 
  * whey-protein, detox-tea, posture-corrector, chisseled-sling-bag) carry
  * their price and `compareAt` as read off the live storefront's own listing
  * for that item, rather than a guess. Where the live listing shows a sale,
- * `compareAt` is its pre-sale price — not an invented markdown. Everything
- * else in the catalogue remains illustrative per the note above until
- * checked the same way.
+ * `compareAt` is its pre-sale price — not an invented markdown.
+ *
+ * SIZES. Six products (actively-tee, lifting-gloves, ch-crop-set,
+ * three-piece-set, tech-fleece-set — plus lifting-gloves again, which
+ * appears in both lists) carry the exact size run read off the matching
+ * live listing, in the live listing's own spelling ("2XL", not "XXL"; "3XL",
+ * not "XXXL" — the storefront uses both conventions on different products,
+ * and they are not interchangeable). Each product's own comment names the
+ * live listing it was matched against and the reasoning; two candidate
+ * matches (a men's fitted tracksuit, a men's jogging tracksuit) were found
+ * and rejected because the live listing's gender or components did not
+ * agree with this catalogue's product even though the names were close.
+ *
+ * Everything not named in either list above remains illustrative per the
+ * note at the top of this file, until checked the same way — not blended
+ * toward a universal size run, because the live storefront does not use
+ * one. It runs S–M–L on some products, M–L–XL–XXL on others, L–XL–2XL–3XL
+ * on most menswear, and XL–2XL–3XL–4XL on at least one; unifying those
+ * would itself be inventing data the real storefront does not contain.
  */
 
 const APPAREL_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -191,9 +207,14 @@ export const PRODUCTS: Product[] = [
     price: 8200,
     flat: "crop",
     media: { sand: "ch-crop-set--sand", onyx: "ch-crop-set--onyx" },
-    sizes: APPAREL_SIZES,
+    // Sizes from the live "Women's Active Wear Set" listing: S, M, L only —
+    // the smallest run in the catalogue. Matched on construction (a ribbed
+    // cropped top over a matching short, sold as a set for workouts or
+    // yoga) rather than on name, since the live listing carries no CH branding
+    // in its own title.
+    sizes: ["S", "M", "L"],
     variants: [
-      { colorway: "sand", inStock: ["XS", "S", "M", "L"], low: ["L"] },
+      { colorway: "sand", inStock: ["S", "M", "L"], low: ["L"] },
       { colorway: "onyx", inStock: ["S", "M", "L"], low: [] },
     ],
     activities: ["training", "everyday"],
@@ -345,13 +366,20 @@ export const PRODUCTS: Product[] = [
       onyx: "actively-tee--onyx",
       crimson: "actively-tee--red",
     },
-    sizes: APPAREL_SIZES,
+    // Sizes read off the live storefront's "Men's Active Wear Cali Fit T
+    // Shirt" product page, not the standard XS–XXL run: L, XL, 2XL, 3XL only
+    // — no S or M. The five colourways there (pink, blue, black, green, red)
+    // also match this tee's forest/cobalt/onyx/crimson/blush run closely
+    // enough to treat it as the same product photographed under a different
+    // name, though the listing itself is filed under "Men's" while this
+    // piece ships unisex — noted rather than silently resolved.
+    sizes: ["L", "XL", "2XL", "3XL"],
     variants: [
-      { colorway: "onyx", inStock: ["S", "M", "L", "XL", "XXL"], low: [] },
-      { colorway: "forest", inStock: ["S", "M", "L", "XL"], low: ["S"] },
-      { colorway: "cobalt", inStock: ["M", "L", "XL", "XXL"], low: ["XXL"] },
-      { colorway: "crimson", inStock: ["S", "M", "L", "XL"], low: ["XL"] },
-      { colorway: "blush", inStock: ["XS", "S", "M", "L"], low: ["XS"] },
+      { colorway: "onyx", inStock: ["L", "XL", "2XL", "3XL"], low: [] },
+      { colorway: "forest", inStock: ["L", "XL", "2XL"], low: ["L"] },
+      { colorway: "cobalt", inStock: ["XL", "2XL", "3XL"], low: ["3XL"] },
+      { colorway: "crimson", inStock: ["L", "XL", "2XL"], low: ["2XL"] },
+      { colorway: "blush", inStock: ["L", "XL"], low: ["L"] },
     ],
     activities: ["training", "everyday"],
     fit: "relaxed",
@@ -465,15 +493,22 @@ export const PRODUCTS: Product[] = [
       bone: "tech-fleece-set--bone",
       blush: "tech-fleece-set--blush",
     },
-    sizes: APPAREL_SIZES,
+    // Three near-identical listings on the live storefront — "Sportswear
+    // Tech Tracksuit," "Sportswear Tech Fleece Tracksuit," and a misspelled
+    // "Tech Fleech Tracksuit" — are the duplicate-naming problem the store
+    // audit itself flagged, so which one this piece corresponds to is not
+    // resolvable from the name alone. All three agree on the same size run
+    // regardless: L, XL, 2XL, 3XL, no S or M. That much is safe to copy even
+    // without settling which duplicate is "the" listing.
+    sizes: ["L", "XL", "2XL", "3XL"],
     variants: [
-      { colorway: "heather", inStock: ["S", "M", "L", "XL"], low: ["XL"] },
-      { colorway: "onyx", inStock: ["S", "M", "L", "XL", "XXL"], low: [] },
-      { colorway: "rust", inStock: ["M", "L", "XL"], low: ["M"] },
-      { colorway: "royal", inStock: ["S", "M", "L", "XL"], low: [] },
-      { colorway: "bone", inStock: ["M", "L", "XL"], low: ["XL"] },
-      { colorway: "blush", inStock: ["S", "M", "L"], low: ["S"] },
-      { colorway: "graphite", inStock: ["M", "L", "XL"], low: ["M"] },
+      { colorway: "heather", inStock: ["L", "XL", "2XL"], low: ["2XL"] },
+      { colorway: "onyx", inStock: ["L", "XL", "2XL", "3XL"], low: [] },
+      { colorway: "rust", inStock: ["XL", "2XL"], low: ["XL"] },
+      { colorway: "royal", inStock: ["L", "XL", "2XL"], low: [] },
+      { colorway: "bone", inStock: ["XL", "2XL"], low: ["2XL"] },
+      { colorway: "blush", inStock: ["L", "XL"], low: ["L"] },
+      { colorway: "graphite", inStock: ["XL", "2XL"], low: ["XL"] },
     ],
     activities: ["training", "running", "everyday"],
     fit: "regular",
@@ -996,10 +1031,14 @@ export const PRODUCTS: Product[] = [
     price: 2499,
     flat: "band",
     media: { onyx: "lifting-gloves--onyx", royal: "lifting-gloves--royal" },
-    sizes: ["S", "M", "L", "XL"],
+    // Read off the live "Weight Lifting Gloves Pair" listing, which is
+    // filed under accessory sizing rather than apparel sizing: S, M, XL,
+    // 3XL — no L, no 2XL. That gap is real, not a typo carried over from a
+    // standard run; kept as-is rather than filled in to look tidy.
+    sizes: ["S", "M", "XL", "3XL"],
     variants: [
-      { colorway: "onyx", inStock: ["S", "M", "L", "XL"], low: [] },
-      { colorway: "royal", inStock: ["M", "L", "XL"], low: ["M"] },
+      { colorway: "onyx", inStock: ["S", "M", "XL", "3XL"], low: [] },
+      { colorway: "royal", inStock: ["M", "XL", "3XL"], low: ["M"] },
     ],
     activities: ["lifting", "training"],
     fit: "regular",
@@ -1497,8 +1536,12 @@ export const PRODUCTS: Product[] = [
     price: 10800,
     flat: "leggings",
     media: { cobalt: "three-piece-set--cobalt" },
-    sizes: APPAREL_SIZES,
-    variants: [{ colorway: "cobalt", inStock: ["XS", "S", "M", "L", "XL"], low: ["XL"] }],
+    // Sizes from the live "Women's Seamless Activewear Set" listing: M, L,
+    // XL, XXL — no XS or S. Matched on the combination of "seamless" and a
+    // three-piece bra/legging/layer structure, which both this listing and
+    // that one share.
+    sizes: ["M", "L", "XL", "XXL"],
+    variants: [{ colorway: "cobalt", inStock: ["M", "L", "XL", "XXL"], low: ["XXL"] }],
     activities: ["training", "recovery", "everyday"],
     fit: "compression",
     isNew: true,
