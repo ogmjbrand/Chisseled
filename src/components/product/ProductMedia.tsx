@@ -30,6 +30,16 @@ import type { FlatKey, ColorwayKey } from "@/lib/art";
  * Cost: four gradient layers and one image per pane. No filter, no blend mode,
  * no `will-change` — this site has already lost a GPU process once to
  * per-element effects, and product cards are the most-repeated element there is.
+ *
+ * THE SAME SET LIGHTS THE TECHNICAL FLATS TOO. It did not, originally — the
+ * flat fallback rendered straight onto the card's raw obsidian background,
+ * with nothing behind it. That is invisible for an onyx colourway: the
+ * flat's own darkest fill and the card's background are close enough to the
+ * same near-black that the garment nearly disappears (caught by eye on the
+ * CH Cropped Sweatshirt card, which defaults to onyx). Lighting the flats
+ * with the same four layers fixes the contrast and, as a side effect, is
+ * exactly the "one consistent presentation across photographed and drawn
+ * products" this file already promises for photography alone.
  */
 
 const STUDIO = {
@@ -44,6 +54,18 @@ const STUDIO = {
   floor:
     "linear-gradient(to top, color-mix(in oklab, var(--color-void) 88%, transparent) 0%, color-mix(in oklab, var(--color-void) 34%, transparent) 16%, transparent 34%)",
 };
+
+/** The four lighting layers, shared by the photographed and drawn branches. */
+function StudioLighting() {
+  return (
+    <>
+      <span aria-hidden className="absolute inset-0" style={{ background: STUDIO.haze }} />
+      <span aria-hidden className="absolute inset-0" style={{ background: STUDIO.key }} />
+      <span aria-hidden className="absolute inset-0" style={{ background: STUDIO.bounce }} />
+      <span aria-hidden className="absolute inset-0" style={{ background: STUDIO.floor }} />
+    </>
+  );
+}
 
 interface ProductMediaProps {
   /** One shot, or a shot per colourway. */
@@ -94,26 +116,7 @@ export function ProductMedia({
         className={`relative block size-full overflow-hidden ${className}`}
         style={{ backgroundColor: "var(--color-ink)" }}
       >
-        <span
-          aria-hidden
-          className="absolute inset-0"
-          style={{ background: STUDIO.haze }}
-        />
-        <span
-          aria-hidden
-          className="absolute inset-0"
-          style={{ background: STUDIO.key }}
-        />
-        <span
-          aria-hidden
-          className="absolute inset-0"
-          style={{ background: STUDIO.bounce }}
-        />
-        <span
-          aria-hidden
-          className="absolute inset-0"
-          style={{ background: STUDIO.floor }}
-        />
+        <StudioLighting />
 
         {/* The contact shadow. An ellipse under the subject, at the height the
             floor meets it — without one the cutout hovers, which is the single
@@ -144,14 +147,23 @@ export function ProductMedia({
   }
 
   return (
-    <Flat
-      flat={flat}
-      colorway={colorway}
-      seed={seed}
-      view={view}
-      className={`size-full ${className}`}
-      label={`${name} in ${colourName}, ${view} view — technical drawing`}
-    />
+    <span
+      className={`relative block size-full overflow-hidden ${className}`}
+      style={{ backgroundColor: "var(--color-ink)" }}
+    >
+      <StudioLighting />
+      {/* No separate contact shadow here — the flat's own SVG already draws
+          one (the pedestal ellipse under the garment), so adding another
+          would double it up. */}
+      <Flat
+        flat={flat}
+        colorway={colorway}
+        seed={seed}
+        view={view}
+        className="relative size-full"
+        label={`${name} in ${colourName}, ${view} view — technical drawing`}
+      />
+    </span>
   );
 }
 
