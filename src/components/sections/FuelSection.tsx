@@ -2,7 +2,8 @@ import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { getNutritionProducts } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
-import { Flat, Specimen } from "@/components/primitives/Visual";
+import { Specimen } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
 
 const CATEGORIES = [
@@ -98,10 +99,14 @@ export function FuelSection() {
                   className="block overflow-hidden bg-graphite/60"
                   aria-label={p.name}
                 >
-                  <Flat
+                  <ProductMedia
+                    media={p.media}
                     flat={p.flat}
                     colorway={p.variants[0].colorway}
                     seed={`fuelcard-${p.slug}`}
+                    view="front"
+                    name={p.name}
+                    sizes="9rem"
                     className="size-full transition-transform duration-[1200ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
                   />
                 </Link>

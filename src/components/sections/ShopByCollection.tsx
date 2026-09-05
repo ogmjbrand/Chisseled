@@ -1,8 +1,26 @@
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
-import { COLLECTIONS, getProductsByCollection } from "@/lib/catalog";
-import { Sculpture } from "@/components/primitives/Visual";
+import { COLLECTIONS, getProduct, getProductsByCollection } from "@/lib/catalog";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark } from "@/components/primitives/Marks";
+import type { ColorwayKey } from "@/lib/art";
+
+/**
+ * Each panel used to carry a procedural `Sculpture` — an invented figure
+ * standing in for a photograph nobody has. Every collection below now has at
+ * least one real, photographed flagship piece, so each panel points at one
+ * rather than inventing a body to fill the frame. Picked by hand rather than
+ * "first product in the collection": the point of a flagship is that it's
+ * the one thing that actually represents the shelf.
+ */
+const COLLECTION_HERO: Record<string, { slug: string; colorway: ColorwayKey }> = {
+  scarred: { slug: "scarred-hoodie", colorway: "onyx" },
+  monogram: { slug: "ch-crop-set", colorway: "onyx" },
+  camo: { slug: "camo-hoodie-set", colorway: "deer" },
+  tracksuits: { slug: "tech-fleece-set", colorway: "onyx" },
+  statement: { slug: "chisel-tee", colorway: "cobalt" },
+  essentials: { slug: "fitted-training-set", colorway: "onyx" },
+};
 
 /**
  * Not category cards — portals. Each panel is a full editorial composition
@@ -33,6 +51,8 @@ export function ShopByCollection() {
           // The signature collection anchors the mosaic; five panels then fill
           // a 4x2 grid exactly instead of orphaning the fifth on its own row.
           const feature = i === 0;
+          const hero = COLLECTION_HERO[collection.slug];
+          const heroProduct = hero ? getProduct(hero.slug) : undefined;
 
           return (
             <Link
@@ -48,14 +68,18 @@ export function ShopByCollection() {
               data-reveal
               style={{ "--reveal-delay": `${i * 90}ms` } as React.CSSProperties}
             >
-              <Sculpture
-                seed={`collection-${collection.slug}`}
-                tone={collection.tone}
-                pose={collection.pose}
-                anchor={collection.anchor}
-                scale={0.92}
-                className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.07]"
-              />
+              {heroProduct ? (
+                <ProductMedia
+                  media={heroProduct.media}
+                  flat={heroProduct.flat}
+                  colorway={hero.colorway}
+                  seed={`collection-${collection.slug}`}
+                  view="front"
+                  name={heroProduct.name}
+                  sizes="(min-width: 1024px) 33vw, 100vw"
+                  className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.07]"
+                />
+              ) : null}
 
               {/* Emerald wash on hover — the portal opening */}
               <span

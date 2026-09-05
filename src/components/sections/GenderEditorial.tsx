@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { getProductsByGender } from "@/lib/catalog";
-import { Sculpture, Flat } from "@/components/primitives/Visual";
+import { getProduct, getProductsByGender } from "@/lib/catalog";
+import { Flat } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark } from "@/components/primitives/Marks";
-import type { Tone } from "@/lib/art";
+import type { ColorwayKey, Tone } from "@/lib/art";
 
 interface GenderEditorialProps {
   gender: "women" | "men";
@@ -16,6 +17,28 @@ interface GenderEditorialProps {
 }
 
 /**
+ * The campaign pane used to be a procedural figure (`Sculpture`) — an
+ * invented silhouette standing in for a model neither section has a real
+ * photograph of. It was replaced with a real photographed garment once the
+ * catalogue had enough studio photography to support it: an invented body is
+ * exactly the kind of thing this build's own rules forbid everywhere else,
+ * and there was no reason the homepage should be the exception.
+ *
+ * `tone` and `pose` are no longer consumed here — they drove the Sculpture's
+ * colour grade and stance, which a fixed photograph doesn't have. Left in the
+ * props so page.tsx does not need touching for what is a rendering change,
+ * not an API one.
+ */
+const CAMPAIGN_HERO: Record<"women" | "men", { slug: string; colorway: ColorwayKey }> = {
+  // The strappy bra's real photography is its back view — the piece is named
+  // for its back — which happens to be genuine editorial drama rather than a
+  // flat product shot.
+  women: { slug: "strappy-bra", colorway: "onyx" },
+  // The signature piece, real photography, on the site since day one.
+  men: { slug: "scarred-hoodie", colorway: "onyx" },
+};
+
+/**
  * The women's and men's sections use the same component deliberately: an
  * equally premium treatment for both is a design requirement, not a
  * coincidence, and sharing the implementation is how it stays that way.
@@ -25,12 +48,12 @@ export function GenderEditorial({
   index,
   headline,
   body,
-  tone,
-  pose,
   flip = false,
 }: GenderEditorialProps) {
   const products = getProductsByGender(gender).slice(0, 4);
   const label = gender === "women" ? "Women" : "Men";
+  const hero = CAMPAIGN_HERO[gender];
+  const heroProduct = getProduct(hero.slug);
 
   return (
     <section
@@ -46,14 +69,18 @@ export function GenderEditorial({
           ].join(" ")}
           data-reveal-media
         >
-          <Sculpture
-            seed={`editorial-${gender}`}
-            tone={tone}
-            pose={pose}
-            anchor={flip ? 0.38 : 0.6}
-            scale={1.04}
-            className="size-full"
-          />
+          {heroProduct ? (
+            <ProductMedia
+              media={heroProduct.media}
+              flat={heroProduct.flat}
+              colorway={hero.colorway}
+              seed={`editorial-${gender}`}
+              view="front"
+              name={heroProduct.name}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="size-full"
+            />
+          ) : null}
 
           {/* Floating flat — a product lifted out of the campaign */}
           <div className="absolute bottom-6 left-6 z-[3] w-28 border border-bone/12 bg-ink/70 p-2 backdrop-blur-md sm:w-32">

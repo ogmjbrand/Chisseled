@@ -43,7 +43,7 @@ export default function HomePage() {
         gender="women"
         index="04"
         headline="Power looks good on you."
-        body="Designed on one block, so the Axis, the Meridian and the Shift line up at every seam. Compression that holds without squeezing, and opacity guaranteed at depth — checked under direct light before any colourway ships."
+        body="A square neckline that sits flat overhead, a strap cage that spreads the load instead of hanging it off two lines, and a wide underband that actually carries the support. Compression that holds without squeezing — checked under direct light before any colourway ships."
         tone="apparel"
         pose="front"
       />

@@ -52,12 +52,50 @@ export function useRevealObserver() {
       { rootMargin: "0px 0px -12% 0px", threshold: 0.08 },
     );
 
+    // Defensive fallback: IntersectionObserver is not guaranteed to keep
+    // delivering entries for the life of a page. Reproduced on this site —
+    // on the homepage's gendered-performance panels and independently on
+    // /about, both pre-dating this fallback — the shared observer fires its
+    // one initial (correctly off-screen) callback for a `data-reveal-media`
+    // panel and then never calls back again, even as the panel demonstrably
+    // scrolls through the viewport afterward and *other* elements sharing
+    // the exact same observer instance keep receiving callbacks throughout.
+    // The cause was not pinned down (rootMargin/threshold interaction with
+    // `aspect-ratio` sizing was the closest lead), and it should not need to
+    // be: whatever the browser-internal reason, a real photograph disappears
+    // behind `clip-path: inset(0 0 100% 0)` forever, which is a
+    // production-breaking failure mode for a bug in a third-party API this
+    // code does not control. So each element gets a lightweight poll,
+    // starting after the observer would normally have had its chance, that
+    // checks the element's own geometry directly and activates it once
+    // genuinely on screen — the animation still plays, it just no longer
+    // depends on the observer's callback actually arriving.
+    const rectSaysVisible = (el: Element) => {
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight * 0.88 && r.bottom > 0;
+    };
+
     const seen = new WeakSet<Element>();
     const scan = () => {
       document.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
         if (seen.has(el) || el.getAttribute("data-reveal") === "in") return;
         seen.add(el);
         observer.observe(el);
+
+        const poll = () => {
+          if (!el.isConnected) return;
+          const done = ["data-reveal", "data-reveal-line", "data-reveal-media"].every(
+            (attr) => !el.hasAttribute(attr) || el.getAttribute(attr) === "in",
+          );
+          if (done) return;
+          if (rectSaysVisible(el)) {
+            activate(el);
+            observer.unobserve(el);
+            return;
+          }
+          window.setTimeout(poll, 400);
+        };
+        window.setTimeout(poll, 700);
       });
     };
 
