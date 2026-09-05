@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { usePrefersReducedMotion, useScrollProgress } from "@/lib/motion";
-import { Flat, Sculpture } from "@/components/primitives/Visual";
+import { Flat } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
+import { getProduct } from "@/lib/catalog";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { Tone } from "@/lib/art";
 import type { FlatKey, ColorwayKey } from "@/lib/art";
@@ -33,6 +35,8 @@ interface Stage {
   pose: "front" | "back";
   flat: FlatKey;
   colorway: ColorwayKey;
+  /** The real product this stage's figure layer now shows. */
+  productSlug: string;
   /** The environment colour this stage settles into. */
   bg: string;
 }
@@ -48,6 +52,7 @@ const STAGES: Stage[] = [
     pose: "front",
     flat: "leggings",
     colorway: "onyx",
+    productSlug: "fitted-training-set",
     bg: "#07070a",
   },
   {
@@ -59,7 +64,8 @@ const STAGES: Stage[] = [
     tone: "train",
     pose: "back",
     flat: "compressionTop",
-    colorway: "purple",
+    colorway: "royal",
+    productSlug: "compression-tee",
     bg: "#04120d",
   },
   {
@@ -71,7 +77,8 @@ const STAGES: Stage[] = [
     tone: "fuel",
     pose: "front",
     flat: "tub",
-    colorway: "gold",
+    colorway: "onyx",
+    productSlug: "whey-protein",
     bg: "#0c0a05",
   },
 ];
@@ -146,9 +153,20 @@ export function Sequence() {
           transition: "background-color 900ms var(--ease-brand)",
         }}
       >
-        {/* --- Figure layers, cross-fading --- */}
+        {/* --- Figure layers, cross-fading ---
+            Each stage used to render a procedural `Sculpture` — an invented
+            silhouette in the stage's tone. Replaced with the real
+            photographed product each stage is actually about, once all
+            three had real studio photography to show instead: fitted-set
+            for apparel, the compression tee for training, the whey tub for
+            nutrition. The three stages share one cross-fade mechanism, so
+            they moved to real photography together rather than one at a
+            time — a real photo cross-fading against an invented figure
+            would read as two different systems fighting for the same
+            frame. */}
         {STAGES.map((stage, i) => {
           const w = stageWeight(p, i, STAGES.length);
+          const product = getProduct(stage.productSlug);
           return (
             <div
               key={stage.id}
@@ -163,14 +181,19 @@ export function Sequence() {
                 willChange: w > 0.01 ? "opacity, transform" : "auto",
               }}
             >
-              <Sculpture
-                seed={`seq-${stage.id}`}
-                tone={stage.tone}
-                pose={stage.pose}
-                anchor={0.62}
-                scale={1.05}
-                className="size-full"
-              />
+              {product ? (
+                <ProductMedia
+                  media={product.media}
+                  flat={product.flat}
+                  colorway={stage.colorway}
+                  seed={`seq-${stage.id}`}
+                  view="front"
+                  name={product.name}
+                  sizes="100vw"
+                  priority={i === 0}
+                  className="size-full"
+                />
+              ) : null}
             </div>
           );
         })}
@@ -321,20 +344,26 @@ function SequenceStatic() {
         </h2>
 
         <div className="grid gap-3 lg:grid-cols-3">
-          {STAGES.map((stage) => (
+          {STAGES.map((stage) => {
+            const product = getProduct(stage.productSlug);
+            return (
             <article
               key={stage.id}
               className="relative grain vignette flex min-h-[30rem] flex-col justify-end overflow-hidden bg-carbon p-8"
               style={{ backgroundColor: stage.bg }}
             >
-              <Sculpture
-                seed={`seq-${stage.id}`}
-                tone={stage.tone}
-                pose={stage.pose}
-                anchor={0.55}
-                scale={0.9}
-                className="absolute inset-0 size-full"
-              />
+              {product ? (
+                <ProductMedia
+                  media={product.media}
+                  flat={product.flat}
+                  colorway={stage.colorway}
+                  seed={`seq-${stage.id}`}
+                  view="front"
+                  name={product.name}
+                  sizes="(min-width: 1024px) 33vw, 100vw"
+                  className="absolute inset-0 size-full"
+                />
+              ) : null}
               <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
               <div className="relative z-[3]">
@@ -343,7 +372,8 @@ function SequenceStatic() {
                 <p className="text-body-sm leading-relaxed text-fog">{stage.body}</p>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-14 border-t border-bone/10 pt-14">
