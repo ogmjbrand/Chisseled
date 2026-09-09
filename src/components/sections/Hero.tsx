@@ -69,7 +69,7 @@ const SLIDES: Slide[] = [
   },
   {
     slug: "tech-fleece-set",
-    cutout: "hoodie-set-gray",
+    cutout: "tech-fleece-set--heather",
     script: "The move",
     word: "TECH",
     accent: "#3b0f7a",
