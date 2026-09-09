@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { PRODUCTS, getProduct, relatedProducts } from "@/lib/catalog";
+import { getEnrichedProduct } from "@/lib/shopify/catalog";
 import { ProductDetail, ReviewList } from "@/components/product/ProductDetail";
 import { ProductCard } from "@/components/product/ProductCard";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
@@ -24,7 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  if (!getProduct(slug)) notFound();
+  const product = await getEnrichedProduct(slug);
   if (!product) notFound();
 
   const related = relatedProducts(product);

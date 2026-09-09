@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { COLORWAYS } from "@/lib/art";
-import { getBundle, getProduct, getProducts } from "@/lib/catalog";
+import { getProduct, getProducts } from "@/lib/catalog";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useEscape, useFocusTrap, useScrollLock } from "@/lib/motion";
@@ -21,7 +21,7 @@ import {
 } from "@/components/primitives/Marks";
 
 export function CartDrawer() {
-  const { cartOpen, setCartOpen, lines, remove, setQty, subtotal, currency, add } = useStore();
+  const { cartOpen, setCartOpen, lines, remove, setQty, subtotal, currency, add, cartError } = useStore();
 
   useScrollLock(cartOpen);
   useEscape(cartOpen, () => setCartOpen(false));
@@ -93,6 +93,19 @@ export function CartDrawer() {
           </button>
         </div>
 
+        {/* --- Cart error (visible, not just announced) --- */}
+        {cartError && lines.length > 0 && (
+          <div
+            className="shrink-0 border-b border-bone/10 px-6 py-3 text-caption"
+            style={{
+              background: "color-mix(in oklab, var(--color-signal-out) 14%, transparent)",
+              color: "var(--color-signal-out)",
+            }}
+          >
+            {cartError}
+          </div>
+        )}
+
         {/* --- Free shipping progress --- */}
         {lines.length > 0 && (
           <div className="shrink-0 border-b border-bone/10 px-6 py-4">
@@ -131,14 +144,16 @@ export function CartDrawer() {
         {/* --- Lines --- */}
         <div className="flex-1 overflow-y-auto overscroll-contain">
           {lines.length === 0 ? (
-            <EmptyBag onClose={() => setCartOpen(false)} />
+            <EmptyBag onClose={() => setCartOpen(false)} error={cartError} />
           ) : (
             <ul className="divide-y divide-bone/10">
               {lines.map((line) => {
-                const bundle = line.bundleSlug ? getBundle(line.bundleSlug) : undefined;
                 const product = getProduct(line.slug);
-                const name = bundle?.name ?? product?.name ?? "Item";
-                const unit = bundle?.price ?? product?.price ?? 0;
+                const name = product?.name ?? "Item";
+                // Shopify's own live line total — never re-derived from the
+                // static catalogue price, so it's correct even when the two
+                // have drifted.
+                const lineTotal = line.priceCents;
 
                 return (
                   <li key={line.id} className="flex gap-4 p-5">
@@ -161,20 +176,18 @@ export function CartDrawer() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <Link
-                            href={bundle ? `/bundles#${bundle.slug}` : `/product/${line.slug}`}
+                            href={`/product/${line.slug}`}
                             onClick={() => setCartOpen(false)}
                             className="block truncate text-body-sm font-medium text-bone hover:text-purple-bright"
                           >
                             {name}
                           </Link>
                           <p className="mt-1 font-mono text-micro uppercase tracking-[0.12em] text-smoke">
-                            {bundle
-                              ? `${bundle.items.length} pieces`
-                              : `${COLORWAYS[line.colorway]?.name ?? line.colorway} · ${line.size}`}
+                            {COLORWAYS[line.colorway]?.name ?? line.colorway} · {line.size}
                           </p>
                         </div>
                         <span className="numeric shrink-0 text-body-sm text-bone">
-                          {formatPrice(unit * line.qty, currency)}
+                          {formatPrice(lineTotal, currency)}
                         </span>
                       </div>
 
@@ -298,13 +311,18 @@ export function CartDrawer() {
   );
 }
 
-function EmptyBag({ onClose }: { onClose: () => void }) {
+function EmptyBag({ onClose, error }: { onClose: () => void; error?: string | null }) {
   return (
     <div className="flex h-full flex-col items-center justify-center px-8 text-center">
       <BagMark className="mb-5 size-9 text-iron" />
-      <p className="display-sm mb-2 text-bone">Your bag is empty.</p>
-      <p className="mb-7 max-w-[22rem] text-body-sm text-smoke">
-        Start with the pieces the studio builds everything else around.
+      <p className="display-sm mb-2 text-bone">
+        {error ? "Couldn't add that." : "Your bag is empty."}
+      </p>
+      <p
+        className={`mb-7 max-w-[22rem] text-body-sm ${error ? "" : "text-smoke"}`}
+        style={error ? { color: "var(--color-signal-out)" } : undefined}
+      >
+        {error ?? "Start with the pieces the studio builds everything else around."}
       </p>
       <div className="flex w-full max-w-[18rem] flex-col gap-2.5">
         <Link href="/shop" onClick={onClose} className="btn btn-primary btn-block">

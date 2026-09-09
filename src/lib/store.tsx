@@ -12,8 +12,14 @@ import {
 } from "react";
 import { getProduct } from "@/lib/catalog";
 import type { CurrencyCode } from "@/lib/format";
-import { BUNDLES } from "@/lib/catalog";
 import type { ColorwayKey } from "@/lib/art";
+import {
+  addLineToCartAction,
+  getCartSummaryAction,
+  removeLineAction,
+  updateLineQtyAction,
+  type CartSummary,
+} from "@/lib/shopify/actions";
 
 /* ==================================================================
    TYPES
@@ -26,8 +32,8 @@ export interface CartLine {
   colorway: ColorwayKey;
   size: string;
   qty: number;
-  /** Bundles enter the cart as a single line with a fixed price. */
-  bundleSlug?: string;
+  /** Live unit-inclusive line total in cents, as priced by Shopify. */
+  priceCents: number;
 }
 
 interface State {
@@ -35,16 +41,18 @@ interface State {
   wishlist: string[];
   recent: string[];
   currency: CurrencyCode;
-  /** Hydrated from localStorage after mount — gates persistence writes. */
+  /** Hydrated from Shopify (cart) / localStorage (wishlist, recent, currency) after mount. */
   ready: boolean;
+  checkoutUrl: string | null;
+  subtotalCents: number;
+  cartLoading: boolean;
+  cartError: string | null;
 }
 
 type Action =
-  | { type: "hydrate"; state: Partial<State> }
-  | { type: "add"; line: Omit<CartLine, "id">; }
-  | { type: "remove"; id: string }
-  | { type: "qty"; id: string; qty: number }
-  | { type: "clear" }
+  | { type: "hydratePreferences"; state: Partial<Pick<State, "wishlist" | "recent" | "currency">> }
+  | { type: "cart"; summary: CartSummary }
+  | { type: "cartLoading" }
   | { type: "wishlist"; slug: string }
   | { type: "viewed"; slug: string }
   | { type: "currency"; currency: CurrencyCode };
@@ -55,46 +63,37 @@ const INITIAL: State = {
   recent: [],
   currency: "USD",
   ready: false,
+  checkoutUrl: null,
+  subtotalCents: 0,
+  cartLoading: false,
+  cartError: null,
 };
-
-const lineId = (l: Omit<CartLine, "id">) =>
-  l.bundleSlug ? `bundle:${l.bundleSlug}` : `${l.slug}:${l.colorway}:${l.size}`;
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case "hydrate":
-      return { ...state, ...action.state, ready: true };
+    case "hydratePreferences":
+      return { ...state, ...action.state };
 
-    case "add": {
-      const id = lineId(action.line);
-      const existing = state.lines.find((l) => l.id === id);
-      if (existing) {
-        return {
-          ...state,
-          lines: state.lines.map((l) =>
-            l.id === id ? { ...l, qty: Math.min(10, l.qty + action.line.qty) } : l,
-          ),
-        };
-      }
-      return { ...state, lines: [...state.lines, { ...action.line, id }] };
-    }
-
-    case "remove":
-      return { ...state, lines: state.lines.filter((l) => l.id !== action.id) };
-
-    case "qty":
+    case "cart":
       return {
         ...state,
-        lines:
-          action.qty <= 0
-            ? state.lines.filter((l) => l.id !== action.id)
-            : state.lines.map((l) =>
-                l.id === action.id ? { ...l, qty: Math.min(10, action.qty) } : l,
-              ),
+        lines: action.summary.lines.map(({ id, slug, colorway, size, qty, priceCents }) => ({
+          id,
+          slug,
+          colorway,
+          size,
+          qty,
+          priceCents,
+        })),
+        checkoutUrl: action.summary.checkoutUrl,
+        subtotalCents: action.summary.subtotalCents,
+        cartLoading: false,
+        cartError: action.summary.error,
+        ready: true,
       };
 
-    case "clear":
-      return { ...state, lines: [] };
+    case "cartLoading":
+      return { ...state, cartLoading: true };
 
     case "wishlist":
       return {
@@ -123,15 +122,17 @@ function reducer(state: State, action: Action): State {
    ================================================================== */
 
 interface StoreValue extends State {
-  add: (line: Omit<CartLine, "id">) => void;
-  remove: (id: string) => void;
-  setQty: (id: string, qty: number) => void;
-  clear: () => void;
+  add: (line: { slug: string; colorway: ColorwayKey; size: string; qty: number }) => Promise<void>;
+  /** Adds every item in a bundle as its own real Shopify line — Shopify has no native "bundle" line item. */
+  addBundle: (items: string[]) => Promise<void>;
+  remove: (id: string) => Promise<void>;
+  setQty: (id: string, qty: number) => Promise<void>;
   toggleWishlist: (slug: string) => void;
   markViewed: (slug: string) => void;
   setCurrency: (c: CurrencyCode) => void;
 
   count: number;
+  /** Live Shopify subtotal in cents. */
   subtotal: number;
 
   cartOpen: boolean;
@@ -145,7 +146,14 @@ interface StoreValue extends State {
 
 const StoreContext = createContext<StoreValue | null>(null);
 
-const KEY = "chisseled.store.v1";
+const PREFS_KEY = "chisseled.prefs.v1";
+
+/** `id` is always `slug:colorway:size` — see `lineId` below; none of those three segments ever contain a colon. */
+function parseLineId(id: string): { slug: string; colorway: ColorwayKey; size: string } | null {
+  const [slug, colorway, size] = id.split(":");
+  if (!slug || !colorway || !size) return null;
+  return { slug, colorway: colorway as ColorwayKey, size };
+}
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL);
@@ -153,44 +161,85 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("");
 
-  // Hydrate after mount so the server render and the first client render match.
+  // Cart: hydrate from the live Shopify cart (server-side cookie-bound).
+  useEffect(() => {
+    getCartSummaryAction()
+      .then((summary) => dispatch({ type: "cart", summary }))
+      .catch(() =>
+        dispatch({
+          type: "cart",
+          summary: { lines: [], subtotalCents: 0, totalCents: 0, checkoutUrl: null, ready: true, error: null },
+        }),
+      );
+  }, []);
+
+  // Preferences (wishlist, recently viewed, display currency) stay local —
+  // Shopify has no concept of any of these for a guest session.
   useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(KEY);
-      dispatch({ type: "hydrate", state: raw ? JSON.parse(raw) : {} });
+      const raw = window.localStorage.getItem(PREFS_KEY);
+      if (raw) dispatch({ type: "hydratePreferences", state: JSON.parse(raw) });
     } catch {
       // Private mode, disabled storage, or corrupt JSON — start clean.
-      dispatch({ type: "hydrate", state: {} });
     }
   }, []);
 
   useEffect(() => {
     if (!state.ready) return;
     try {
-      const { lines, wishlist, recent, currency } = state;
-      window.localStorage.setItem(KEY, JSON.stringify({ lines, wishlist, recent, currency }));
+      const { wishlist, recent, currency } = state;
+      window.localStorage.setItem(PREFS_KEY, JSON.stringify({ wishlist, recent, currency }));
     } catch {
       // Storage unavailable — the session still works, it just won't persist.
     }
   }, [state]);
 
-  const add = useCallback((line: Omit<CartLine, "id">) => {
-    dispatch({ type: "add", line });
+  const add = useCallback(async (line: { slug: string; colorway: ColorwayKey; size: string; qty: number }) => {
+    dispatch({ type: "cartLoading" });
     setCartOpen(true);
-    const p = getProduct(line.slug);
-    setAnnouncement(`${p?.name ?? "Item"} added to bag.`);
+    const summary = await addLineToCartAction(line);
+    dispatch({ type: "cart", summary });
+    if (summary.error) {
+      setAnnouncement(summary.error);
+    } else {
+      const p = getProduct(line.slug);
+      setAnnouncement(`${p?.name ?? "Item"} added to bag.`);
+    }
   }, []);
 
-  const remove = useCallback((id: string) => {
-    dispatch({ type: "remove", id });
-    setAnnouncement("Item removed from bag.");
+  const addBundle = useCallback(
+    async (items: string[]) => {
+      for (const slug of items) {
+        const p = getProduct(slug);
+        if (!p) continue;
+        const size = p.variants[0]?.inStock[0] ?? p.sizes[0];
+        if (!size) continue;
+        // Sequential, not parallel: each call reads-then-writes the same
+        // Shopify cart, and concurrent writes to one cart can race.
+        // eslint-disable-next-line no-await-in-loop
+        await add({ slug: p.slug, colorway: p.variants[0].colorway, size, qty: 1 });
+      }
+    },
+    [add],
+  );
+
+  const remove = useCallback(async (id: string) => {
+    const parsed = parseLineId(id);
+    if (!parsed) return;
+    dispatch({ type: "cartLoading" });
+    const summary = await removeLineAction(parsed);
+    dispatch({ type: "cart", summary });
+    setAnnouncement(summary.error ?? "Item removed from bag.");
   }, []);
 
-  const setQty = useCallback((id: string, qty: number) => {
-    dispatch({ type: "qty", id, qty });
+  const setQty = useCallback(async (id: string, qty: number) => {
+    const parsed = parseLineId(id);
+    if (!parsed) return;
+    dispatch({ type: "cartLoading" });
+    const summary = await updateLineQtyAction({ ...parsed, qty });
+    dispatch({ type: "cart", summary });
+    if (summary.error) setAnnouncement(summary.error);
   }, []);
-
-  const clear = useCallback(() => dispatch({ type: "clear" }), []);
 
   const toggleWishlist = useCallback((slug: string) => {
     dispatch({ type: "wishlist", slug });
@@ -204,31 +253,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "currency", currency });
   }, []);
 
-  const count = useMemo(
-    () => state.lines.reduce((n, l) => n + l.qty, 0),
-    [state.lines],
-  );
-
-  const subtotal = useMemo(
-    () =>
-      state.lines.reduce((sum, l) => {
-        if (l.bundleSlug) return sum + (BUNDLE_PRICES[l.bundleSlug] ?? 0) * l.qty;
-        return sum + (getProduct(l.slug)?.price ?? 0) * l.qty;
-      }, 0),
-    [state.lines],
-  );
+  const count = useMemo(() => state.lines.reduce((n, l) => n + l.qty, 0), [state.lines]);
 
   const value: StoreValue = {
     ...state,
     add,
+    addBundle,
     remove,
     setQty,
-    clear,
     toggleWishlist,
     markViewed,
     setCurrency,
     count,
-    subtotal,
+    subtotal: state.subtotalCents,
     cartOpen,
     setCartOpen,
     searchOpen,
@@ -251,12 +288,3 @@ export function useStore(): StoreValue {
   if (!ctx) throw new Error("useStore must be used inside StoreProvider");
   return ctx;
 }
-
-/**
- * Derived from the catalogue rather than duplicated. The previous hardcoded
- * table had drifted: two of its four slugs no longer existed, so those lines
- * priced at zero, and the values were still in naira.
- */
-const BUNDLE_PRICES: Record<string, number> = Object.fromEntries(
-  BUNDLES.map((b) => [b.slug, b.price]),
-);

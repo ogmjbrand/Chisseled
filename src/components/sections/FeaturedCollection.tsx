@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
-import { getFeatured } from "@/lib/catalog";
+import { getEnrichedFeatured } from "@/lib/shopify/catalog";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ArrowMark } from "@/components/primitives/Marks";
 
-export function FeaturedCollection() {
-  const products = getFeatured();
+export async function FeaturedCollection() {
+  const products = await getEnrichedFeatured();
 
   return (
     <section

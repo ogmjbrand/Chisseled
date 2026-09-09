@@ -9,7 +9,7 @@ import { Flat } from "@/components/primitives/Visual";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
 
 export function Bundles({ heading = true }: { heading?: boolean }) {
-  const { add, currency } = useStore();
+  const { addBundle, currency } = useStore();
 
   return (
     <section
@@ -116,15 +116,7 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      add({
-                        slug: bundle.items[0],
-                        bundleSlug: bundle.slug,
-                        colorway: "onyx",
-                        size: "Bundle",
-                        qty: 1,
-                      })
-                    }
+                    onClick={() => addBundle(bundle.items)}
                     className={complete ? "btn btn-primary btn-block" : "btn btn-ghost btn-block"}
                   >
                     Add bundle to bag

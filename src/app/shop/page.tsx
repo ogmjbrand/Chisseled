@@ -1,4 +1,4 @@
-import { getProducts } from "@/lib/catalog";
+import { getEnrichedProducts } from "@/lib/shopify/catalog";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { JsonLd } from "@/components/primitives/JsonLd";
@@ -11,8 +11,8 @@ export const metadata = pageMetadata({
   path: "/shop",
 });
 
-export default function ShopPage() {
-  const products = getProducts();
+export default async function ShopPage() {
+  const products = await getEnrichedProducts();
 
   return (
     <>

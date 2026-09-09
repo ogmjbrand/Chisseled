@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { COLLECTIONS, getProductsByCollection, getCollection } from "@/lib/catalog";
+import { COLLECTIONS, getCollection } from "@/lib/catalog";
+import { getEnrichedProductsByCollection } from "@/lib/shopify/catalog";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { JsonLd } from "@/components/primitives/JsonLd";
@@ -39,7 +40,7 @@ export default async function CollectionPage({
   const collection = getCollection(slug);
   if (!collection) notFound();
 
-  const products = getProductsByCollection(collection.slug as CollectionSlug);
+  const products = await getEnrichedProductsByCollection(collection.slug as CollectionSlug);
 
   return (
     <>
