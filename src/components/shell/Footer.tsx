@@ -53,7 +53,7 @@ export function Footer() {
         <div className="flex items-center gap-3">
           <BrandMark className="h-6 w-auto" />
           <p className="font-mono text-micro uppercase tracking-[0.18em] text-ash">
-            © {new Date().getFullYear()} Chisseled ·{" "}
+            © {new Date().getFullYear()} Chisseled Inc ·{" "}
             <span className="text-smoke">Built different.</span>
           </p>
         </div>

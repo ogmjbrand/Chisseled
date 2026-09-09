@@ -3,7 +3,7 @@ import type { Article, Product } from "@/lib/types";
 
 export const SITE = {
   name: "CHISSELED",
-  legalName: "CHISSELED",
+  legalName: "Chisseled Inc",
   tagline: "Look Chisseled. Move Chisseled. Live Chisseled.",
   description:
     "Premium performance apparel, training, nutrition and essentials engineered for people committed to becoming more.",
