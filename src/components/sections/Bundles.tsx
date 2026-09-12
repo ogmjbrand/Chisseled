@@ -5,7 +5,7 @@ import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { BUNDLES, getProduct } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
-import { Flat } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
 
 export function Bundles({ heading = true }: { heading?: boolean }) {
@@ -71,15 +71,18 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
                 <p className="mb-5 text-body-sm font-medium text-purple-bright">{bundle.promise}</p>
                 <p className="mb-7 text-body-sm leading-relaxed text-smoke">{bundle.description}</p>
 
-                {/* The pieces, as flats */}
+                {/* The pieces */}
                 <ul className="mb-7 flex flex-wrap gap-1.5">
                   {items.map((p) =>
                     p ? (
                       <li key={p.slug} className="size-14 overflow-hidden bg-graphite" title={p.name}>
-                        <Flat
+                        <ProductMedia
+                          media={p.media}
                           flat={p.flat}
                           colorway={p.variants[0].colorway}
                           seed={`bundle-${bundle.slug}-${p.slug}`}
+                          view="front"
+                          name={p.name}
                           className="size-full"
                         />
                       </li>
