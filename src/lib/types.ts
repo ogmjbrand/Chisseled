@@ -99,6 +99,15 @@ export interface Product {
   };
   isNew?: boolean;
   isMemberOnly?: boolean;
+  shopifyOptions?: ShopifyProductOptionView[];
+  shopifyVariants?: ShopifyVariantView[];
+  shopifyImages?: {
+    url: string;
+    altText: string | null;
+    width: number | null;
+    height: number | null;
+  }[];
+
 }
 
 export interface Bundle {
@@ -155,4 +164,22 @@ export interface Article {
   author: string;
   tone: Tone;
   body: string[];
+}
+
+export interface ShopifyProductOptionView {
+  name: string;
+  values: string[];
+}
+
+export interface ShopifyVariantView {
+  id: string;
+  title: string;
+  availableForSale: boolean;
+  quantityAvailable: number | null;
+  selectedOptions: {
+    name: string;
+    value: string;
+  }[];
+  priceCents: number;
+  compareAtCents?: number;
 }

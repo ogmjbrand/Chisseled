@@ -1,36 +1,69 @@
-import { notFound } from "next/navigation";
-import { PRODUCTS, getProduct, relatedProducts } from "@/lib/catalog";
-import { getEnrichedProduct } from "@/lib/shopify/catalog";
+﻿import { notFound } from "next/navigation";
+import { getEnrichedProduct, getEnrichedProducts } from "@/lib/shopify/catalog";
 import { ProductDetail, ReviewList } from "@/components/product/ProductDetail";
 import { ProductCard } from "@/components/product/ProductCard";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata, productSchema } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const products = await getEnrichedProducts();
+
+  return products.map((product) => ({
+    slug: product.slug,
+  }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
-  const product = getProduct(slug);
-  if (!product) return pageMetadata({ title: "Not found", description: "", path: "/shop" });
+  const product = await getEnrichedProduct(slug);
+
+  if (!product) {
+    return pageMetadata({
+      title: "Not found",
+      description: "",
+      path: "/shop",
+    });
+  }
 
   return pageMetadata({
     title: product.name,
-    description: `${product.tagline} ${product.fabric}`,
+    description: product.tagline,
     path: `/product/${product.slug}`,
   });
 }
 
-export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
-  if (!getProduct(slug)) notFound();
-  const product = await getEnrichedProduct(slug);
-  if (!product) notFound();
 
-  const related = relatedProducts(product);
-  const collectionName = product.collection.charAt(0).toUpperCase() + product.collection.slice(1);
+  const product = await getEnrichedProduct(slug);
+
+  if (!product) {
+    notFound();
+  }
+
+  const allProducts = await getEnrichedProducts();
+
+  const related = allProducts
+    .filter((item) => item.slug !== product.slug)
+    .filter(
+      (item) =>
+        item.category === product.category ||
+        item.gender === product.gender,
+    )
+    .slice(0, 4);
+
+  const collectionName =
+    product.collection.charAt(0).toUpperCase() +
+    product.collection.slice(1);
 
   return (
     <>
@@ -40,29 +73,58 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           breadcrumbSchema([
             { name: "Home", path: "/" },
             { name: "Shop", path: "/shop" },
-            { name: collectionName, path: `/shop/${product.collection}` },
-            { name: product.name, path: `/product/${product.slug}` },
+            {
+              name: collectionName,
+              path: `/shop/${product.collection}`,
+            },
+            {
+              name: product.name,
+              path: `/product/${product.slug}`,
+            },
           ]),
         ]}
       />
 
-      <nav aria-label="Breadcrumb" className="shell pt-[calc(var(--nav-h)+1.5rem)]">
+      <nav
+        aria-label="Breadcrumb"
+        className="shell pt-[calc(var(--nav-h)+1.5rem)]"
+      >
         <ol className="flex flex-wrap items-center gap-2">
           {[
             { name: "Home", path: "/" },
             { name: "Shop", path: "/shop" },
-            { name: collectionName, path: `/shop/${product.collection}` },
-            { name: product.name, path: `/product/${product.slug}` },
-          ].map((t, i, arr) => (
-            <li key={t.path} className="flex items-center gap-2">
-              {i > 0 && <span aria-hidden className="text-ash">/</span>}
-              {i === arr.length - 1 ? (
-                <span aria-current="page" className="font-mono text-micro uppercase tracking-[0.16em] text-fog">
-                  {t.name}
+            {
+              name: collectionName,
+              path: `/shop/${product.collection}`,
+            },
+            {
+              name: product.name,
+              path: `/product/${product.slug}`,
+            },
+          ].map((item, index, items) => (
+            <li
+              key={item.path}
+              className="flex items-center gap-2"
+            >
+              {index > 0 && (
+                <span aria-hidden className="text-ash">
+                  /
+                </span>
+              )}
+
+              {index === items.length - 1 ? (
+                <span
+                  aria-current="page"
+                  className="font-mono text-micro uppercase tracking-[0.16em] text-fog"
+                >
+                  {item.name}
                 </span>
               ) : (
-                <a href={t.path} className="font-mono text-micro uppercase tracking-[0.16em] text-ash transition-colors hover:text-bone">
-                  {t.name}
+                <a
+                  href={item.path}
+                  className="font-mono text-micro uppercase tracking-[0.16em] text-ash transition-colors hover:text-bone"
+                >
+                  {item.name}
                 </a>
               )}
             </li>
@@ -74,19 +136,31 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
       <ReviewList product={product} />
 
-      {/* Related */}
-      <section className="border-t border-bone/10 bg-ink section-pad" aria-labelledby="related-heading">
-        <div className="shell">
-          <h2 id="related-heading" className="display-md mb-12 text-bone">
-            Completes the kit.
-          </h2>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
-            {related.map((p, i) => (
-              <ProductCard key={p.slug} product={p} index={i} />
-            ))}
+      {related.length > 0 ? (
+        <section
+          className="border-t border-bone/10 bg-ink section-pad"
+          aria-labelledby="related-heading"
+        >
+          <div className="shell">
+            <h2
+              id="related-heading"
+              className="display-md mb-12 text-bone"
+            >
+              Completes the kit.
+            </h2>
+
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
+              {related.map((item, index) => (
+                <ProductCard
+                  key={item.slug}
+                  product={item}
+                  index={index}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <RecentlyViewed exclude={product.slug} />
     </>
