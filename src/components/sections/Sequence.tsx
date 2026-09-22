@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { usePrefersReducedMotion, useScrollProgress } from "@/lib/motion";
-import { Flat } from "@/components/primitives/Visual";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { getProduct } from "@/lib/catalog";
 import { ArrowMark } from "@/components/primitives/Marks";
@@ -208,6 +207,7 @@ export function Sequence() {
         {STAGES.map((stage, i) => {
           const w = stageWeight(p, i, STAGES.length);
           const local = p * STAGES.length - i;
+          const product = getProduct(stage.productSlug);
           return (
             <div
               key={`flat-${stage.id}`}
@@ -223,10 +223,14 @@ export function Sequence() {
               }}
             >
               <div className="border border-bone/12 bg-black/40 p-3 backdrop-blur-md">
-                <Flat
+                <ProductMedia
+                  media={product?.media}
                   flat={stage.flat}
                   colorway={stage.colorway}
                   seed={`seqflat-${stage.id}`}
+                  view="front"
+                  name={product?.name ?? stage.line}
+                  sizes="17rem"
                   className="size-full"
                 />
                 <p className="mt-2 px-1 font-mono text-[0.5625rem] uppercase tracking-[0.16em] text-fog">

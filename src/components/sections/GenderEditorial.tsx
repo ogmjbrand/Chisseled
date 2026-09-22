@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getProduct, getProductsByGender } from "@/lib/catalog";
-import { Flat } from "@/components/primitives/Visual";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { ColorwayKey, Tone } from "@/lib/art";
@@ -82,12 +81,15 @@ export function GenderEditorial({
             />
           ) : null}
 
-          {/* Floating flat — a product lifted out of the campaign */}
+          {/* Floating piece — a product lifted out of the campaign */}
           <div className="absolute bottom-6 left-6 z-[3] w-28 border border-bone/12 bg-ink/70 p-2 backdrop-blur-md sm:w-32">
-            <Flat
+            <ProductMedia
+              media={products[0]?.media}
               flat={products[0]?.flat ?? "tee"}
               colorway={products[0]?.variants[0].colorway ?? "onyx"}
               seed={`float-${gender}`}
+              view="front"
+              name={products[0]?.name ?? "Piece"}
               className="size-full"
             />
             <p className="mt-1.5 truncate px-1 pb-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-fog">
@@ -127,10 +129,13 @@ export function GenderEditorial({
                   className="group flex items-center gap-3 p-3.5 transition-colors duration-400 hover:bg-carbon"
                 >
                   <span className="size-12 shrink-0 overflow-hidden bg-graphite">
-                    <Flat
+                    <ProductMedia
+                      media={p.media}
                       flat={p.flat}
                       colorway={p.variants[0].colorway}
                       seed={`rail-${p.slug}`}
+                      view="front"
+                      name={p.name}
                       className="size-full"
                     />
                   </span>
