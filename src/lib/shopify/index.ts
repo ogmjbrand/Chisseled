@@ -155,6 +155,20 @@ interface CartResponse {
   cart: ShopifyCart | null;
 }
 
+/**
+ * Shopify's cart lines are expected by the application as an array.
+ *
+ * Some Shopify responses can expose the connection as:
+ *
+ *   lines: { edges: [{ node: ... }] }
+ *
+ * while the existing application expects:
+ *
+ *   lines: [...]
+ *
+ * Normalize the response here so the rest of the application
+ * does not need to know about the transport shape.
+ */
 export async function getCart(
   cartId: string,
 ): Promise<ShopifyCart | null> {
@@ -163,7 +177,57 @@ export async function getCart(
     variables: { cartId },
   });
 
-  return data?.cart ?? null;
+  const cart = data?.cart;
+
+  if (!cart) {
+    return null;
+  }
+
+  const rawCart = cart as unknown as {
+    lines?: unknown;
+  };
+
+  const rawLines = rawCart.lines;
+
+  if (Array.isArray(rawLines)) {
+    return cart;
+  }
+
+  if (
+    rawLines &&
+    typeof rawLines === "object" &&
+    "edges" in rawLines
+  ) {
+    const connection = rawLines as {
+      edges?: unknown;
+    };
+
+    const normalizedLines = Array.isArray(connection.edges)
+      ? connection.edges
+          .map((edge) => {
+            if (
+              edge &&
+              typeof edge === "object" &&
+              "node" in edge
+            ) {
+              return (edge as { node: unknown }).node;
+            }
+
+            return null;
+          })
+          .filter((line): line is NonNullable<typeof line> => line !== null)
+      : [];
+
+    return {
+      ...cart,
+      lines: normalizedLines,
+    } as ShopifyCart;
+  }
+
+  return {
+    ...cart,
+    lines: [],
+  } as ShopifyCart;
 }
 
 interface CartLineInput {
