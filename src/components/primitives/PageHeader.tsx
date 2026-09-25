@@ -1,22 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import { TONE_BACKDROP } from "@/lib/art";
 import type { Tone } from "@/lib/art";
-
-/**
- * Real training photography behind every route header, keyed by the same
- * `tone` each page already passed to the procedural figure this replaced.
- * One photo per tone, reused across pages the way SectionBackdrop already
- * reuses these same files lower on the homepage — a small real library
- * stretched deliberately, not a fabricated one grown to match.
- */
-const TONE_BACKDROP: Record<Tone, string> = {
-  apparel: "trail",
-  train: "push-up",
-  fuel: "mountain",
-  recover: "swim",
-  void: "rope-climb",
-  bone: "trail",
-};
 
 /**
  * The standard route opening: a breadcrumb, an oversized editorial

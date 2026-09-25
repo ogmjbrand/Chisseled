@@ -48,6 +48,20 @@ export function rng(seed: string) {
 
 export type Tone = "void" | "apparel" | "train" | "fuel" | "recover" | "bone";
 
+/**
+ * Real training photography, one file per tone, standing in wherever a
+ * procedural figure used to. A slug under /media/editorial — the same small
+ * set SectionBackdrop already reuses across the homepage.
+ */
+export const TONE_BACKDROP: Record<Tone, string> = {
+  apparel: "trail",
+  train: "push-up",
+  fuel: "mountain",
+  recover: "swim",
+  void: "rope-climb",
+  bone: "trail",
+};
+
 export interface TonePalette {
   /** Deep field behind everything. */
   base: string;

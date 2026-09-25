@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { NAV } from "@/lib/nav";
-import { getProduct } from "@/lib/catalog";
 import { useStore } from "@/lib/store";
 import { useEscape, useScrolled, useScrollLock } from "@/lib/motion";
-import { ProductMedia } from "@/components/product/ProductMedia";
-import type { ColorwayKey } from "@/lib/art";
+import { TONE_BACKDROP } from "@/lib/art";
 import {
   AccountMark,
   ArrowMark,
@@ -233,20 +232,6 @@ export function Header() {
    MEGA PANEL
    ================================================================== */
 
-/**
- * The editorial panel used to show a procedural `Sculpture` — an invented
- * figure standing in for whatever the section was about. Replaced with a
- * real photographed product per section, the same real-photography-first
- * rule the rest of the storefront already follows.
- */
-const FEATURE_PRODUCT: Record<string, { slug: string; colorway: ColorwayKey }> = {
-  "nav-shop": { slug: "scarred-hoodie", colorway: "onyx" },
-  "nav-train": { slug: "compression-tee", colorway: "royal" },
-  "nav-fuel": { slug: "whey-protein", colorway: "onyx" },
-  "nav-community": { slug: "three-piece-training-set", colorway: "onyx" },
-  "nav-about": { slug: "fitted-training-set", colorway: "onyx" },
-};
-
 function MegaPanel({
   section,
   open,
@@ -301,22 +286,14 @@ function MegaPanel({
           href={section.feature.href}
           className="group relative col-span-5 grain vignette overflow-hidden"
         >
-          {(() => {
-            const featured = FEATURE_PRODUCT[section.feature.seed];
-            const product = featured ? getProduct(featured.slug) : undefined;
-            return product ? (
-              <ProductMedia
-                media={product.media}
-                flat={product.flat}
-                colorway={featured!.colorway}
-                seed={section.feature.seed}
-                view="front"
-                name={product.name}
-                sizes="(min-width: 1024px) 32vw, 0px"
-                className="absolute inset-0 size-full transition-transform duration-[1400ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
-              />
-            ) : null;
-          })()}
+          <Image
+            src={`/media/editorial/${TONE_BACKDROP[section.feature.tone]}.webp`}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 32vw, 0px"
+            className="object-cover transition-transform duration-[1400ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]"
+            style={{ objectPosition: section.feature.pose === "back" ? "center 25%" : "center 75%" }}
+          />
           <div className="relative z-[3] flex h-full max-w-[24rem] flex-col justify-end p-8">
             <p className="eyebrow mb-3 text-purple-bright">{section.feature.eyebrow}</p>
             <h3 className="display-sm mb-3 text-bone">{section.feature.title}</h3>
