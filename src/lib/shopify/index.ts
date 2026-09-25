@@ -156,19 +156,27 @@ interface CartResponse {
 }
 
 /**
- * Shopify's cart lines are expected by the application as an array.
- *
- * Some Shopify responses can expose the connection as:
- *
- *   lines: { edges: [{ node: ... }] }
- *
- * while the existing application expects:
- *
- *   lines: [...]
- *
- * Normalize the response here so the rest of the application
- * does not need to know about the transport shape.
+ * Every cart-returning operation requests `lines` the same way (see
+ * CART_FIELDS in queries.ts): `lines(first: 100) { edges { node { ... } } }`.
+ * Shopify therefore always answers with `lines: { edges: [{ node }] }`, but
+ * `ShopifyCart.lines` is typed — and consumed throughout actions.ts — as a
+ * plain `ShopifyCartLine[]`. This is the single place that reconciles the
+ * two, the same way `edges()` above already does for products and
+ * collections. It must run on every function that can return a cart —
+ * createCart/addToCart/updateCart/removeFromCart included, not just reads —
+ * since a line added a moment ago is exactly what the customer expects to
+ * still see at checkout.
  */
+function normalizeCart(cart: ShopifyCart | null | undefined): ShopifyCart | null {
+  if (!cart) return null;
+  const rawLines = cart.lines as unknown;
+  if (Array.isArray(rawLines)) return cart;
+  return {
+    ...cart,
+    lines: edges(rawLines as { edges: { node: ShopifyCart["lines"][number] }[] } | null | undefined),
+  };
+}
+
 export async function getCart(
   cartId: string,
 ): Promise<ShopifyCart | null> {
@@ -177,57 +185,7 @@ export async function getCart(
     variables: { cartId },
   });
 
-  const cart = data?.cart;
-
-  if (!cart) {
-    return null;
-  }
-
-  const rawCart = cart as unknown as {
-    lines?: unknown;
-  };
-
-  const rawLines = rawCart.lines;
-
-  if (Array.isArray(rawLines)) {
-    return cart;
-  }
-
-  if (
-    rawLines &&
-    typeof rawLines === "object" &&
-    "edges" in rawLines
-  ) {
-    const connection = rawLines as {
-      edges?: unknown;
-    };
-
-    const normalizedLines = Array.isArray(connection.edges)
-      ? connection.edges
-          .map((edge) => {
-            if (
-              edge &&
-              typeof edge === "object" &&
-              "node" in edge
-            ) {
-              return (edge as { node: unknown }).node;
-            }
-
-            return null;
-          })
-          .filter((line): line is NonNullable<typeof line> => line !== null)
-      : [];
-
-    return {
-      ...cart,
-      lines: normalizedLines,
-    } as ShopifyCart;
-  }
-
-  return {
-    ...cart,
-    lines: [],
-  } as ShopifyCart;
+  return normalizeCart(data?.cart);
 }
 
 interface CartLineInput {
@@ -252,7 +210,7 @@ export async function createCart(
     });
 
   return {
-    cart: data?.cartCreate.cart ?? null,
+    cart: normalizeCart(data?.cartCreate.cart),
     userErrors: data?.cartCreate.userErrors ?? [],
     networkError,
   };
@@ -279,7 +237,7 @@ export async function addToCart(
     });
 
   return {
-    cart: data?.cartLinesAdd.cart ?? null,
+    cart: normalizeCart(data?.cartLinesAdd.cart),
     userErrors: data?.cartLinesAdd.userErrors ?? [],
     networkError,
   };
@@ -311,7 +269,7 @@ export async function updateCart(
     });
 
   return {
-    cart: data?.cartLinesUpdate.cart ?? null,
+    cart: normalizeCart(data?.cartLinesUpdate.cart),
     userErrors: data?.cartLinesUpdate.userErrors ?? [],
     networkError,
   };
@@ -338,7 +296,7 @@ export async function removeFromCart(
     });
 
   return {
-    cart: data?.cartLinesRemove.cart ?? null,
+    cart: normalizeCart(data?.cartLinesRemove.cart),
     userErrors: data?.cartLinesRemove.userErrors ?? [],
     networkError,
   };
