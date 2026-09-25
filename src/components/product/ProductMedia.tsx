@@ -45,6 +45,14 @@ function StudioLighting() {
 
 interface ProductMediaProps {
   media?: string | Partial<Record<string, string>>;
+  /**
+   * A second real photo to show for the "detail" view — a genuine Shopify
+   * gallery image, never a generated or guessed one. Absent, the detail view
+   * falls back to the technical flat exactly as it always has: the local
+   * catalogue only ever photographs the front, and the flat is what actually
+   * carries construction detail for those products.
+   */
+  secondaryMedia?: string;
   flat: FlatKey;
   colorway: ColorwayKey;
   seed: string;
@@ -90,6 +98,7 @@ function getMediaSource(
 
 export function ProductMedia({
   media,
+  secondaryMedia,
   flat,
   colorway,
   seed,
@@ -101,9 +110,10 @@ export function ProductMedia({
 }: ProductMediaProps) {
   const colourName = getColorName(colorway);
   const shot = getMediaSource(media, colorway);
+  const activeShot = view === "front" ? shot : secondaryMedia;
 
-  if (shot && view === "front") {
-    const imageSrc = resolveImageSource(shot);
+  if (activeShot) {
+    const imageSrc = resolveImageSource(activeShot);
 
     return (
       <span

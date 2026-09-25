@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { COLORWAYS } from "@/lib/art";
 import { getProduct, getProducts } from "@/lib/catalog";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
@@ -26,6 +26,25 @@ export function CartDrawer() {
   useScrollLock(cartOpen);
   useEscape(cartOpen, () => setCartOpen(false));
   const trapRef = useFocusTrap<HTMLDivElement>(cartOpen);
+
+  // A line the customer just removed collapses smoothly instead of vanishing
+  // the instant the server confirms it — the visual removal and the real one
+  // are deliberately staggered by one transition's length.
+  const [leaving, setLeaving] = useState<Set<string>>(new Set());
+  const removeLine = (id: string) => {
+    setLeaving((prev) => new Set(prev).add(id));
+    window.setTimeout(() => remove(id), 360);
+  };
+
+  // Once the server confirms a line gone, its "leaving" flag has done its
+  // job — drop it so the set doesn't keep every id removed all session.
+  useEffect(() => {
+    const ids = new Set(lines.map((l) => l.id));
+    setLeaving((prev) => {
+      const next = new Set([...prev].filter((id) => ids.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [lines]);
 
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
@@ -155,8 +174,18 @@ export function CartDrawer() {
                 // have drifted.
                 const lineTotal = line.priceCents;
 
+                const isLeaving = leaving.has(line.id);
+
                 return (
-                  <li key={line.id} className="flex gap-4 p-5">
+                  <li
+                    key={line.id}
+                    className="grid transition-[grid-template-rows,opacity] duration-300 ease-[var(--ease-out-expo)]"
+                    style={{
+                      gridTemplateRows: isLeaving ? "0fr" : "1fr",
+                      opacity: isLeaving ? 0 : 1,
+                    }}
+                  >
+                  <div className="flex gap-4 overflow-hidden p-5">
                     <div className="relative size-24 shrink-0 overflow-hidden bg-graphite">
                       {product ? (
                         <ProductMedia
@@ -219,13 +248,14 @@ export function CartDrawer() {
 
                         <button
                           type="button"
-                          onClick={() => remove(line.id)}
+                          onClick={() => removeLine(line.id)}
                           className="font-mono text-micro uppercase tracking-[0.14em] text-ash transition-colors hover:text-signal-low"
                         >
                           Remove
                         </button>
                       </div>
                     </div>
+                  </div>
                   </li>
                 );
               })}

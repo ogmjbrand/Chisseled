@@ -1,5 +1,5 @@
 import { COLORWAYS } from "@/lib/art";
-import type { ColorwayKey } from "@/lib/art";
+import type { ColorwayKey, FlatKey } from "@/lib/art";
 import type { CollectionSlug, Product, ShopifyProductOptionView, ShopifyVariantView, Variant } from "@/lib/types";
 import type {
   ShopifyProduct,
@@ -184,6 +184,32 @@ function categoryForProduct(product: ShopifyProduct): string {
   return "Apparel";
 }
 
+/**
+ * The technical flat this Shopify product falls back to whenever its photo
+ * is unavailable — same title-keyword read as categoryForProduct, mapped to
+ * an actual drawing that exists in FLATS, never the bare category label
+ * (which isn't a valid key and rendered every Shopify product as a generic
+ * tee regardless of what it actually was).
+ */
+function flatForProduct(product: ShopifyProduct): FlatKey {
+  const title = product.title.toLowerCase();
+
+  if (title.includes("hoodie")) return "hoodie";
+  if (title.includes("sweatshirt")) return "hoodie";
+  if (title.includes("jacket")) return "jacket";
+  if (title.includes("legging")) return "leggings";
+  if (title.includes("pant")) return "leggings";
+  if (title.includes("short")) return "shorts";
+  if (title.includes("crop")) return "crop";
+  if (title.includes("compression")) return "compressionTop";
+  if (title.includes("bra")) return "bra";
+  if (title.includes("sock")) return "socks";
+  if (title.includes("cap")) return "cap";
+  if (title.includes("bag")) return "bag";
+
+  return "tee";
+}
+
 function genderForProduct(product: ShopifyProduct): Product["gender"] {
   const text = `${product.title} ${product.tags.join(" ")}`.toLowerCase();
 
@@ -242,7 +268,7 @@ function productFromShopify(product: ShopifyProduct): Product {
      * Compatibility with the existing Product type.
      * Actual Shopify images are supplied through media.
      */
-    flat: "apparel",
+    flat: flatForProduct(product),
 
     media: product.featuredImage?.url,
 

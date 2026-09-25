@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   useEffect,
   useMemo,
@@ -51,6 +52,7 @@ export function ProductDetail({
   const [subscribe, setSubscribe] = useState(false);
   const [openPanel, setOpenPanel] =
     useState<string | null>("benefits");
+  const [galleryIndex, setGalleryIndex] = useState(0);
 
   const variant =
     product.variants[variantIndex] ??
@@ -59,10 +61,20 @@ export function ProductDetail({
   const saved = wishlist.includes(product.slug);
   const stock = stockLevel(product);
   const isNutrition = Boolean(product.nutrition);
+  // Real Shopify gallery photography, when there's more than one shot to
+  // gallery through. One shot is just the main image again — not a gallery.
+  const galleryImages = product.shopifyImages && product.shopifyImages.length > 1
+    ? product.shopifyImages
+    : null;
+  const activeGalleryImage = galleryImages?.[galleryIndex] ?? galleryImages?.[0];
 
   useEffect(() => {
     markViewed(product.slug);
   }, [product.slug, markViewed]);
+
+  useEffect(() => {
+    setGalleryIndex(0);
+  }, [product.slug]);
 
   useEffect(() => {
     if (!variant) return;
@@ -143,15 +155,28 @@ export function ProductDetail({
 
         <div className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:h-fit">
           <div className="relative grain aspect-square overflow-hidden bg-graphite">
-            <ProductMedia
-              media={product.media}
-              flat={product.flat}
-              colorway={variant.colorway}
-              seed={`pdp-${product.slug}-${variant.colorway}`}
-              view={view}
-              name={product.name}
-              priority
-            />
+            {activeGalleryImage ? (
+              <span key={galleryIndex} className="absolute inset-0 block animate-fade">
+                <Image
+                  src={activeGalleryImage.url}
+                  alt={activeGalleryImage.altText || product.name}
+                  fill
+                  sizes="(min-width: 1024px) 45vw, 100vw"
+                  priority
+                  className="object-contain"
+                />
+              </span>
+            ) : (
+              <ProductMedia
+                media={product.media}
+                flat={product.flat}
+                colorway={variant.colorway}
+                seed={`pdp-${product.slug}-${variant.colorway}`}
+                view={view}
+                name={product.name}
+                priority
+              />
+            )}
 
             <div className="pointer-events-none absolute left-4 top-4 flex flex-col items-start gap-1.5">
               {product.isNew && (
@@ -171,47 +196,76 @@ export function ProductDetail({
             </div>
           </div>
 
-          {/* Thumbnails — alternate views and campaign frame */}
+          {/* Thumbnails — the real gallery where Shopify has one, otherwise
+              the alternate technical view and a campaign frame. */}
           <div className="mt-3 grid grid-cols-4 gap-3">
-            {VIEWS.map((v) => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => setView(v)}
-                aria-pressed={view === v}
-                aria-label={`View ${v}`}
-                className={[
-                  "aspect-square overflow-hidden border bg-graphite transition-colors duration-300",
-                  view === v
-                    ? "border-bone"
-                    : "border-transparent hover:border-bone/35",
-                ].join(" ")}
-              >
-                <ProductMedia
-                  media={product.media}
-                  flat={product.flat}
-                  colorway={variant.colorway}
-                  seed={`pdp-${product.slug}-${variant.colorway}`}
-                  view={v}
-                  name={product.name}
-                  sizes="120px"
-                />
-              </button>
-            ))}
+            {galleryImages ? (
+              galleryImages.map((img, i) => (
+                <button
+                  key={img.url}
+                  type="button"
+                  onClick={() => setGalleryIndex(i)}
+                  aria-pressed={i === galleryIndex}
+                  aria-label={`View photo ${i + 1} of ${galleryImages.length}`}
+                  className={[
+                    "relative aspect-square overflow-hidden border bg-graphite transition-colors duration-300",
+                    i === galleryIndex
+                      ? "border-bone"
+                      : "border-transparent hover:border-bone/35",
+                  ].join(" ")}
+                >
+                  <Image
+                    src={img.url}
+                    alt=""
+                    fill
+                    sizes="120px"
+                    className="object-cover"
+                  />
+                </button>
+              ))
+            ) : (
+              <>
+                {VIEWS.map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setView(v)}
+                    aria-pressed={view === v}
+                    aria-label={`View ${v}`}
+                    className={[
+                      "aspect-square overflow-hidden border bg-graphite transition-colors duration-300",
+                      view === v
+                        ? "border-bone"
+                        : "border-transparent hover:border-bone/35",
+                    ].join(" ")}
+                  >
+                    <ProductMedia
+                      media={product.media}
+                      flat={product.flat}
+                      colorway={variant.colorway}
+                      seed={`pdp-${product.slug}-${variant.colorway}`}
+                      view={v}
+                      name={product.name}
+                      sizes="120px"
+                    />
+                  </button>
+                ))}
 
-            <div className="col-span-2 overflow-hidden bg-carbon grain">
-              <Sculpture
-                seed={`pdp-campaign-${product.slug}`}
-                tone={product.tone}
-                pose="front"
-                anchor={0.5}
-                scale={0.9}
-                className="size-full"
-              />
-            </div>
+                <div className="col-span-2 overflow-hidden bg-carbon grain">
+                  <Sculpture
+                    seed={`pdp-campaign-${product.slug}`}
+                    tone={product.tone}
+                    pose="front"
+                    anchor={0.5}
+                    scale={0.9}
+                    className="size-full"
+                  />
+                </div>
+              </>
+            )}
           </div>
 
-          {!product.media && <MediaNote />}
+          {!product.media && !galleryImages && <MediaNote />}
         </div>
 
         {/* ============ PURCHASE ============ */}
