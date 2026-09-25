@@ -60,8 +60,9 @@ export function findShopifyVariant(
   size: string,
 ): ShopifyProductVariant | null {
   const hasColorOption = product.options.some((o) => /^colou?r$/i.test(o.name));
+  const variants = product.variants.edges.map((e) => e.node);
   return (
-    product.variants.find((v) => {
+    variants.find((v) => {
       if (hasColorOption && !colorMatches(v.selectedOptions, colorway)) return false;
       return sizeMatches(v.selectedOptions, size);
     }) ?? null
@@ -77,9 +78,10 @@ export function enrichProduct(local: Product, shopify: ShopifyProduct | null): P
   if (!shopify) return local;
 
   const hasColorOption = shopify.options.some((o) => /^colou?r$/i.test(o.name));
+  const shopifyVariants = shopify.variants.edges.map((e) => e.node);
 
   const variants = local.variants.map((variant) => {
-    const matching = shopify.variants.filter((v) =>
+    const matching = shopifyVariants.filter((v) =>
       hasColorOption ? colorMatches(v.selectedOptions, variant.colorway) : true,
     );
     // No Shopify variant at all for this colourway — leave the local stock

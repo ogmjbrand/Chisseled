@@ -43,9 +43,9 @@ export interface ShopifyProduct {
   descriptionHtml: string;
   description: string;
   featuredImage: ShopifyImage | null;
-  images: ShopifyImage[];
+  images: { edges: { node: ShopifyImage }[] };
   options: ShopifyProductOption[];
-  variants: ShopifyProductVariant[];
+  variants: { edges: { node: ShopifyProductVariant }[] };
   priceRange: { minVariantPrice: ShopifyMoney; maxVariantPrice: ShopifyMoney };
   compareAtPriceRange: { minVariantPrice: ShopifyMoney; maxVariantPrice: ShopifyMoney };
   tags: string[];
