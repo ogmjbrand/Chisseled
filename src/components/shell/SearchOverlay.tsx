@@ -6,7 +6,7 @@ import { ARTICLES, PROGRAMS, PRODUCTS, COLLECTIONS } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useEscape, useFocusTrap, useScrollLock } from "@/lib/motion";
-import { Flat } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark, CloseMark, SearchMark } from "@/components/primitives/Marks";
 
 type Result =
@@ -195,10 +195,13 @@ export function SearchOverlay() {
                               className="group flex items-center gap-4 p-2 transition-colors duration-300 hover:bg-bone/5"
                             >
                               <div className="size-14 shrink-0 overflow-hidden bg-graphite">
-                                <Flat
+                                <ProductMedia
+                                  media={p.media}
                                   flat={p.flat}
                                   colorway={p.variants[0].colorway}
                                   seed={`search-${p.slug}`}
+                                  view="front"
+                                  name={p.name}
                                   className="size-full"
                                 />
                               </div>

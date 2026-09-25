@@ -6,7 +6,7 @@ import { COLORWAYS } from "@/lib/art";
 import { stockLevel } from "@/lib/catalog";
 import { formatDate, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
-import { Flat, Sculpture } from "@/components/primitives/Visual";
+import { Sculpture } from "@/components/primitives/Visual";
 import { ProductMedia, MediaNote } from "@/components/product/ProductMedia";
 import { SizeChart } from "@/components/product/SizeChart";
 import {
@@ -604,10 +604,13 @@ function StickyBar({
       <div className="shell flex items-center justify-between gap-4 py-3.5">
         <div className="hidden min-w-0 items-center gap-3.5 sm:flex">
           <div className="size-12 shrink-0 overflow-hidden bg-graphite">
-            <Flat
+            <ProductMedia
+              media={product.media}
               flat={product.flat}
               colorway={product.variants[0].colorway}
               seed={`sticky-${product.slug}`}
+              view="front"
+              name={product.name}
               className="size-full"
             />
           </div>

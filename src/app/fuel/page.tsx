@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getNutritionProducts, getProduct } from "@/lib/catalog";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { ProductCard } from "@/components/product/ProductCard";
-import { Flat, Specimen } from "@/components/primitives/Visual";
+import { Specimen } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, collectionSchema, pageMetadata } from "@/lib/seo";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
@@ -115,12 +116,15 @@ export default function FuelPage() {
 
           <div className="shell relative z-[3] grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
             <div className="relative grain aspect-square overflow-hidden bg-graphite" data-reveal-media>
-              <Flat
+              <ProductMedia
+                media={hero.media}
                 flat={hero.flat}
                 colorway={hero.variants[0].colorway}
                 seed="fuel-hero-flat"
+                view="front"
+                name={hero.name}
+                sizes="(min-width: 1024px) 45vw, 100vw"
                 className="size-full"
-                label={hero.name}
               />
             </div>
 
@@ -260,10 +264,13 @@ export default function FuelPage() {
                           className="group flex items-center gap-3 border border-bone/10 p-2.5 transition-colors duration-400 hover:border-bone/30"
                         >
                           <span className="size-11 shrink-0 overflow-hidden bg-graphite">
-                            <Flat
+                            <ProductMedia
+                              media={p.media}
                               flat={p.flat}
                               colorway={p.variants[0].colorway}
                               seed={`stack-${slug}`}
+                              view="front"
+                              name={p.name}
                               className="size-full"
                             />
                           </span>

@@ -7,7 +7,7 @@ import { getProduct, getProducts } from "@/lib/catalog";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useEscape, useFocusTrap, useScrollLock } from "@/lib/motion";
-import { Flat } from "@/components/primitives/Visual";
+import { ProductMedia } from "@/components/product/ProductMedia";
 import {
   ArrowMark,
   BagMark,
@@ -159,10 +159,13 @@ export function CartDrawer() {
                   <li key={line.id} className="flex gap-4 p-5">
                     <div className="relative size-24 shrink-0 overflow-hidden bg-graphite">
                       {product ? (
-                        <Flat
+                        <ProductMedia
+                          media={product.media}
                           flat={product.flat}
                           colorway={line.colorway}
                           seed={line.id}
+                          view="front"
+                          name={name}
                           className="size-full"
                         />
                       ) : (
@@ -238,10 +241,13 @@ export function CartDrawer() {
                   p ? (
                     <li key={p.slug} className="flex items-center gap-3">
                       <div className="size-14 shrink-0 overflow-hidden bg-graphite">
-                        <Flat
+                        <ProductMedia
+                          media={p.media}
                           flat={p.flat}
                           colorway={p.variants[0].colorway}
                           seed={`rec-${p.slug}`}
+                          view="front"
+                          name={p.name}
                           className="size-full"
                         />
                       </div>
