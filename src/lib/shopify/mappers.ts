@@ -53,18 +53,28 @@ function sizeMatches(options: ShopifySelectedOption[], size: string): boolean {
   return value === size.trim().toLowerCase();
 }
 
-/** Only a product with real colour variation carries a "Color" option; a single-colourway product may only have "Size". */
+/**
+ * Only a product with real colour variation carries a "Color" option; a
+ * single-colourway product may only have "Size" — and a single-size product
+ * (a tea, a tub, a one-size accessory) may carry no "Size" option at all, in
+ * which case `size` has nothing real to match and is never even read: a
+ * caller with no size to offer falls back to `product.sizes[0]`, which is
+ * `undefined` on a genuinely sizeless product, and `sizeMatches` used to
+ * call `.trim()` on that unconditionally.
+ */
 export function findShopifyVariant(
   product: ShopifyProduct,
   colorway: ColorwayKey,
   size: string,
 ): ShopifyProductVariant | null {
   const hasColorOption = product.options.some((o) => /^colou?r$/i.test(o.name));
+  const hasSizeOption = product.options.some((o) => o.name.toLowerCase() === "size");
   const variants = product.variants.edges.map((e) => e.node);
   return (
     variants.find((v) => {
       if (hasColorOption && !colorMatches(v.selectedOptions, colorway)) return false;
-      return sizeMatches(v.selectedOptions, size);
+      if (hasSizeOption && !sizeMatches(v.selectedOptions, size)) return false;
+      return true;
     }) ?? null
   );
 }
