@@ -1,10 +1,26 @@
 import Link from "next/link";
-import { Sculpture } from "@/components/primitives/Visual";
+import Image from "next/image";
 import type { Tone } from "@/lib/art";
 
 /**
+ * Real training photography behind every route header, keyed by the same
+ * `tone` each page already passed to the procedural figure this replaced.
+ * One photo per tone, reused across pages the way SectionBackdrop already
+ * reuses these same files lower on the homepage — a small real library
+ * stretched deliberately, not a fabricated one grown to match.
+ */
+const TONE_BACKDROP: Record<Tone, string> = {
+  apparel: "trail",
+  train: "push-up",
+  fuel: "mountain",
+  recover: "swim",
+  void: "rope-climb",
+  bone: "trail",
+};
+
+/**
  * The standard route opening: a breadcrumb, an oversized editorial
- * headline, and a campaign field behind it. Consistent enough that every
+ * headline, and a real photograph behind it. Consistent enough that every
  * route feels like the same brand, varied enough by tone that none of
  * them feel like the same page.
  */
@@ -37,13 +53,14 @@ export function PageHeader({
       ].join(" ")}
       style={{ paddingTop: "calc(var(--nav-h) + clamp(3rem,6vw,6rem))" }}
     >
-      <Sculpture
-        seed={seed}
-        tone={tone}
-        pose={pose}
-        anchor={0.78}
-        scale={compact ? 0.8 : 1}
-        className="absolute inset-0 size-full opacity-70"
+      <Image
+        src={`/media/editorial/${TONE_BACKDROP[tone]}.webp`}
+        alt=""
+        fill
+        sizes="100vw"
+        priority
+        className="object-cover"
+        style={{ objectPosition: pose === "back" ? "center 25%" : "center 75%" }}
       />
       <span
         aria-hidden
