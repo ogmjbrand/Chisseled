@@ -21,7 +21,8 @@ import {
 } from "@/components/primitives/Marks";
 
 export function CartDrawer({ kitProducts }: { kitProducts: Product[] }) {
-  const { cartOpen, setCartOpen, lines, remove, setQty, subtotal, currency, add, cartError } = useStore();
+  const { cartOpen, setCartOpen, lines, remove, setQty, subtotal, currency, add, cartError, checkoutUrl } =
+    useStore();
 
   useScrollLock(cartOpen);
   useEscape(cartOpen, () => setCartOpen(false));
@@ -310,7 +311,19 @@ export function CartDrawer({ kitProducts }: { kitProducts: Product[] }) {
               Taxes and shipping calculated at checkout.
             </p>
 
-            <Link href="/checkout" onClick={() => setCartOpen(false)} className="btn btn-primary btn-block">
+            {/*
+              Straight to Shopify's own real checkout URL when the client
+              already has it (true right after any successful cart mutation)
+              — skips a second, cookie-dependent round trip through our own
+              /checkout route, which was the failure mode when that cookie
+              didn't resolve on the very next navigation. /checkout remains
+              the fallback for direct/bookmarked visits.
+            */}
+            <Link
+              href={checkoutUrl ?? "/checkout"}
+              onClick={() => setCartOpen(false)}
+              className="btn btn-primary btn-block"
+            >
               Checkout
               <ArrowMark className="size-4" />
             </Link>
