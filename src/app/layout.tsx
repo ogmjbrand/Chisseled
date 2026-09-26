@@ -11,6 +11,22 @@ import { GrainDefs } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { StoreProvider } from "@/lib/store";
 import { SITE, organizationSchema, websiteSchema } from "@/lib/seo";
+import { getEnrichedProductsByHandles } from "@/lib/shopify/catalog";
+
+/**
+ * "Complete your performance kit" — real, addable Shopify handles. Kept here
+ * (fetched once per request, cached like every other Shopify read) rather
+ * than in the local catalogue, since a local slug has no guarantee of
+ * existing in the connected store.
+ */
+const CART_KIT_HANDLES = [
+  "weight-lifting-gloves-fitness-gloves-pair",
+  "sport-liquid-chalk",
+  "multifunctional-waterproof-large-gym-bag",
+  "abdominal-wheel-muscle-roller-ab-wheel-roller",
+  "bodybuilding-muscle-relaxation-fitness-pvc-4-touch-hand-roller-massager",
+  "protein-nutritional-supplement",
+];
 
 /**
  * Archivo carries a width axis, which is what lets the display type go
@@ -81,7 +97,9 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const kitProducts = await getEnrichedProductsByHandles(CART_KIT_HANDLES);
+
   return (
     <html
       lang="en"
@@ -97,7 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main id="main">{children}</main>
           <Footer />
-          <CartDrawer />
+          <CartDrawer kitProducts={kitProducts} />
           <SearchOverlay />
         </StoreProvider>
       </body>

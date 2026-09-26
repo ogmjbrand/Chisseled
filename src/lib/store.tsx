@@ -10,9 +10,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getProduct } from "@/lib/catalog";
 import type { CurrencyCode } from "@/lib/format";
 import type { ColorwayKey } from "@/lib/art";
+import type { Product } from "@/lib/types";
 import {
   addLineToCartAction,
   getCartSummaryAction,
@@ -29,6 +29,9 @@ export interface CartLine {
   /** product slug + colourway + size — the true identity of a line. */
   id: string;
   slug: string;
+  /** Straight from Shopify's own cart response — never re-derived from the local catalogue. */
+  name: string;
+  imageUrl: string | null;
   colorway: ColorwayKey;
   size: string;
   qty: number;
@@ -77,9 +80,11 @@ function reducer(state: State, action: Action): State {
     case "cart":
       return {
         ...state,
-        lines: action.summary.lines.map(({ id, slug, colorway, size, qty, priceCents }) => ({
+        lines: action.summary.lines.map(({ id, slug, name, imageUrl, colorway, size, qty, priceCents }) => ({
           id,
           slug,
+          name,
+          imageUrl,
           colorway,
           size,
           qty,
@@ -124,7 +129,7 @@ function reducer(state: State, action: Action): State {
 interface StoreValue extends State {
   add: (line: { slug: string; colorway: ColorwayKey; size: string; qty: number }) => Promise<void>;
   /** Adds every item in a bundle as its own real Shopify line — Shopify has no native "bundle" line item. */
-  addBundle: (items: string[]) => Promise<void>;
+  addBundle: (products: Product[]) => Promise<void>;
   remove: (id: string) => Promise<void>;
   setQty: (id: string, qty: number) => Promise<void>;
   toggleWishlist: (slug: string) => void;
@@ -202,16 +207,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (summary.error) {
       setAnnouncement(summary.error);
     } else {
-      const p = getProduct(line.slug);
-      setAnnouncement(`${p?.name ?? "Item"} added to bag.`);
+      const name = summary.lines.find((l) => l.slug === line.slug)?.name ?? "Item";
+      setAnnouncement(`${name} added to bag.`);
     }
   }, []);
 
+  /** `products` are already-resolved, real Shopify products — never re-looked-up locally. */
   const addBundle = useCallback(
-    async (items: string[]) => {
-      for (const slug of items) {
-        const p = getProduct(slug);
-        if (!p) continue;
+    async (products: Product[]) => {
+      for (const p of products) {
         const size = p.variants[0]?.inStock[0] ?? p.sizes[0];
         if (!size) continue;
         // Sequential, not parallel: each call reads-then-writes the same

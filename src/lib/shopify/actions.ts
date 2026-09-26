@@ -95,6 +95,8 @@ function resolveColorway(slug: string, value: string | undefined): ColorwayKey {
 export interface CartLineSummary {
   id: string;
   slug: string;
+  name: string;
+  imageUrl: string | null;
   colorway: ColorwayKey;
   size: string;
   qty: number;
@@ -124,6 +126,8 @@ function summarize(cart: ShopifyCart | null, error: string | null = null): CartS
     return {
       id: `${slug}:${colorway}:${size}`,
       slug,
+      name: line.merchandise.product.title,
+      imageUrl: line.merchandise.product.featuredImage?.url ?? null,
       colorway,
       size,
       qty: line.quantity,

@@ -12,6 +12,8 @@ import { Community } from "@/components/sections/Community";
 import { JournalStrip } from "@/components/sections/JournalStrip";
 import { Sequence } from "@/components/sections/Sequence";
 import { Marquee } from "@/components/sections/Marquee";
+import { BUNDLES } from "@/lib/catalog";
+import { getEnrichedProductsByHandles } from "@/lib/shopify/catalog";
 
 /**
  * The homepage is a directed sequence, not a stack of blocks. It moves:
@@ -19,7 +21,10 @@ import { Marquee } from "@/components/sections/Marquee";
  * → platform → nutrition → systems → proof → people → ideas → the
  * signature transformation → close.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const bundleHandles = [...new Set(BUNDLES.flatMap((b) => b.items))];
+  const bundleProducts = await getEnrichedProductsByHandles(bundleHandles);
+
   return (
     <>
       <Hero />
@@ -64,7 +69,7 @@ export default function HomePage() {
 
       <FuelSection />
 
-      <Bundles />
+      <Bundles products={bundleProducts} />
 
       <Marquee
         items={["Wear it", "Train in it", "Live it", "Become Chisseled"]}

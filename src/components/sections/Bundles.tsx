@@ -2,14 +2,23 @@
 
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
-import { BUNDLES, getProduct } from "@/lib/catalog";
+import { BUNDLES } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
+import type { Product } from "@/lib/types";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
 
-export function Bundles({ heading = true }: { heading?: boolean }) {
+export function Bundles({
+  heading = true,
+  products,
+}: {
+  heading?: boolean;
+  /** Real Shopify products for every handle referenced in BUNDLES' items — fetched server-side. */
+  products: Product[];
+}) {
   const { addBundle, currency } = useStore();
+  const byHandle = new Map(products.map((p) => [p.slug, p]));
 
   return (
     <section
@@ -40,7 +49,9 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
 
         <div className="grid gap-3 lg:grid-cols-3">
           {BUNDLES.slice(0, 3).map((bundle, i) => {
-            const items = bundle.items.map(getProduct).filter(Boolean);
+            const items = bundle.items
+              .map((slug) => byHandle.get(slug))
+              .filter((p): p is Product => Boolean(p));
             const complete = bundle.tier === "Complete";
 
             return (
@@ -119,7 +130,7 @@ export function Bundles({ heading = true }: { heading?: boolean }) {
 
                   <button
                     type="button"
-                    onClick={() => addBundle(bundle.items)}
+                    onClick={() => addBundle(items)}
                     className={complete ? "btn btn-primary btn-block" : "btn btn-ghost btn-block"}
                   >
                     Add bundle to bag

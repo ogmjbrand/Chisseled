@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { BUNDLES, getProduct } from "@/lib/catalog";
+import { BUNDLES } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { Bundles } from "@/components/sections/Bundles";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 import { CheckMark } from "@/components/primitives/Marks";
+import { getEnrichedProductsByHandles } from "@/lib/shopify/catalog";
 
 export const metadata = pageMetadata({
   title: "Performance Bundles",
@@ -14,7 +15,11 @@ export const metadata = pageMetadata({
   path: "/bundles",
 });
 
-export default function BundlesPage() {
+export default async function BundlesPage() {
+  const bundleHandles = [...new Set(BUNDLES.flatMap((b) => b.items))];
+  const products = await getEnrichedProductsByHandles(bundleHandles);
+  const byHandle = new Map(products.map((p) => [p.slug, p]));
+
   return (
     <>
       <JsonLd
@@ -36,7 +41,7 @@ export default function BundlesPage() {
         ]}
       />
 
-      <Bundles heading={false} />
+      <Bundles heading={false} products={products} />
 
       {/* Comparison */}
       <section
@@ -71,8 +76,8 @@ export default function BundlesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-bone/8">
-                {[...new Set(BUNDLES.flatMap((b) => b.items))].map((slug) => {
-                  const p = getProduct(slug);
+                {bundleHandles.map((slug) => {
+                  const p = byHandle.get(slug);
                   if (!p) return null;
                   return (
                     <tr key={slug}>

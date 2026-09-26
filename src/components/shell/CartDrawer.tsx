@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { COLORWAYS } from "@/lib/art";
-import { getProduct, getProducts } from "@/lib/catalog";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
+import type { Product } from "@/lib/types";
 import { useEscape, useFocusTrap, useScrollLock } from "@/lib/motion";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import {
@@ -20,7 +20,7 @@ import {
   TruckMark,
 } from "@/components/primitives/Marks";
 
-export function CartDrawer() {
+export function CartDrawer({ kitProducts }: { kitProducts: Product[] }) {
   const { cartOpen, setCartOpen, lines, remove, setQty, subtotal, currency, add, cartError } = useStore();
 
   useScrollLock(cartOpen);
@@ -56,22 +56,9 @@ export function CartDrawer() {
    */
   const recommendations = useMemo(() => {
     const inBag = new Set(lines.map((l) => l.slug));
-    const KIT = ["carbon-crew-sock", "haul-training-bag", "recover-magnesium", "base-whey-isolate"];
 
-    const fromKit = KIT.filter((s) => !inBag.has(s))
-      .map((s) => getProduct(s))
-      .filter(Boolean);
-
-    if (fromKit.length >= 3) return fromKit.slice(0, 3);
-
-    // Fall back to the cheapest complements so the slot is never empty.
-    return [
-      ...fromKit,
-      ...getProducts()
-        .filter((p) => !inBag.has(p.slug) && !KIT.includes(p.slug))
-        .sort((a, b) => a.price - b.price),
-    ].slice(0, 3);
-  }, [lines]);
+    return kitProducts.filter((p) => !inBag.has(p.slug)).slice(0, 3);
+  }, [lines, kitProducts]);
 
   return (
     <>
@@ -167,8 +154,7 @@ export function CartDrawer() {
           ) : (
             <ul className="divide-y divide-bone/10">
               {lines.map((line) => {
-                const product = getProduct(line.slug);
-                const name = product?.name ?? "Item";
+                const name = line.name || "Item";
                 // Shopify's own live line total — never re-derived from the
                 // static catalogue price, so it's correct even when the two
                 // have drifted.
@@ -187,10 +173,10 @@ export function CartDrawer() {
                   >
                   <div className="flex gap-4 overflow-hidden p-5">
                     <div className="relative size-24 shrink-0 overflow-hidden bg-graphite">
-                      {product ? (
+                      {line.imageUrl ? (
                         <ProductMedia
-                          media={product.media}
-                          flat={product.flat}
+                          media={line.imageUrl}
+                          flat="tee"
                           colorway={line.colorway}
                           seed={line.id}
                           view="front"

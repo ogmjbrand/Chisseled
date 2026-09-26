@@ -331,6 +331,19 @@ export async function getEnrichedProducts(): Promise<Product[]> {
   return shopifyProducts.map(productFromShopify);
 }
 
+/**
+ * Resolves a specific, ordered set of real Shopify handles (bundle contents,
+ * cart-drawer recommendations) — handles Shopify no longer carries are
+ * dropped rather than surfaced as a broken product.
+ */
+export async function getEnrichedProductsByHandles(
+  handles: string[],
+): Promise<Product[]> {
+  const products = await Promise.all(handles.map((handle) => getEnrichedProduct(handle)));
+
+  return products.filter((product): product is Product => Boolean(product));
+}
+
 export async function getEnrichedProductsByCollection(
   collection: CollectionSlug,
 ): Promise<Product[]> {

@@ -1706,7 +1706,7 @@ export const BUNDLES: Bundle[] = [
     promise: "Everything you need on day one. Nothing you don't.",
     description:
       "The three pieces that make the first eight weeks feel deliberate rather than improvised: something to train in, something to carry it in, and the one supplement worth taking from the start.",
-    items: ["chisseled-tee", "performance-crew-sock", "creatine-monohydrate"],
+    items: ["chisseled-black-workout-t-shirt", "chisseled-gray-compression-socks", "creatine-monohydrate"],
     price: 10500,
     saves: 1400,
     tone: "apparel",
@@ -1718,7 +1718,12 @@ export const BUNDLES: Bundle[] = [
     promise: "The kit for people already doing the work.",
     description:
       "A matched training set, the bra that holds through it, and cushioning where the load actually lands. This is the bundle most members settle on.",
-    items: ["fitted-training-set", "seamless-sports-bra", "performance-crew-sock", "creatine-monohydrate"],
+    items: [
+      "women-fitness-clothing-ribbed-seamless-tight-gym-active-wear-solid-color-2-piece-workout-yoga-set",
+      "sports-bra-chisseled",
+      "chisseled-gray-compression-socks",
+      "creatine-monohydrate",
+    ],
     extras: ["3 months of CHISSELED Training, included"],
     price: 20500,
     saves: 3000,
@@ -1731,7 +1736,13 @@ export const BUNDLES: Bundle[] = [
     promise: "The whole system, layered for every part of the session.",
     description:
       "Training layer, warm-up layer and walk-home layer, plus what carries them and what you take afterwards. Built for people training five days a week through a cold season.",
-    items: ["tech-fleece-set", "scarred-hoodie", "performance-crew-sock", "chisseled-sling-bag", "creatine-monohydrate"],
+    items: [
+      "sportswear-tech-fleece-tracksuit",
+      "hoodie-scarred",
+      "chisseled-gray-compression-socks",
+      "chisseled-crossbody-backpackblack",
+      "creatine-monohydrate",
+    ],
     extras: ["6 months of CHISSELED Training, included", "Priority access to every drop"],
     price: 34500,
     saves: 5600,
@@ -1744,7 +1755,11 @@ export const BUNDLES: Bundle[] = [
     promise: "Every layer, matched, in one dye lot.",
     description:
       "The three-piece training set with the cropped sweatshirt that goes over it and the socks that go under everything. Chosen so the pieces work together rather than merely coexisting in a drawer.",
-    items: ["three-piece-training-set", "ch-cropped-sweatshirt", "performance-crew-sock"],
+    items: [
+      "women-seamless-sports-bra-shorts-gym-yoga-pants-sports-fitness-sets",
+      "women-cropped-fitness-casual-sweatshirts",
+      "chisseled-gray-compression-socks",
+    ],
     extras: ["3 months of CHISSELED Training, included"],
     price: 21500,
     saves: 2600,
