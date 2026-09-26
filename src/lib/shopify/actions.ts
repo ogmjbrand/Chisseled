@@ -157,6 +157,26 @@ export async function getCartSummaryAction(): Promise<CartSummary> {
   return summarize(cart, error);
 }
 
+/**
+ * Read-only cart lookup for a Server Component's own render (the checkout
+ * page's initial GET) — never creates or persists a cart. Next.js only
+ * allows `cookies().set()` inside a Server Action or Route Handler; a
+ * Server Component's render pass is neither, even when it calls an
+ * exported "use server" function directly rather than through a real
+ * client-dispatched action. `ensureCart()` creating-and-persisting a new
+ * cart from here throws ("Cookies can only be modified in a Server Action
+ * or Route Handler"), which was surfacing as an empty bag at checkout for
+ * anyone whose stored cart id no longer resolved on Shopify's side —
+ * losing the "empty" vs. "couldn't verify" distinction for a real cart.
+ */
+export async function getCheckoutSummaryAction(): Promise<CartSummary> {
+  const existingId = await readCartId();
+  if (!existingId) return summarize(null);
+
+  const cart = await shopifyGetCart(existingId);
+  return summarize(cart);
+}
+
 export async function addLineToCartAction(input: {
   slug: string;
   colorway: ColorwayKey;

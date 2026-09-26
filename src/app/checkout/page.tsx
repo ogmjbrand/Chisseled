@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getCartSummaryAction } from "@/lib/shopify/actions";
+import { getCheckoutSummaryAction } from "@/lib/shopify/actions";
 import { ArrowMark } from "@/components/primitives/Marks";
 import { pageMetadata } from "@/lib/seo";
 
@@ -24,7 +24,7 @@ export const metadata = {
  * contradictory checkouts in the same app.
  */
 export default async function CheckoutPage() {
-  const summary = await getCartSummaryAction();
+  const summary = await getCheckoutSummaryAction();
 
   if (summary.error) {
     return (
