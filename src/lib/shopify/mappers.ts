@@ -70,13 +70,30 @@ export function findShopifyVariant(
   const hasColorOption = product.options.some((o) => /^colou?r$/i.test(o.name));
   const hasSizeOption = product.options.some((o) => o.name.toLowerCase() === "size");
   const variants = product.variants.edges.map((e) => e.node);
-  return (
-    variants.find((v) => {
-      if (hasColorOption && !colorMatches(v.selectedOptions, colorway)) return false;
-      if (hasSizeOption && !sizeMatches(v.selectedOptions, size)) return false;
-      return true;
-    }) ?? null
-  );
+
+  const exact = variants.find((v) => {
+    if (hasColorOption && !colorMatches(v.selectedOptions, colorway)) return false;
+    if (hasSizeOption && !sizeMatches(v.selectedOptions, size)) return false;
+    return true;
+  });
+  if (exact) return exact;
+
+  /*
+   * "apparel" is colorwayForValue()'s catch-all for any real Shopify colour
+   * that doesn't match one of this project's curated colourway names — the
+   * common case for the connected store's own catalogue, whose colours
+   * ("Black", "Gray", "Blue", ...) were never chosen to line up with
+   * COLORWAYS. colorMatches() can then never succeed against it, since
+   * "apparel" isn't a real colour any variant actually carries — so a
+   * product that legitimately has that colour in stock, at the requested
+   * size, was being rejected outright. Fall back to matching on size alone
+   * rather than refusing an otherwise real, in-stock variant.
+   */
+  if (hasColorOption && colorway === "apparel") {
+    return variants.find((v) => !hasSizeOption || sizeMatches(v.selectedOptions, size)) ?? null;
+  }
+
+  return null;
 }
 
 /**
