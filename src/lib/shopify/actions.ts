@@ -59,14 +59,25 @@ const UNREACHABLE = "Couldn't reach the store. Check your connection and try aga
  */
 async function ensureCart(): Promise<{ cart: ShopifyCart | null; error: string | null }> {
   const existingId = await readCartId();
+  console.log("[CHECKOUT_TRACE] ensureCart: existingId =", existingId);
 
   if (existingId) {
     const cart = await shopifyGetCart(existingId);
+    console.log(
+      "[CHECKOUT_TRACE] ensureCart: shopifyGetCart(existingId) =",
+      cart ? { id: cart.id, lineCount: cart.lines.length, checkoutUrl: cart.checkoutUrl } : null,
+    );
     if (cart) return { cart, error: null };
     // Falls through to create a new one — the stored id is stale.
   }
 
   const result = await shopifyCreateCart([]);
+  console.log(
+    "[CHECKOUT_TRACE] ensureCart: shopifyCreateCart([]) =",
+    result.cart ? { id: result.cart.id, checkoutUrl: result.cart.checkoutUrl } : null,
+    "userErrors =",
+    result.userErrors,
+  );
   if (result.cart) {
     await writeCartId(result.cart.id);
     return { cart: result.cart, error: null };
@@ -171,9 +182,14 @@ export async function getCartSummaryAction(): Promise<CartSummary> {
  */
 export async function getCheckoutSummaryAction(): Promise<CartSummary> {
   const existingId = await readCartId();
+  console.log("[CHECKOUT_TRACE] getCheckoutSummaryAction: existingId =", existingId);
   if (!existingId) return summarize(null);
 
   const cart = await shopifyGetCart(existingId);
+  console.log(
+    "[CHECKOUT_TRACE] getCheckoutSummaryAction: cart =",
+    cart ? { id: cart.id, lineCount: cart.lines.length, checkoutUrl: cart.checkoutUrl } : null,
+  );
   return summarize(cart);
 }
 
@@ -183,12 +199,21 @@ export async function addLineToCartAction(input: {
   size: string;
   qty: number;
 }): Promise<CartSummary> {
+  console.log("[CHECKOUT_TRACE] addLineToCartAction: input =", input);
+
   const product = await getProductByHandle(input.slug);
+  console.log("[CHECKOUT_TRACE] addLineToCartAction: getProductByHandle found =", Boolean(product));
   if (!product) {
     return summarize(null, `"${input.slug}" isn't available in the store right now.`);
   }
 
   const variant = findShopifyVariant(product, input.colorway, input.size);
+  console.log(
+    "[CHECKOUT_TRACE] addLineToCartAction: findShopifyVariant =",
+    variant
+      ? { id: variant.id, availableForSale: variant.availableForSale, selectedOptions: variant.selectedOptions }
+      : null,
+  );
   if (!variant) {
     return summarize(null, "That size and colour combination isn't available.");
   }
@@ -197,9 +222,23 @@ export async function addLineToCartAction(input: {
   }
 
   const { cart: current, error } = await ensureCart();
+  console.log(
+    "[CHECKOUT_TRACE] addLineToCartAction: ensureCart =",
+    current ? { id: current.id } : null,
+    "error =",
+    error,
+  );
   if (!current) return summarize(null, error);
 
   const result = await shopifyAddToCart(current.id, [{ merchandiseId: variant.id, quantity: input.qty }]);
+  console.log(
+    "[CHECKOUT_TRACE] addLineToCartAction: shopifyAddToCart result =",
+    result.cart
+      ? { id: result.cart.id, lineCount: result.cart.lines.length, checkoutUrl: result.cart.checkoutUrl }
+      : null,
+    "userErrors =",
+    result.userErrors,
+  );
   return summarize(result.cart, errorFrom(result));
 }
 
