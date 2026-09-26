@@ -1,10 +1,24 @@
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
-import { getNutritionProducts } from "@/lib/catalog";
+import { getProduct } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { Specimen } from "@/components/primitives/Visual";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
+import { getProductByHandle } from "@/lib/shopify";
+import { enrichProduct } from "@/lib/shopify/mappers";
+
+/**
+ * Of this project's local nutrition catalogue, only these two slugs are also
+ * real handles in the connected Shopify store — the rest (whey-protein,
+ * c4-pre-workout) have no matching Shopify product, so linking to them would
+ * 404 and Add to Bag would fail exactly like the bundle/cart-drawer
+ * regression fixed earlier. Real Shopify price/availability is merged onto
+ * the local editorial copy via enrichProduct() rather than switching to raw
+ * Shopify data outright, so "What it does" / "When to take it" etc. — none
+ * of which Shopify models — are preserved.
+ */
+const REAL_NUTRITION_HANDLES = ["creatine-monohydrate", "detox-tea"];
 
 const CATEGORIES = [
   { id: "protein", name: "Protein", note: "Close the daily gap." },
@@ -13,8 +27,17 @@ const CATEGORIES = [
   { id: "daily", name: "Daily Essentials", note: "The unglamorous things." },
 ];
 
-export function FuelSection() {
-  const products = getNutritionProducts();
+export async function FuelSection() {
+  const products = (
+    await Promise.all(
+      REAL_NUTRITION_HANDLES.map(async (slug) => {
+        const local = getProduct(slug);
+        if (!local) return null;
+        const shopify = await getProductByHandle(slug);
+        return enrichProduct(local, shopify);
+      }),
+    )
+  ).filter((p): p is NonNullable<typeof p> => p !== null);
 
   return (
     <section

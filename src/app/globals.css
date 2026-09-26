@@ -550,6 +550,28 @@
   .marquee-track { animation: none; }
 }
 
+/* Loading-state placeholder block — the chisseled-shimmer keyframe already
+   existed unused; this is its first real use, for loading.tsx skeletons. */
+@utility skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-graphite);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-bone) 8%, transparent),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: chisseled-shimmer 1.8s ease-in-out infinite;
+}
+
 /* ============================================================
    COMPONENT PRIMITIVES
    ============================================================ */

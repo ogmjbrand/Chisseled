@@ -109,7 +109,7 @@ export function Header() {
           {/* --- Mobile menu trigger --- */}
           <button
             type="button"
-            className="-ml-2 p-2 lg:hidden"
+            className="-ml-3 p-3 lg:hidden"
             aria-label="Open menu"
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen(true)}
@@ -167,7 +167,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="p-2.5 text-fog transition-colors duration-300 hover:text-bone"
+              className="p-3 text-fog transition-colors duration-300 hover:text-bone"
               aria-label="Search"
             >
               <SearchMark className="size-5" />
@@ -175,7 +175,7 @@ export function Header() {
 
             <Link
               href="/account"
-              className="hidden p-2.5 text-fog transition-colors duration-300 hover:text-bone sm:block"
+              className="hidden p-3 text-fog transition-colors duration-300 hover:text-bone sm:block"
               aria-label="Account"
             >
               <AccountMark className="size-5" />
@@ -183,19 +183,19 @@ export function Header() {
 
             <Link
               href="/wishlist"
-              className="relative hidden p-2.5 text-fog transition-colors duration-300 hover:text-bone sm:block"
+              className="relative hidden p-3 text-fog transition-colors duration-300 hover:text-bone sm:block"
               aria-label={`Wishlist, ${wishlist.length} saved`}
             >
               <WishMark className="size-5" />
               {wishlist.length > 0 && (
-                <span className="absolute right-1 top-1 size-1.5 rounded-full bg-purple-bright" />
+                <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-purple-bright" />
               )}
             </Link>
 
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="relative -mr-2 flex items-center gap-2 p-2.5 text-bone"
+              className="relative -mr-3 flex items-center gap-2 p-3 text-bone"
               aria-label={`Open bag, ${count} ${count === 1 ? "item" : "items"}`}
             >
               <BagMark className="size-5" />
@@ -316,6 +316,7 @@ function MegaPanel({
 
 function MobileNav({ onClose }: { onClose: () => void }) {
   const [expanded, setExpanded] = useState<string | null>(NAV[0].label);
+  const { wishlist } = useStore();
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col bg-ink lg:hidden animate-fade">
@@ -323,9 +324,36 @@ function MobileNav({ onClose }: { onClose: () => void }) {
         <span className="font-display text-[1.0625rem] font-black uppercase tracking-[0.3em]">
           Chisseled
         </span>
-        <button type="button" onClick={onClose} className="-mr-2 p-2" aria-label="Close menu">
-          <CloseMark className="size-6" />
-        </button>
+
+        {/* Account/wishlist live here, at the top of the drawer, rather than
+            below the whole nav accordion — one tap (hamburger) and they're
+            immediately visible, no scrolling required. They also don't fit
+            in the collapsed header's own utility row on a narrow phone
+            without crowding search/bag/hamburger past comfortable widths. */}
+        <div className="flex items-center gap-1">
+          <Link
+            href="/account"
+            onClick={onClose}
+            className="p-3 text-fog transition-colors duration-300 hover:text-bone"
+            aria-label="Account"
+          >
+            <AccountMark className="size-5" />
+          </Link>
+          <Link
+            href="/wishlist"
+            onClick={onClose}
+            className="relative p-3 text-fog transition-colors duration-300 hover:text-bone"
+            aria-label={`Wishlist, ${wishlist.length} saved`}
+          >
+            <WishMark className="size-5" />
+            {wishlist.length > 0 && (
+              <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-purple-bright" />
+            )}
+          </Link>
+          <button type="button" onClick={onClose} className="-mr-3 p-3" aria-label="Close menu">
+            <CloseMark className="size-6" />
+          </button>
+        </div>
       </div>
 
       <nav aria-label="Mobile" className="flex-1 overflow-y-auto overscroll-contain px-[var(--gutter)] py-6">
@@ -388,16 +416,7 @@ function MobileNav({ onClose }: { onClose: () => void }) {
           })}
         </ul>
 
-        <div className="mt-8 grid grid-cols-2 gap-3">
-          <Link href="/account" onClick={onClose} className="btn btn-ghost btn-sm justify-center">
-            Account
-          </Link>
-          <Link href="/wishlist" onClick={onClose} className="btn btn-ghost btn-sm justify-center">
-            Wishlist
-          </Link>
-        </div>
-
-        <Link href="/fit" onClick={onClose} className="btn btn-purple btn-block mt-3">
+        <Link href="/fit" onClick={onClose} className="btn btn-purple btn-block mt-8">
           Find your fit
         </Link>
       </nav>

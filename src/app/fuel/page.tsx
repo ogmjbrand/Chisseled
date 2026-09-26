@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getNutritionProducts, getProduct } from "@/lib/catalog";
+import { getProduct } from "@/lib/catalog";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Specimen } from "@/components/primitives/Visual";
@@ -7,6 +7,20 @@ import { ProductMedia } from "@/components/product/ProductMedia";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, collectionSchema, pageMetadata } from "@/lib/seo";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
+import { getProductByHandle } from "@/lib/shopify";
+import { enrichProduct } from "@/lib/shopify/mappers";
+
+/**
+ * Of this project's local nutrition catalogue (whey-protein,
+ * creatine-monohydrate, c4-pre-workout, detox-tea), only these two are also
+ * real handles in the connected Shopify store. Listing the other two would
+ * link to a product page that 404s and an Add to Bag that fails — the same
+ * regression already fixed for bundles/cart-drawer recommendations. Real
+ * Shopify price/availability is merged onto the local editorial copy via
+ * enrichProduct() so the nutrition-panel content (which Shopify doesn't
+ * model) is preserved.
+ */
+const REAL_NUTRITION_HANDLES = ["creatine-monohydrate", "detox-tea"];
 
 export const metadata = pageMetadata({
   title: "Fuel the Work",
@@ -41,9 +55,18 @@ const SECTIONS = [
   { id: "daily", category: "Daily Essentials", title: "The unglamorous things.", tone: "void" as const },
 ];
 
-export default function FuelPage() {
-  const products = getNutritionProducts();
-  const hero = getProduct("creatine-monohydrate");
+export default async function FuelPage() {
+  const products = (
+    await Promise.all(
+      REAL_NUTRITION_HANDLES.map(async (slug) => {
+        const local = getProduct(slug);
+        if (!local) return null;
+        const shopify = await getProductByHandle(slug);
+        return enrichProduct(local, shopify);
+      }),
+    )
+  ).filter((p): p is NonNullable<typeof p> => p !== null);
+  const hero = products.find((p) => p.slug === "creatine-monohydrate");
 
   return (
     <>

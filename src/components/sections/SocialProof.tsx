@@ -6,19 +6,13 @@ import { EditorialImage } from "@/components/primitives/EditorialImage";
 import { ArrowMark, StarMark } from "@/components/primitives/Marks";
 
 /**
- * A transformation wall rather than a testimonial carousel: measurable
- * numbers, named people, and real review text pulled from the catalogue.
- *
- * PRODUCTION NOTE: the headline figures below must be replaced with
- * verified values from the analytics and review platforms before launch.
+ * A transformation wall rather than a testimonial carousel: named people and
+ * real review text pulled from the catalogue. This section previously also
+ * led with a row of headline stats ("50,000+ athletes," "4.9/5," etc.) that
+ * were placeholder figures, never replaced with verified numbers, and were
+ * shipping to production as if they were real — removed rather than kept as
+ * fabricated trust signals. Reinstate them once real, sourced figures exist.
  */
-
-const FIGURES = [
-  { value: "50,000+", label: "Athletes training" },
-  { value: "4.9 / 5", label: "Customer rating" },
-  { value: "100,000+", label: "Sessions logged" },
-  { value: "38", label: "Countries shipped" },
-];
 
 export function SocialProof() {
   // Pull the strongest review from across the catalogue.
@@ -40,21 +34,6 @@ export function SocialProof() {
             Built by people who do the work.
           </h2>
         </div>
-
-        {/* Figures */}
-        <ul className="mb-4 grid gap-px border border-bone/10 bg-bone/10 sm:grid-cols-2 lg:grid-cols-4">
-          {FIGURES.map((f, i) => (
-            <li
-              key={f.label}
-              className="bg-ink p-7"
-              data-reveal
-              style={{ "--reveal-delay": `${i * 70}ms` } as React.CSSProperties}
-            >
-              <p className="numeric mb-2 text-h3 text-bone">{f.value}</p>
-              <p className="eyebrow">{f.label}</p>
-            </li>
-          ))}
-        </ul>
 
         {/* The wall */}
         <div className="grid gap-3 lg:grid-cols-3">
