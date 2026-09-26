@@ -25,11 +25,6 @@ export const metadata = {
  */
 export default async function CheckoutPage() {
   const summary = await getCheckoutSummaryAction();
-  console.log("[CHECKOUT_TRACE] CheckoutPage: summary =", {
-    lineCount: summary.lines.length,
-    checkoutUrl: summary.checkoutUrl,
-    error: summary.error,
-  });
 
   if (summary.error) {
     return (
@@ -61,6 +56,5 @@ export default async function CheckoutPage() {
     );
   }
 
-  console.log("[CHECKOUT_TRACE] CheckoutPage: redirecting to", summary.checkoutUrl);
   redirect(summary.checkoutUrl);
 }
