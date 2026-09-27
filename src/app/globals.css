@@ -435,15 +435,18 @@
   [data-reveal] {
     opacity: 0;
     transform: translate3d(0, var(--reveal-y, 24px), 0);
+    filter: blur(8px);
     transition:
       opacity 900ms var(--ease-out-expo),
-      transform 1100ms var(--ease-out-expo);
+      transform 1100ms var(--ease-out-expo),
+      filter 900ms var(--ease-out-expo);
     transition-delay: var(--reveal-delay, 0ms);
   }
 
   [data-reveal="in"] {
     opacity: 1;
     transform: translate3d(0, 0, 0);
+    filter: blur(0);
   }
 
   /* Line-by-line typographic reveal for editorial headlines */
@@ -492,6 +495,7 @@
   [data-reveal-media] {
     opacity: 1 !important;
     transform: none !important;
+    filter: none !important;
     clip-path: none !important;
   }
 }
