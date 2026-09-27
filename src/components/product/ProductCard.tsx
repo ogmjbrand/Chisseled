@@ -7,7 +7,7 @@ import { stockLevel } from "@/lib/catalog";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { ProductMedia } from "@/components/product/ProductMedia";
-import { CheckMark, StarMark, WishMark } from "@/components/primitives/Marks";
+import { CheckMark, WishMark } from "@/components/primitives/Marks";
 import type { Product } from "@/lib/types";
 
 interface ProductCardProps {
@@ -186,17 +186,6 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
             )}
           </div>
         </div>
-
-        {/* Rating */}
-        {product.rating > 0 && (
-          <div className="mt-2 flex items-center gap-1.5">
-            <StarMark className="size-3 text-purple-bright" />
-            <span className="numeric text-micro text-fog">{product.rating.toFixed(1)}</span>
-            {product.reviewCount > 0 && (
-              <span className="text-micro text-ash">({product.reviewCount.toLocaleString()})</span>
-            )}
-          </div>
-        )}
 
         {/* Colourways */}
         {product.variants.length > 1 && (

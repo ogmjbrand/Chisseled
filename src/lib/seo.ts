@@ -79,6 +79,15 @@ export function websiteSchema() {
   };
 }
 
+/**
+ * aggregateRating/review previously emitted product.rating/reviewCount/
+ * reviews as schema.org structured data — those fields are illustrative
+ * sample data (see src/lib/reviews.ts's own header comment), not real
+ * customer reviews, so surfacing them to search engines as AggregateRating/
+ * Review markup would be publishing fabricated review data as fact. Omitted
+ * entirely rather than emitted with placeholder values; add back only once
+ * a real review platform is wired up.
+ */
 export function productSchema(product: Product) {
   const available = product.variants.some((v) => v.inStock.length > 0);
 
@@ -102,21 +111,6 @@ export function productSchema(product: Product) {
         : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    },
-    review: product.reviews.slice(0, 3).map((r) => ({
-      "@type": "Review",
-      author: { "@type": "Person", name: r.author },
-      datePublished: r.date,
-      name: r.title,
-      reviewBody: r.body,
-      reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5, worstRating: 1 },
-    })),
   };
 }
 

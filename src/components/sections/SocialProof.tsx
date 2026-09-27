@@ -1,31 +1,26 @@
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
-import { ATHLETES, PRODUCTS } from "@/lib/catalog";
+import { ATHLETES } from "@/lib/catalog";
 import { Sculpture } from "@/components/primitives/Visual";
 import { EditorialImage } from "@/components/primitives/EditorialImage";
-import { ArrowMark, StarMark } from "@/components/primitives/Marks";
-import { getRealProductHandles } from "@/lib/shopify/catalog";
+import { ArrowMark } from "@/components/primitives/Marks";
 
 /**
- * A transformation wall rather than a testimonial carousel: named people and
- * real review text pulled from the catalogue. This section previously also
- * led with a row of headline stats ("50,000+ athletes," "4.9/5," etc.) that
- * were placeholder figures, never replaced with verified numbers, and were
- * shipping to production as if they were real — removed rather than kept as
- * fabricated trust signals. Reinstate them once real, sourced figures exist.
+ * This section used to also carry a row of headline stats ("50,000+
+ * athletes," "4.9/5," etc.) and a grid of named-customer review quotes
+ * pulled from src/lib/reviews.ts. Both were removed as fabricated social
+ * proof: the stats were an explicitly-flagged placeholder never replaced
+ * with verified numbers, and reviews.ts's own header comment says its
+ * content is "illustrative sample data... production must render only
+ * verified purchase reviews from the live review store" — i.e. the names,
+ * star ratings, dates, and "verified" badges attached to every product's
+ * reviews are all invented, not real customer testimonials. Neither had a
+ * live source to swap in, so per this project's own no-fabrication rule
+ * they're removed rather than replaced with different invented content.
+ * What's left is exactly what's real: one named, credited coach.
  */
 
-export async function SocialProof() {
-  // Pull the strongest review from across the catalogue.
-  const quotes = PRODUCTS.slice(0, 8)
-    .flatMap((p) => p.reviews.slice(0, 1).map((r) => ({ ...r, product: p.name, slug: p.slug })))
-    .slice(0, 5);
-
-  // Most of these reference local-catalogue products with no matching
-  // Shopify handle — the caption below only links through when the product
-  // is real and purchasable, plain text otherwise.
-  const realHandles = await getRealProductHandles();
-
+export function SocialProof() {
   return (
     <section
       className="relative grain border-t border-bone/10 bg-carbon section-pad"
@@ -41,94 +36,47 @@ export async function SocialProof() {
           </h2>
         </div>
 
-        {/* The wall */}
-        <div className="grid gap-3 lg:grid-cols-3">
-          {/* Athlete portrait */}
-          <Link
-            href={`/community#${ATHLETES[3].slug}`}
-            className="group relative grain vignette row-span-2 hidden min-h-[30rem] overflow-hidden bg-ink lg:block"
-            data-reveal
-          >
-            {ATHLETES[3].photo ? (
-              <EditorialImage
-                src={ATHLETES[3].photo}
-                alt={`${ATHLETES[3].name}, ${ATHLETES[3].role}`}
-                sizes="(min-width: 1024px) 33vw, 100vw"
-                className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
-              />
-            ) : (
-              <Sculpture
-                seed={`proof-${ATHLETES[3].slug}`}
-                tone={ATHLETES[3].tone}
-                pose={ATHLETES[3].pose}
-                anchor={0.5}
-                scale={0.98}
-                className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
-              />
-            )}
-            <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+        {/* Coach spotlight — real, named, credited; not a customer review */}
+        <Link
+          href={`/community#${ATHLETES[3].slug}`}
+          className="group relative grain vignette block min-h-[24rem] overflow-hidden bg-ink sm:min-h-[28rem]"
+          data-reveal
+        >
+          {ATHLETES[3].photo ? (
+            <EditorialImage
+              src={ATHLETES[3].photo}
+              alt={`${ATHLETES[3].name}, ${ATHLETES[3].role}`}
+              sizes="100vw"
+              className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
+            />
+          ) : (
+            <Sculpture
+              seed={`proof-${ATHLETES[3].slug}`}
+              tone={ATHLETES[3].tone}
+              pose={ATHLETES[3].pose}
+              anchor={0.5}
+              scale={0.98}
+              className="absolute inset-0 size-full transition-transform duration-[1600ms] ease-[var(--ease-out-expo)] group-hover:scale-105"
+            />
+          )}
+          <span aria-hidden className="absolute inset-0 z-[2] bg-gradient-to-t from-ink via-ink/40 to-transparent" />
 
-            <div className="relative z-[3] flex h-full flex-col justify-end p-7">
-              <p className="eyebrow mb-3 text-purple-bright">{ATHLETES[3].discipline}</p>
-              <p className="display-sm mb-3 text-bone">{ATHLETES[3].name}</p>
-              <p className="mb-5 max-w-[30ch] text-body-sm italic leading-relaxed text-fog">
-                “{ATHLETES[3].quote}”
-              </p>
-              <ul className="flex gap-6 border-t border-bone/12 pt-4">
-                {ATHLETES[3].stats.map((s) => (
-                  <li key={s.label}>
-                    <p className="numeric text-caption text-bone">{s.value}</p>
-                    <p className="text-[0.5625rem] uppercase tracking-[0.14em] text-ash">{s.label}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Link>
-
-          {/* Review cards */}
-          {quotes.map((q, i) => (
-            <figure
-              key={q.id}
-              className="flex flex-col justify-between border border-bone/10 bg-ink p-6"
-              data-reveal
-              style={{ "--reveal-delay": `${i * 80}ms` } as React.CSSProperties}
-            >
-              <div>
-                <div className="mb-4 flex items-center gap-0.5" aria-label={`${q.rating} out of 5`}>
-                  {Array.from({ length: 5 }).map((_, s) => (
-                    <StarMark
-                      key={s}
-                      className={s < q.rating ? "size-3.5 text-purple-bright" : "size-3.5 text-iron"}
-                      filled={s < q.rating}
-                    />
-                  ))}
-                </div>
-                <blockquote>
-                  <p className="mb-3 text-body-sm font-medium text-bone">{q.title}</p>
-                  <p className="text-body-sm leading-relaxed text-smoke">
-                    {q.body.length > 168 ? `${q.body.slice(0, 168).trimEnd()}…` : q.body}
-                  </p>
-                </blockquote>
-              </div>
-
-              <figcaption className="mt-6 flex items-baseline justify-between gap-3 border-t border-bone/10 pt-4">
-                <span className="text-caption text-fog">{q.author}</span>
-                {realHandles.has(q.slug) ? (
-                  <Link
-                    href={`/product/${q.slug}`}
-                    className="truncate font-mono text-micro uppercase tracking-[0.12em] text-ash transition-colors hover:text-purple-bright"
-                  >
-                    {q.product}
-                  </Link>
-                ) : (
-                  <span className="truncate font-mono text-micro uppercase tracking-[0.12em] text-ash">
-                    {q.product}
-                  </span>
-                )}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+          <div className="relative z-[3] flex h-full max-w-[34rem] flex-col justify-end p-7 sm:p-10">
+            <p className="eyebrow mb-3 text-purple-bright">{ATHLETES[3].discipline}</p>
+            <p className="display-sm mb-3 text-bone">{ATHLETES[3].name}</p>
+            <p className="mb-5 max-w-[36ch] text-body-sm italic leading-relaxed text-fog">
+              “{ATHLETES[3].quote}”
+            </p>
+            <ul className="flex gap-6 border-t border-bone/12 pt-4">
+              {ATHLETES[3].stats.map((s) => (
+                <li key={s.label}>
+                  <p className="numeric text-caption text-bone">{s.value}</p>
+                  <p className="text-[0.5625rem] uppercase tracking-[0.14em] text-ash">{s.label}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Link>
 
         <div className="mt-10 flex justify-center">
           <Link href="/community#stories" className="btn btn-ghost btn-sm">

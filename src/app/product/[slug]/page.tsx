@@ -1,6 +1,6 @@
 ﻿import { notFound } from "next/navigation";
 import { getEnrichedProduct, getEnrichedProducts } from "@/lib/shopify/catalog";
-import { ProductDetail, ReviewList } from "@/components/product/ProductDetail";
+import { ProductDetail } from "@/components/product/ProductDetail";
 import { ProductCard } from "@/components/product/ProductCard";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { JsonLd } from "@/components/primitives/JsonLd";
@@ -133,8 +133,6 @@ export default async function ProductPage({
       </nav>
 
       <ProductDetail product={product} />
-
-      <ReviewList product={product} />
 
       {related.length > 0 ? (
         <section

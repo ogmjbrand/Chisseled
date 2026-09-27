@@ -12,14 +12,17 @@ import type { Activity, Fit, Product } from "@/lib/types";
  * present, so a collection never offers a filter that would return nothing.
  */
 
-type SortKey = "featured" | "price-asc" | "price-desc" | "rating" | "new";
+// "Top rated" was removed as a sort — it ordered by product.rating/
+// reviewCount, which are illustrative sample data (see src/lib/reviews.ts),
+// not real review data, so sorting by them would present fabricated
+// numbers as a meaningful ranking.
+type SortKey = "featured" | "price-asc" | "price-desc" | "new";
 
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "featured", label: "Featured" },
   { key: "new", label: "Newest" },
   { key: "price-asc", label: "Price: low to high" },
   { key: "price-desc", label: "Price: high to low" },
-  { key: "rating", label: "Top rated" },
 ];
 
 const ACTIVITY_LABELS: Record<Activity, string> = {
@@ -116,8 +119,6 @@ export function ProductGrid({
         return [...out].sort((a, b) => a.price - b.price);
       case "price-desc":
         return [...out].sort((a, b) => b.price - a.price);
-      case "rating":
-        return [...out].sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount);
       case "new":
         return [...out].sort((a, b) => Number(b.isNew ?? false) - Number(a.isNew ?? false));
       default:

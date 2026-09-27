@@ -99,9 +99,7 @@ export default function TrainPage() {
         <ul className="flex flex-wrap gap-x-10 gap-y-5 border-t border-bone/10 pt-7">
           {[
             { v: "6", k: "Programmes" },
-            { v: "72,000+", k: "Members training" },
             { v: "3", k: "Coaches" },
-            { v: "100K+", k: "Sessions logged" },
           ].map((s) => (
             <li key={s.k}>
               <p className="numeric text-h5 text-bone">{s.v}</p>
