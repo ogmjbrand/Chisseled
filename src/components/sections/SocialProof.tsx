@@ -4,6 +4,7 @@ import { ATHLETES, PRODUCTS } from "@/lib/catalog";
 import { Sculpture } from "@/components/primitives/Visual";
 import { EditorialImage } from "@/components/primitives/EditorialImage";
 import { ArrowMark, StarMark } from "@/components/primitives/Marks";
+import { getRealProductHandles } from "@/lib/shopify/catalog";
 
 /**
  * A transformation wall rather than a testimonial carousel: named people and
@@ -14,11 +15,16 @@ import { ArrowMark, StarMark } from "@/components/primitives/Marks";
  * fabricated trust signals. Reinstate them once real, sourced figures exist.
  */
 
-export function SocialProof() {
+export async function SocialProof() {
   // Pull the strongest review from across the catalogue.
   const quotes = PRODUCTS.slice(0, 8)
     .flatMap((p) => p.reviews.slice(0, 1).map((r) => ({ ...r, product: p.name, slug: p.slug })))
     .slice(0, 5);
+
+  // Most of these reference local-catalogue products with no matching
+  // Shopify handle — the caption below only links through when the product
+  // is real and purchasable, plain text otherwise.
+  const realHandles = await getRealProductHandles();
 
   return (
     <section
@@ -107,12 +113,18 @@ export function SocialProof() {
 
               <figcaption className="mt-6 flex items-baseline justify-between gap-3 border-t border-bone/10 pt-4">
                 <span className="text-caption text-fog">{q.author}</span>
-                <Link
-                  href={`/product/${q.slug}`}
-                  className="truncate font-mono text-micro uppercase tracking-[0.12em] text-ash transition-colors hover:text-purple-bright"
-                >
-                  {q.product}
-                </Link>
+                {realHandles.has(q.slug) ? (
+                  <Link
+                    href={`/product/${q.slug}`}
+                    className="truncate font-mono text-micro uppercase tracking-[0.12em] text-ash transition-colors hover:text-purple-bright"
+                  >
+                    {q.product}
+                  </Link>
+                ) : (
+                  <span className="truncate font-mono text-micro uppercase tracking-[0.12em] text-ash">
+                    {q.product}
+                  </span>
+                )}
               </figcaption>
             </figure>
           ))}

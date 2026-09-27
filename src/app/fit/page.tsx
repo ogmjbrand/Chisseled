@@ -1,6 +1,7 @@
 import { FitQuiz } from "@/components/sections/FitQuiz";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
+import { getRealProductHandles } from "@/lib/shopify/catalog";
 
 export const metadata = pageMetadata({
   title: "Find Your Performance Fit",
@@ -9,7 +10,12 @@ export const metadata = pageMetadata({
   path: "/fit",
 });
 
-export default function FitPage() {
+export default async function FitPage() {
+  // The quiz scores against the full local catalogue (rich activity/fit/
+  // collection tags Shopify doesn't carry), but only real, purchasable
+  // Shopify products should render as a shoppable ProductCard at the end.
+  const realProductHandles = [...(await getRealProductHandles())];
+
   return (
     <>
       <JsonLd
@@ -18,7 +24,7 @@ export default function FitPage() {
           { name: "Find Your Fit", path: "/fit" },
         ])}
       />
-      <FitQuiz />
+      <FitQuiz realProductHandles={realProductHandles} />
     </>
   );
 }

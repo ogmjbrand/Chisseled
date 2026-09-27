@@ -350,13 +350,18 @@ export function Hero() {
           Built different. Apparel, training and fuel engineered to work as one system.
         </p>
 
+        {/*
+          Each slide's specs (GSM, price, colourway count) describe this
+          slide's own editorial garment — not necessarily a product the
+          connected Shopify store currently carries at that spec or price.
+          Linking straight to `/product/${slide.slug}` risked a 404, and
+          redirecting to a different real product would show the wrong specs
+          right next to it. `/shop` is always real and never misleading.
+        */}
         <div className="pointer-events-auto flex flex-col gap-3 sm:flex-row">
-          <Link href={`/product/${slide.slug}`} className="btn btn-primary">
-            Shop this piece
+          <Link href="/shop" className="btn btn-primary">
+            Shop the collection
             <ArrowMark className="size-4" />
-          </Link>
-          <Link href="/shop" className="btn btn-ghost">
-            All collections
           </Link>
         </div>
       </div>

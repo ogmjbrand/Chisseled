@@ -7,6 +7,8 @@ import { Specimen } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 import { ArrowMark } from "@/components/primitives/Marks";
+import { getProductByHandle } from "@/lib/shopify";
+import { enrichProduct } from "@/lib/shopify/mappers";
 
 export const metadata = pageMetadata({
   title: "The Chisseled Method",
@@ -48,10 +50,23 @@ const PRINCIPLES = [
   },
 ];
 
-export default function MethodPage() {
-  const recovery = getProductsByCollection("essentials").filter((p) =>
+export default async function MethodPage() {
+  // Only real, currently-purchasable Shopify products belong in a grid of
+  // ProductCards with a live Add to Bag — most local-catalogue recovery
+  // picks aren't real Shopify handles, so those are dropped rather than
+  // shown as purchasable when they aren't. The ones that qualify are
+  // enriched with real Shopify price so what's displayed matches checkout.
+  const recoveryLocal = getProductsByCollection("essentials").filter((p) =>
     p.activities.includes("recovery"),
   );
+  const recovery = (
+    await Promise.all(
+      recoveryLocal.map(async (local) => {
+        const shopify = await getProductByHandle(local.slug);
+        return shopify ? enrichProduct(local, shopify) : null;
+      }),
+    )
+  ).filter((p): p is NonNullable<typeof p> => p !== null);
 
   return (
     <>

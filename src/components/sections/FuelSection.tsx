@@ -79,12 +79,17 @@ export async function FuelSection() {
           </Link>
         </div>
 
-        {/* Category rail */}
+        {/*
+          Category rail — the connected store's real nutrition catalogue is
+          currently 2 flat products, not four distinct shoppable categories,
+          so these link to /fuel itself (the /fuel#<id> anchors they used to
+          point at no longer exist there) rather than a dead jump target.
+        */}
         <ul className="mb-4 grid gap-px border border-bone/10 bg-bone/10 sm:grid-cols-2 lg:grid-cols-4">
           {CATEGORIES.map((c, i) => (
             <li key={c.id} className="bg-ink">
               <Link
-                href={`/fuel#${c.id}`}
+                href="/fuel"
                 className="group block p-6 transition-colors duration-500 hover:bg-carbon"
                 data-reveal
                 style={{ "--reveal-delay": `${i * 70}ms` } as React.CSSProperties}

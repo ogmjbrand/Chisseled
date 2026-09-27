@@ -48,13 +48,6 @@ const STANDARDS = [
   },
 ];
 
-const SECTIONS = [
-  { id: "protein", category: "Protein", title: "Close the daily gap.", tone: "fuel" as const },
-  { id: "performance", category: "Performance", title: "Dosed to the research.", tone: "train" as const },
-  { id: "recovery", category: "Recovery", title: "The half nobody sells.", tone: "recover" as const },
-  { id: "daily", category: "Daily Essentials", title: "The unglamorous things.", tone: "void" as const },
-];
-
 export default async function FuelPage() {
   const products = (
     await Promise.all(
@@ -67,6 +60,49 @@ export default async function FuelPage() {
     )
   ).filter((p): p is NonNullable<typeof p> => p !== null);
   const hero = products.find((p) => p.slug === "creatine-monohydrate");
+
+  /*
+   * Each stack's copy describes a pairing; several of the original items
+   * (heavyweight-hoodie-set, chisseled-sling-bag, performance-crew-sock)
+   * aren't real Shopify handles, so they're dropped rather than shown as
+   * purchasable when they can't be bought. A stack that has no real product
+   * left doesn't get rendered at all, rather than showing an empty card.
+   */
+  const STACKS = [
+    {
+      title: "The training stack",
+      items: ["creatine-monohydrate", "performance-crew-sock"],
+      why: "The one supplement the evidence agrees on, and cushioning where the load lands. Both are daily, neither is exciting.",
+    },
+    {
+      title: "The recovery stack",
+      items: ["detox-tea", "heavyweight-hoodie-set"],
+      why: "A warm evening habit and something to stay warm in. Recovery is mostly the boring hours between sessions.",
+    },
+    {
+      title: "The carry stack",
+      items: ["chisseled-sling-bag", "creatine-monohydrate", "performance-crew-sock"],
+      why: "What a session actually needs, sized so nothing else fits. Pack it once and stop deciding.",
+    },
+  ];
+
+  const stacks = (
+    await Promise.all(
+      STACKS.map(async (stack) => {
+        const stackProducts = (
+          await Promise.all(
+            stack.items.map(async (slug) => {
+              const local = getProduct(slug);
+              if (!local) return null;
+              const shopify = await getProductByHandle(slug);
+              return shopify ? enrichProduct(local, shopify) : null;
+            }),
+          )
+        ).filter((p): p is NonNullable<typeof p> => p !== null);
+        return { ...stack, products: stackProducts };
+      }),
+    )
+  ).filter((stack) => stack.products.length > 0);
 
   return (
     <>
@@ -195,45 +231,43 @@ export default async function FuelPage() {
         </section>
       )}
 
-      {/* --- Category sections --- */}
-      {SECTIONS.map((section, si) => {
-        const items = products.filter((p) => p.category === section.category);
-        if (items.length === 0) return null;
-
-        return (
-          <section
-            key={section.id}
-            id={section.id}
-            className={[
-              "border-b border-bone/10 section-pad",
-              si % 2 === 0 ? "bg-carbon" : "bg-ink",
-            ].join(" ")}
-            aria-labelledby={`${section.id}-heading`}
-          >
-            <div className="shell">
-              <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
-                <div>
-                  <p className="eyebrow mb-4">{section.category}</p>
-                  <h2 id={`${section.id}-heading`} className="display-md text-bone">
-                    {section.title}
-                  </h2>
-                </div>
-                <p className="numeric text-caption text-ash">
-                  {items.length} {items.length === 1 ? "product" : "products"}
-                </p>
+      {/*
+        --- The range ---
+        This used to be four category sections (Protein/Performance/Recovery/
+        Daily Essentials), each filtering by product category. That grouping
+        never actually matched the catalogue's own category values, so every
+        section rendered empty regardless of the Shopify-data fix above — a
+        pre-existing content/taxonomy bug, not a Shopify staleness issue. At
+        the current catalogue size (2 real nutrition products) a four-way
+        split has nothing to divide; one honest grid replaces it rather than
+        re-inventing categories the products don't actually carry.
+      */}
+      {products.length > 0 && (
+        <section className="border-b border-bone/10 bg-carbon section-pad" aria-labelledby="range-heading">
+          <div className="shell">
+            <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <p className="eyebrow mb-4">In stock now</p>
+                <h2 id="range-heading" className="display-md text-bone">
+                  The current range.
+                </h2>
               </div>
-
-              <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
-                {items.map((p, i) => (
-                  <ProductCard key={p.slug} product={p} index={i} />
-                ))}
-              </div>
+              <p className="numeric text-caption text-ash">
+                {products.length} {products.length === 1 ? "product" : "products"}
+              </p>
             </div>
-          </section>
-        );
-      })}
+
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
+              {products.map((p, i) => (
+                <ProductCard key={p.slug} product={p} index={i} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* --- Stack recommendations --- */}
+      {stacks.length > 0 && (
       <section className="bg-ink section-pad" aria-labelledby="stacks-heading">
         <div className="shell">
           <div className="mb-14 grid items-end gap-10 lg:grid-cols-[1fr_auto]">
@@ -250,23 +284,7 @@ export default async function FuelPage() {
           </div>
 
           <div className="grid gap-3 lg:grid-cols-3">
-            {[
-              {
-                title: "The training stack",
-                items: ["creatine-monohydrate", "performance-crew-sock"],
-                why: "The one supplement the evidence agrees on, and cushioning where the load lands. Both are daily, neither is exciting.",
-              },
-              {
-                title: "The recovery stack",
-                items: ["detox-tea", "heavyweight-hoodie-set"],
-                why: "A warm evening habit and something to stay warm in. Recovery is mostly the boring hours between sessions.",
-              },
-              {
-                title: "The carry stack",
-                items: ["chisseled-sling-bag", "creatine-monohydrate", "performance-crew-sock"],
-                why: "What a session actually needs, sized so nothing else fits. Pack it once and stop deciding.",
-              },
-            ].map((stack, i) => (
+            {stacks.map((stack, i) => (
               <article
                 key={stack.title}
                 className="border border-bone/10 bg-carbon p-7"
@@ -277,40 +295,37 @@ export default async function FuelPage() {
                 <p className="mb-7 text-body-sm leading-relaxed text-smoke">{stack.why}</p>
 
                 <ul className="space-y-2.5">
-                  {stack.items.map((slug) => {
-                    const p = getProduct(slug);
-                    if (!p) return null;
-                    return (
-                      <li key={slug}>
-                        <Link
-                          href={`/product/${slug}`}
-                          className="group flex items-center gap-3 border border-bone/10 p-2.5 transition-colors duration-400 hover:border-bone/30"
-                        >
-                          <span className="size-11 shrink-0 overflow-hidden bg-graphite">
-                            <ProductMedia
-                              media={p.media}
-                              flat={p.flat}
-                              colorway={p.variants[0].colorway}
-                              seed={`stack-${slug}`}
-                              view="front"
-                              name={p.name}
-                              className="size-full"
-                            />
-                          </span>
-                          <span className="min-w-0 flex-1 truncate text-caption text-bone">
-                            {p.name}
-                          </span>
-                          <ArrowMark className="size-4 shrink-0 -translate-x-1 text-ash opacity-0 transition-all duration-400 group-hover:translate-x-0 group-hover:opacity-100" />
-                        </Link>
-                      </li>
-                    );
-                  })}
+                  {stack.products.map((p) => (
+                    <li key={p.slug}>
+                      <Link
+                        href={`/product/${p.slug}`}
+                        className="group flex items-center gap-3 border border-bone/10 p-2.5 transition-colors duration-400 hover:border-bone/30"
+                      >
+                        <span className="size-11 shrink-0 overflow-hidden bg-graphite">
+                          <ProductMedia
+                            media={p.media}
+                            flat={p.flat}
+                            colorway={p.variants[0].colorway}
+                            seed={`stack-${p.slug}`}
+                            view="front"
+                            name={p.name}
+                            className="size-full"
+                          />
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-caption text-bone">
+                          {p.name}
+                        </span>
+                        <ArrowMark className="size-4 shrink-0 -translate-x-1 text-ash opacity-0 transition-all duration-400 group-hover:translate-x-0 group-hover:opacity-100" />
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </article>
             ))}
           </div>
         </div>
       </section>
+      )}
     </>
   );
 }

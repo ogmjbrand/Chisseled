@@ -15,10 +15,13 @@ type Result =
 
 const SUGGESTED = ["Scarred", "Hoodies", "Training sets", "Sports bras", "Creatine", "Bundles"];
 
-export function SearchOverlay() {
+export function SearchOverlay({ realProductHandles }: { realProductHandles: string[] }) {
   const { searchOpen, setSearchOpen, currency } = useStore();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  // Most of the local catalogue isn't a real, purchasable Shopify product —
+  // searching only the real subset is what stops a result from 404ing.
+  const realHandles = useMemo(() => new Set(realProductHandles), [realProductHandles]);
 
   useScrollLock(searchOpen);
   useEscape(searchOpen, () => setSearchOpen(false));
@@ -52,8 +55,8 @@ export function SearchOverlay() {
     const match = (...fields: string[]) =>
       fields.some((f) => f.toLowerCase().includes(q));
 
-    const products: Result[] = PRODUCTS.filter((p) =>
-      match(p.name, p.category, p.tagline, p.collection, ...p.activities),
+    const products: Result[] = PRODUCTS.filter(
+      (p) => realHandles.has(p.slug) && match(p.name, p.category, p.tagline, p.collection, ...p.activities),
     )
       .slice(0, 5)
       .map((p) => ({
@@ -98,7 +101,7 @@ export function SearchOverlay() {
       }));
 
     return [...products, ...collections, ...programmes, ...articles];
-  }, [query]);
+  }, [query, realHandles]);
 
   const grouped = useMemo(() => {
     return {

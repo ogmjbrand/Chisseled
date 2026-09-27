@@ -11,7 +11,7 @@ import { GrainDefs } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { StoreProvider } from "@/lib/store";
 import { SITE, organizationSchema, websiteSchema } from "@/lib/seo";
-import { getEnrichedProductsByHandles } from "@/lib/shopify/catalog";
+import { getEnrichedProductsByHandles, getRealProductHandles } from "@/lib/shopify/catalog";
 
 /**
  * "Complete your performance kit" — real, addable Shopify handles. Kept here
@@ -99,6 +99,10 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const kitProducts = await getEnrichedProductsByHandles(CART_KIT_HANDLES);
+  // Passed to SearchOverlay so it only links search results through to a
+  // product page that actually exists — a Set isn't serialisable across the
+  // Server/Client boundary, so this crosses as a plain array.
+  const realProductHandles = [...(await getRealProductHandles())];
 
   return (
     <html
@@ -116,7 +120,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <main id="main">{children}</main>
           <Footer />
           <CartDrawer kitProducts={kitProducts} />
-          <SearchOverlay />
+          <SearchOverlay realProductHandles={realProductHandles} />
         </StoreProvider>
       </body>
     </html>

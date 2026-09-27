@@ -3,6 +3,7 @@ import { getProduct, getProductsByGender } from "@/lib/catalog";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { ColorwayKey, Tone } from "@/lib/art";
+import { getRealProductHandles } from "@/lib/shopify/catalog";
 
 interface GenderEditorialProps {
   gender: "women" | "men";
@@ -42,14 +43,22 @@ const CAMPAIGN_HERO: Record<"women" | "men", { slug: string; colorway: ColorwayK
  * equally premium treatment for both is a design requirement, not a
  * coincidence, and sharing the implementation is how it stays that way.
  */
-export function GenderEditorial({
+export async function GenderEditorial({
   gender,
   index,
   headline,
   body,
   flip = false,
 }: GenderEditorialProps) {
-  const products = getProductsByGender(gender).slice(0, 4);
+  // The category rail links straight to a product page, so only real,
+  // currently-purchasable Shopify products belong in it — most of the local
+  // catalogue's gendered picks aren't (only 2 of 71 local products are also
+  // real Shopify handles, and neither is gendered apparel). The campaign
+  // photo above is pure editorial (no link at all) and unaffected.
+  const realHandles = await getRealProductHandles();
+  const products = getProductsByGender(gender)
+    .filter((p) => realHandles.has(p.slug))
+    .slice(0, 4);
   const label = gender === "women" ? "Women" : "Men";
   const hero = CAMPAIGN_HERO[gender];
   const heroProduct = getProduct(hero.slug);
@@ -82,20 +91,22 @@ export function GenderEditorial({
           ) : null}
 
           {/* Floating piece — a product lifted out of the campaign */}
-          <div className="absolute bottom-6 left-6 z-[3] w-28 border border-bone/12 bg-ink/70 p-2 backdrop-blur-md sm:w-32">
-            <ProductMedia
-              media={products[0]?.media}
-              flat={products[0]?.flat ?? "tee"}
-              colorway={products[0]?.variants[0].colorway ?? "onyx"}
-              seed={`float-${gender}`}
-              view="front"
-              name={products[0]?.name ?? "Piece"}
-              className="size-full"
-            />
-            <p className="mt-1.5 truncate px-1 pb-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-fog">
-              {products[0]?.name}
-            </p>
-          </div>
+          {products[0] && (
+            <div className="absolute bottom-6 left-6 z-[3] w-28 border border-bone/12 bg-ink/70 p-2 backdrop-blur-md sm:w-32">
+              <ProductMedia
+                media={products[0].media}
+                flat={products[0].flat}
+                colorway={products[0].variants[0].colorway}
+                seed={`float-${gender}`}
+                view="front"
+                name={products[0].name}
+                className="size-full"
+              />
+              <p className="mt-1.5 truncate px-1 pb-0.5 font-mono text-[0.5625rem] uppercase tracking-[0.12em] text-fog">
+                {products[0].name}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* --- Copy --- */}
@@ -121,6 +132,7 @@ export function GenderEditorial({
           </p>
 
           {/* Category rail */}
+          {products.length > 0 && (
           <ul className="mb-10 grid grid-cols-2 gap-px border border-bone/10 bg-bone/10">
             {products.map((p) => (
               <li key={p.slug} className="bg-ink">
@@ -150,6 +162,7 @@ export function GenderEditorial({
               </li>
             ))}
           </ul>
+          )}
 
           <Link href="/shop" className="btn btn-primary">
             Shop {label.toLowerCase()}&apos;s

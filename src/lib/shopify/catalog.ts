@@ -332,6 +332,21 @@ export async function getEnrichedProducts(): Promise<Product[]> {
 }
 
 /**
+ * The set of local catalogue slugs that are also real, currently-listed
+ * Shopify handles. Several homepage/editorial surfaces recommend or link to
+ * products by local slug without knowing whether the connected store still
+ * carries a matching item — this is how they check before rendering a
+ * "shop this" affordance a customer could actually act on. Backed by the
+ * same cached product fetch as getEnrichedProducts(), so calling this
+ * alongside it in the same request doesn't cost a second round trip.
+ */
+export async function getRealProductHandles(): Promise<Set<string>> {
+  const shopifyProducts = await getShopifyProducts(250);
+
+  return new Set(shopifyProducts.map((p) => p.handle));
+}
+
+/**
  * Resolves a specific, ordered set of real Shopify handles (bundle contents,
  * cart-drawer recommendations) — handles Shopify no longer carries are
  * dropped rather than surfaced as a broken product.

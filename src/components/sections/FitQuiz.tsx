@@ -129,7 +129,7 @@ const QUESTIONS: Question[] = [
 
 type Answers = Record<string, string[]>;
 
-export function FitQuiz() {
+export function FitQuiz({ realProductHandles }: { realProductHandles: string[] }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [done, setDone] = useState(false);
@@ -172,6 +172,7 @@ export function FitQuiz() {
     return (
       <Result
         result={result}
+        realProductHandles={realProductHandles}
         onRestart={() => {
           setAnswers({});
           setStep(0);
@@ -359,7 +360,20 @@ const SUMMARIES: Record<Fit, string> = {
    RESULT
    ================================================================== */
 
-function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => void }) {
+function Result({
+  result,
+  realProductHandles,
+  onRestart,
+}: {
+  result: ScoreResult;
+  realProductHandles: string[];
+  onRestart: () => void;
+}) {
+  // The scoring above weighs the full local catalogue (activities/fit/
+  // collection tags Shopify doesn't carry) — but only a real, currently
+  // purchasable Shopify product should render as a shoppable ProductCard.
+  const realHandles = new Set(realProductHandles);
+  const shoppableProducts = result.products.filter((p) => realHandles.has(p.slug));
   return (
     <div className="pb-24 pt-[calc(var(--nav-h)+3rem)]">
       <div className="shell">
@@ -414,11 +428,18 @@ function Result({ result, onRestart }: { result: ScoreResult; onRestart: () => v
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
-            {result.products.map((p, i) => (
-              <ProductCard key={p.slug} product={p} index={i} />
-            ))}
-          </div>
+          {shoppableProducts.length > 0 ? (
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
+              {shoppableProducts.map((p, i) => (
+                <ProductCard key={p.slug} product={p} index={i} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-body-sm text-smoke">
+              Nothing in stock matches this combination precisely — shop the full collection
+              below and use the {result.fit} fit as your filter.
+            </p>
+          )}
         </section>
 
         <div className="mt-14 flex flex-col gap-3 border-t border-bone/10 pt-10 sm:flex-row">
