@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
-import { COLLECTIONS, getProduct, getProductsByCollection } from "@/lib/catalog";
+import { COLLECTIONS, getProduct } from "@/lib/catalog";
+import { getEnrichedProductsByCollection } from "@/lib/shopify/catalog";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { ColorwayKey } from "@/lib/art";
+import type { CollectionSlug } from "@/lib/types";
 
 /**
  * Each panel used to carry a procedural `Sculpture` — an invented figure
@@ -27,7 +29,25 @@ const COLLECTION_HERO: Record<string, { slug: string; colorway: ColorwayKey }> =
  * that transforms on hover, with the product count carried as data so the
  * panel still says something concrete.
  */
-export function ShopByCollection() {
+export async function ShopByCollection() {
+  // The count shown here has to be the same number the destination page
+  // will actually render. It previously came from the local editorial
+  // catalogue's own collection field, which is a different classification
+  // than the one `/shop/[collection]` uses for the real, live Shopify
+  // products (title/tag keyword matching in collectionForProduct()) — so
+  // the badge and a few panels ("Scarred", "Statement", "CH Monogram")
+  // promised a shelf that didn't exist: the real catalogue currently has
+  // zero products keyword-matched into those three, so their pages render
+  // 0 pieces. A collection with nothing real behind it is not shown at
+  // all, rather than linking to an empty page or inventing filler stock.
+  const withCounts = await Promise.all(
+    COLLECTIONS.map(async (collection) => ({
+      collection,
+      count: (await getEnrichedProductsByCollection(collection.slug as CollectionSlug)).length,
+    })),
+  );
+  const live = withCounts.filter((c) => c.count > 0);
+
   return (
     <section className="relative bg-ink section-pad" aria-labelledby="collections-heading">
       <SectionBackdrop src="trail" strength="quiet" />
@@ -46,8 +66,7 @@ export function ShopByCollection() {
       </div>
 
       <div className="shell grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {COLLECTIONS.map((collection, i) => {
-          const count = getProductsByCollection(collection.slug).length;
+        {live.map(({ collection, count }, i) => {
           // The signature collection anchors the mosaic; five panels then fill
           // a 4x2 grid exactly instead of orphaning the fifth on its own row.
           const feature = i === 0;
