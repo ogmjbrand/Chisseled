@@ -146,3 +146,22 @@ export function ReturnMark({ className, strokeWidth = 1.4 }: MarkProps) {
     </svg>
   );
 }
+
+export function SendMark({ className, strokeWidth = 1.4 }: MarkProps) {
+  return (
+    <svg {...base(className)} stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.5 3.5 3 10.5l7 2.5 2.5 7Z" />
+      <path d="M20.5 3.5 12.5 13" />
+    </svg>
+  );
+}
+
+/** A four-point spark — the assistant's mark, not a generic AI sparkle: drawn to the same single-grid stroke as the rest of the set. */
+export function SparkMark({ className, strokeWidth = 1.4 }: MarkProps) {
+  return (
+    <svg {...base(className)} stroke="currentColor" strokeWidth={strokeWidth} strokeLinejoin="round">
+      <path d="M12 3c.6 3.4 2.1 4.9 5.5 5.5-3.4.6-4.9 2.1-5.5 5.5-.6-3.4-2.1-4.9-5.5-5.5C9.9 7.9 11.4 6.4 12 3Z" />
+      <path d="M18.5 15.5c.3 1.7 1 2.4 2.5 2.5-1.5.1-2.2.8-2.5 2.5-.3-1.7-1-2.4-2.5-2.5 1.5-.1 2.2-.8 2.5-2.5Z" />
+    </svg>
+  );
+}

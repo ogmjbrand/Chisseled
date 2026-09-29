@@ -6,6 +6,7 @@ import { Header } from "@/components/shell/Header";
 import { Footer } from "@/components/shell/Footer";
 import { CartDrawer } from "@/components/shell/CartDrawer";
 import { SearchOverlay } from "@/components/shell/SearchOverlay";
+import { Assistant } from "@/components/assistant/Assistant";
 import { RevealRoot } from "@/components/shell/RevealRoot";
 import { GrainDefs } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
@@ -121,6 +122,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Footer />
           <CartDrawer kitProducts={kitProducts} />
           <SearchOverlay realProductHandles={realProductHandles} />
+          <Assistant />
         </StoreProvider>
       </body>
     </html>

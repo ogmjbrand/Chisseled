@@ -536,6 +536,13 @@
   to   { background-position: 180% 0; }
 }
 
+/* Assistant typing indicator — a rhythmic dim/brighten, not the expanding
+   chisseled-pulse-ring (that one balloons and fades, wrong shape for a dot). */
+@keyframes chisseled-typing {
+  0%, 60%, 100% { opacity: 0.35; transform: scale(0.85); }
+  30%           { opacity: 1; transform: scale(1); }
+}
+
 @utility animate-rise {
   animation: chisseled-rise 900ms var(--ease-out-expo) both;
 }
