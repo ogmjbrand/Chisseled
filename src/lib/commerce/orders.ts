@@ -214,7 +214,10 @@ export async function initializePayment(
       orderId: order.orderId,
       orderNumber: order.number,
     });
-    if (!/^https:\/\//.test(authorizationUrl) && process.env.NODE_ENV === "production") {
+    // Only ever redirect a shopper to an HTTPS page (http is tolerated for localhost test doubles).
+    const target = new URL(authorizationUrl);
+    const local = target.hostname === "localhost" || target.hostname === "127.0.0.1";
+    if (target.protocol !== "https:" && !(local && target.protocol === "http:" && process.env.PAYMENTS_ALLOW_LOCAL === "1")) {
       throw new Error("Provider returned a non-HTTPS payment URL");
     }
     await db()`update payments set status = 'pending', authorization_url = ${authorizationUrl}, raw = ${db().json(raw as never)}

@@ -3,6 +3,7 @@
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import { customerRegisterAction, customerSignInAction } from "@/lib/auth/customer-actions";
 import type { ActionState } from "@/lib/security/validate";
+import { useKeepForm } from "@/components/admin/useKeepForm";
 
 /**
  * Sign in, built on the light-spill login reference.
@@ -63,7 +64,8 @@ export function SignInPanel({ next = "/account" }: { next?: string }) {
   const [signInState, signIn, signingIn] = useActionState<ActionState, FormData>(customerSignInAction, { ok: true });
   const [registerState, register, registering] = useActionState<ActionState, FormData>(customerRegisterAction, { ok: true });
   const state = mode === "signin" ? signInState : registerState;
-  const pending = signingIn || registering;
+  const keep = useKeepForm(mode === "signin" ? signIn : register);
+  const pending = signingIn || registering || keep.pending;
   const FIELDS = mode === "signin" ? SIGN_IN : REGISTER;
   const panelRef = useRef<HTMLDivElement>(null);
   const [spill, setSpill] = useState(REST);
@@ -125,7 +127,7 @@ export function SignInPanel({ next = "/account" }: { next?: string }) {
 
       <h2 className="display-sm mb-6 text-bone">{mode === "signin" ? "Sign in" : "Create account"}</h2>
 
-      <form key={mode} action={mode === "signin" ? signIn : register} className="space-y-4">
+      <form key={mode} action={mode === "signin" ? signIn : register} onSubmit={keep.onSubmit} className="space-y-4">
         <input type="hidden" name="next" value={next} />
         {FIELDS.map((f) => (
           <div key={f.id}>

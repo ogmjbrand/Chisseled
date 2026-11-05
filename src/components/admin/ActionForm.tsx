@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef, type ReactNode } from "react";
-import { useFormStatus } from "react-dom";
+import { createContext, useActionState, useContext, useEffect, useRef, type ReactNode } from "react";
 import type { ActionState } from "@/lib/security/validate";
+import { useKeepForm } from "@/components/admin/useKeepForm";
 
 type Action = (prev: ActionState, form: FormData) => Promise<ActionState>;
+
+const Pending = createContext(false);
 
 /** A form bound to an admin server action, with inline success / error feedback. */
 export function ActionForm({
@@ -23,25 +25,20 @@ export function ActionForm({
   confirm?: string;
   id?: string;
 }) {
-  const [state, formAction] = useActionState<ActionState, FormData>(action, { ok: true });
+  const [state, formAction, actionPending] = useActionState<ActionState, FormData>(action, { ok: true });
+  const { onSubmit, pending } = useKeepForm(formAction, { confirm });
   const ref = useRef<HTMLFormElement>(null);
   useEffect(() => {
     if (state.ok && state.message && resetOnSuccess) ref.current?.reset();
   }, [state, resetOnSuccess]);
 
   return (
-    <form
-      id={id}
-      ref={ref}
-      action={formAction}
-      className={className}
-      onSubmit={(e) => {
-        if (confirm && !window.confirm(confirm)) e.preventDefault();
-      }}
-    >
-      {children}
-      <FormMessage state={state} />
-    </form>
+    <Pending.Provider value={pending || actionPending}>
+      <form id={id} ref={ref} action={formAction} onSubmit={onSubmit} className={className}>
+        {children}
+        <FormMessage state={state} />
+      </form>
+    </Pending.Provider>
   );
 }
 
@@ -76,7 +73,7 @@ export function Submit({
   name?: string;
   value?: string;
 }) {
-  const { pending } = useFormStatus();
+  const pending = useContext(Pending);
   return (
     <button type="submit" name={name} value={value} disabled={pending} className={`adm-btn adm-btn-${variant} ${className}`}>
       {pending ? "Working…" : children}

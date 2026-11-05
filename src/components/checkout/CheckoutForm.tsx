@@ -7,6 +7,7 @@ import { placeOrderAction, quoteAction, type Quote } from "@/lib/commerce/checko
 import { formatMoney } from "@/lib/commerce/money";
 import { ShieldMark } from "@/components/primitives/Marks";
 import type { ActionState } from "@/lib/security/validate";
+import { useKeepForm } from "@/components/admin/useKeepForm";
 
 interface Item {
   id: string;
@@ -65,7 +66,10 @@ function Field({
 }
 
 export function CheckoutForm({ currency, defaultCountry, countries, providers, signedIn, prefill, items }: Props) {
-  const [state, submit, submitting] = useActionState<ActionState, FormData>(placeOrderAction, { ok: true });
+  const [state, submit, actionPending] = useActionState<ActionState, FormData>(placeOrderAction, { ok: true });
+  // Keeps every typed field if the server rejects the order (stock, code, validation).
+  const keep = useKeepForm(submit);
+  const submitting = actionPending || keep.pending;
   const [quote, setQuote] = useState<Quote | null>(null);
   const [country, setCountry] = useState(defaultCountry);
   const [rateId, setRateId] = useState<string | null>(null);
@@ -100,7 +104,7 @@ export function CheckoutForm({ currency, defaultCountry, countries, providers, s
   const money = (c: number) => formatMoney(c, currency);
 
   return (
-    <form action={submit} className="grid gap-12 lg:grid-cols-[1fr_24rem] lg:gap-16">
+    <form action={submit} onSubmit={keep.onSubmit} className="grid gap-12 lg:grid-cols-[1fr_24rem] lg:gap-16">
       <div className="space-y-12">
         {/* Contact */}
         <fieldset className="space-y-4">

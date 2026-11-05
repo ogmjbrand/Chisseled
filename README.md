@@ -6,13 +6,17 @@ treated as one system rather than three catalogues.
 Built with Next.js 16 (App Router), React 19, TypeScript in strict mode, and
 Tailwind CSS 4. No UI kit, no component library, no animation library: every
 component, every mark, and the entire motion system is written for this project.
-Three runtime dependencies — `next`, `react`, `react-dom`.
+Commerce runs on its own backend — Supabase PostgreSQL, first-party auth,
+Paystack and Flutterwave — with no Shopify dependency. Runtime dependencies:
+`next`, `react`, `react-dom`, `postgres`.
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # 72 static pages
-npm run typecheck
+cp .env.example .env.local          # fill in DATABASE_URL, payment keys, CRON_SECRET, APP_URL
+npm run db:migrate                  # applies supabase/migrations
+npm run admin:create-owner -- --email you@chisseled.com --name "Your Name"
+npm run dev                         # http://localhost:3000 · admin at /admin
+npm run lint && npm run typecheck && npm run build
 ```
 
 ---
@@ -21,18 +25,17 @@ npm run typecheck
 
 | | |
 |---|---|
-| Routes | 16 pages, 72 prerendered URLs |
+| Routes | 16 storefront pages + 25 admin screens, rendered per request from the database |
 | Catalogue | 41 products across 6 collections, 4 bundles, 6 programmes, 6 articles |
 | Components | 38, all first-party |
 | Photography | 52 matted product shots, 5 editorial frames, 3 manufacturer size sheets |
 | Identity | Brand lockup and shield, keyed to alpha; favicon, apple icon and OG card generated from them |
 | Source | ~13,400 lines of TypeScript/TSX |
 
-Commerce runs end to end in the browser: catalogue → filtering → product detail
-with colourway and size selection → bag → checkout → order confirmation.
-Wishlist, search, bundle builder, and a fit quiz are all wired. Persistence is
-`localStorage`; there is no backend, and the site says so where a customer would
-otherwise assume one.
+Commerce runs end to end on the CHISSELED database: catalogue → filtering →
+product detail with colourway and size selection → bag → checkout → verified
+payment → order confirmation → account order history, all managed from
+`/admin`. Wishlist, recently viewed and display currency stay in `localStorage`.
 
 ---
 
@@ -239,22 +242,63 @@ that cannot actually scroll. The harness now asks whether the page scrolls.
 
 ---
 
+## Commerce system
+
+The storefront, cart, checkout and the `/admin` console all run on the
+CHISSELED database. Design notes live in `docs/COMMERCE_PLAN.md`; the short
+version:
+
+| Concern | How it works |
+|---|---|
+| Data | `supabase/migrations` — products, variants, categories, collections, inventory + movements, customers + addresses + notes, carts, orders + items + events, payments, refunds, webhook events, discounts + redemptions, shipping zones/rates, shipments, campaigns, notifications, staff, roles, permissions, audit log. RLS on every table; browser keys can read only the active catalogue. |
+| Stock | `reserved ≤ on_hand` is a table constraint. Checkout reserves with a conditional `UPDATE` inside one transaction, so two buyers can't take the last unit. Payment commits the sale; expiry or cancellation releases it. Every change is a row in `inventory_movements`. |
+| Payments | Server-side initialisation → provider-hosted page → redirect → **server-side verification** against the provider API (amount and currency re-checked). Webhooks are HMAC-verified over the raw body and deduplicated on `(provider, event_id)`. Secret keys never leave the server. |
+| Admin | `/admin` — overview, products, collections, categories, orders (fulfil, refund, cancel, re-verify, printable invoice), customers (segments), inventory, payments, refunds, discounts, shipping, marketing (campaigns, abandoned carts), analytics, staff & roles, audit log, notifications, settings. Every page and action checks permissions server-side and every change is audited. |
+| Customers | Guest checkout, accounts (scrypt-hashed passwords, httpOnly sessions), order history; guest orders join the account created with the same email. |
+| Housekeeping | `GET /api/cron/maintenance` with `Authorization: Bearer $CRON_SECRET` every ~10 minutes: re-checks unpaid orders with the provider, releases expired reservations, marks abandoned carts, prunes sessions. |
+| Migrating off Shopify | `npm run import:shopify` copies products, variants, stock, images and collections once (as drafts unless `--activate`). It is the only code that mentions Shopify. |
+
+### Going live checklist
+
+1. Set `DATABASE_URL` (Supabase → Connect → transaction pooler) and run `npm run db:migrate`.
+2. Create the owner account, then in `/admin`: shipping zones and rates, store currency and tax, products and stock.
+3. Add `PAYSTACK_SECRET_KEY` and/or `FLUTTERWAVE_SECRET_KEY` + `FLUTTERWAVE_WEBHOOK_HASH`, and point each provider's webhook at `/api/webhooks/paystack` / `/api/webhooks/flutterwave`. Test with test keys first.
+4. Set `APP_URL`, `CRON_SECRET` and schedule the maintenance call. Optional: `RESEND_API_KEY` + `EMAIL_FROM` for confirmation emails, `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for image uploads (public bucket `product-images`).
+
+### End-to-end test
+
+`scripts/e2e/commerce.e2e.mjs` drives a real browser against a real Postgres
+and a Paystack test double (`scripts/e2e/mock-paystack.mjs`): admin sign-in,
+product/zone/discount creation, browse → bag → checkout with a code → pay →
+confirmation, DB consistency, webhook signature + idempotency, a two-shopper
+race for the last unit, fulfilment, partial refund with restock, RBAC, the
+maintenance job, and reservation expiry. 27/27 pass.
+
+```bash
+scripts/e2e/reset-db.sh                 # local Postgres
+node scripts/e2e/mock-paystack.mjs &    # port 4010
+PAYSTACK_SECRET_KEY=sk_test_mock PAYSTACK_BASE_URL=http://127.0.0.1:4010 PAYMENTS_ALLOW_LOCAL=1 \
+  APP_URL=http://localhost:3100 CRON_SECRET=cron-test-secret DATABASE_URL=postgres://postgres@127.0.0.1/chisseled \
+  npx next start -p 3100 &
+DATABASE_URL=postgres://postgres@127.0.0.1/chisseled node scripts/e2e/commerce.e2e.mjs
+```
+
+---
+
 ## Honest limits
 
-This is a front-end demonstration, and it does not pretend otherwise on screen:
-
-- No backend. Cart, wishlist and orders live in `localStorage`. Checkout
-  validates and confirms but takes no payment, and says so.
-- Authentication is not connected. The account page states this.
-- Currency conversion uses fixed rates for USD, GBP, EUR and CAD. Prices are a
-  USD MSRP architecture, not exchange-rate conversions from another market.
-  Multi-language is not implemented — only the currency selector ships.
-- The card form on the payment step is interface only. Its inputs deliberately
-  carry no `cc-*` autocomplete hints, so no browser is invited to autofill a
-  real card into a demonstration form, and nothing typed is transmitted or
-  stored. In production it is replaced by the PSP's hosted fields.
-- Headline social-proof figures are marked in the source as requiring
-  verified values before launch.
+- Storefront prices display through the existing USD-based currency selector
+  (GBP/EUR/CAD are presentational rates). Checkout always charges, and shows,
+  the store currency set in `/admin/settings`.
+- Flutterwave is implemented to its v3 API (initialise, verify by reference,
+  signed webhooks, refunds) but the automated test exercises the Paystack path
+  only; run a test-mode Flutterwave payment before enabling it.
+- Abandoned-cart reminders link back to the shop; they don't restore the exact
+  bag on another device.
+- Reviews are not implemented, so no ratings are shown anywhere.
+- The local editorial catalogue (`src/lib/catalog.ts`) still supplies copy for
+  editorial sections; only products that are active in the database can be
+  bought.
 
 ---
 
