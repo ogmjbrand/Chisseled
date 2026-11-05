@@ -1,8 +1,10 @@
-import { getEnrichedProducts } from "@/lib/shopify/catalog";
+import { getEnrichedProducts } from "@/lib/commerce/catalog";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { PageHeader } from "@/components/primitives/PageHeader";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, collectionSchema, pageMetadata } from "@/lib/seo";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = pageMetadata({
   title: "Shop All",

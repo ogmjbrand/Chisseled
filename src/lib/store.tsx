@@ -19,7 +19,7 @@ import {
   removeLineAction,
   updateLineQtyAction,
   type CartSummary,
-} from "@/lib/shopify/actions";
+} from "@/lib/commerce/cart-actions";
 
 /* ==================================================================
    TYPES
@@ -29,13 +29,13 @@ export interface CartLine {
   /** product slug + colourway + size — the true identity of a line. */
   id: string;
   slug: string;
-  /** Straight from Shopify's own cart response — never re-derived from the local catalogue. */
+  /** Straight from the server cart — never re-derived from the local catalogue. */
   name: string;
   imageUrl: string | null;
   colorway: ColorwayKey;
   size: string;
   qty: number;
-  /** Live unit-inclusive line total in cents, as priced by Shopify. */
+  /** Line total in minor units at the current database price. */
   priceCents: number;
 }
 
@@ -44,7 +44,7 @@ interface State {
   wishlist: string[];
   recent: string[];
   currency: CurrencyCode;
-  /** Hydrated from Shopify (cart) / localStorage (wishlist, recent, currency) after mount. */
+  /** Hydrated from the server cart / localStorage (wishlist, recent, currency) after mount. */
   ready: boolean;
   checkoutUrl: string | null;
   subtotalCents: number;
@@ -127,8 +127,8 @@ function reducer(state: State, action: Action): State {
    ================================================================== */
 
 interface StoreValue extends State {
-  add: (line: { slug: string; colorway: ColorwayKey; size: string; qty: number }) => Promise<void>;
-  /** Adds every item in a bundle as its own real Shopify line — Shopify has no native "bundle" line item. */
+  add: (line: { slug: string; colorway: ColorwayKey; size: string | undefined; qty: number }) => Promise<void>;
+  /** Adds every item in a bundle as its own cart line. */
   addBundle: (products: Product[]) => Promise<void>;
   remove: (id: string) => Promise<void>;
   setQty: (id: string, qty: number) => Promise<void>;
@@ -137,7 +137,7 @@ interface StoreValue extends State {
   setCurrency: (c: CurrencyCode) => void;
 
   count: number;
-  /** Live Shopify subtotal in cents. */
+  /** Live server subtotal in minor units. */
   subtotal: number;
 
   cartOpen: boolean;
@@ -153,20 +153,13 @@ const StoreContext = createContext<StoreValue | null>(null);
 
 const PREFS_KEY = "chisseled.prefs.v1";
 
-/** `id` is always `slug:colorway:size` — see `lineId` below; none of those three segments ever contain a colon. */
-function parseLineId(id: string): { slug: string; colorway: ColorwayKey; size: string } | null {
-  const [slug, colorway, size] = id.split(":");
-  if (!slug || !colorway || !size) return null;
-  return { slug, colorway: colorway as ColorwayKey, size };
-}
-
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("");
 
-  // Cart: hydrate from the live Shopify cart (server-side cookie-bound).
+  // Cart: hydrate from the server-side cart (cookie-bound).
   useEffect(() => {
     getCartSummaryAction()
       .then((summary) => dispatch({ type: "cart", summary }))
@@ -178,8 +171,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       );
   }, []);
 
-  // Preferences (wishlist, recently viewed, display currency) stay local —
-  // Shopify has no concept of any of these for a guest session.
+  // Preferences (wishlist, recently viewed, display currency) stay local to the browser.
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(PREFS_KEY);
@@ -199,7 +191,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, [state]);
 
-  const add = useCallback(async (line: { slug: string; colorway: ColorwayKey; size: string; qty: number }) => {
+  const add = useCallback(async (line: { slug: string; colorway: ColorwayKey; size: string | undefined; qty: number }) => {
     dispatch({ type: "cartLoading" });
     setCartOpen(true);
     const summary = await addLineToCartAction(line);
@@ -212,14 +204,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  /** `products` are already-resolved, real Shopify products — never re-looked-up locally. */
+  /** `products` are already-resolved, live products — never re-looked-up locally. */
   const addBundle = useCallback(
     async (products: Product[]) => {
       for (const p of products) {
         const size = p.variants[0]?.inStock[0] ?? p.sizes[0];
-        if (!size) continue;
+        if (!p.variants[0] || (p.sizes.length > 0 && !size)) continue;
         // Sequential, not parallel: each call reads-then-writes the same
-        // Shopify cart, and concurrent writes to one cart can race.
+        // cart, and concurrent writes to one cart can race.
         // eslint-disable-next-line no-await-in-loop
         await add({ slug: p.slug, colorway: p.variants[0].colorway, size, qty: 1 });
       }
@@ -228,19 +220,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   const remove = useCallback(async (id: string) => {
-    const parsed = parseLineId(id);
-    if (!parsed) return;
     dispatch({ type: "cartLoading" });
-    const summary = await removeLineAction(parsed);
+    const summary = await removeLineAction({ id });
     dispatch({ type: "cart", summary });
     setAnnouncement(summary.error ?? "Item removed from bag.");
   }, []);
 
   const setQty = useCallback(async (id: string, qty: number) => {
-    const parsed = parseLineId(id);
-    if (!parsed) return;
     dispatch({ type: "cartLoading" });
-    const summary = await updateLineQtyAction({ ...parsed, qty });
+    const summary = await updateLineQtyAction({ id, qty });
     dispatch({ type: "cart", summary });
     if (summary.error) setAnnouncement(summary.error);
   }, []);

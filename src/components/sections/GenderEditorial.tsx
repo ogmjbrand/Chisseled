@@ -3,7 +3,7 @@ import { getProduct, getProductsByGender } from "@/lib/catalog";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { ColorwayKey, Tone } from "@/lib/art";
-import { getRealProductHandles } from "@/lib/shopify/catalog";
+import { getRealProductHandles } from "@/lib/commerce/catalog";
 
 interface GenderEditorialProps {
   gender: "women" | "men";
@@ -51,9 +51,9 @@ export async function GenderEditorial({
   flip = false,
 }: GenderEditorialProps) {
   // The category rail links straight to a product page, so only real,
-  // currently-purchasable Shopify products belong in it — most of the local
+  // currently-purchasable live products belong in it — most of the local
   // catalogue's gendered picks aren't (only 2 of 71 local products are also
-  // real Shopify handles, and neither is gendered apparel). The campaign
+  // live products, and neither is gendered apparel). The campaign
   // photo above is pure editorial (no link at all) and unaffected.
   const realHandles = await getRealProductHandles();
   const products = getProductsByGender(gender)

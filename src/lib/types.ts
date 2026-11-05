@@ -99,15 +99,22 @@ export interface Product {
   };
   isNew?: boolean;
   isMemberOnly?: boolean;
-  shopifyOptions?: ShopifyProductOptionView[];
-  shopifyVariants?: ShopifyVariantView[];
-  shopifyImages?: {
+  /** Option definitions from the commerce database, e.g. Size / Color. */
+  options?: ProductOptionView[];
+  /** Every purchasable variant with its live price and availability. */
+  liveVariants?: ProductVariantView[];
+  /** Product gallery photography, in display order. */
+  gallery?: {
     url: string;
     altText: string | null;
     width: number | null;
     height: number | null;
   }[];
-
+  /** Primary category slug (database), when known. */
+  categorySlug?: string;
+  /** All collection slugs this product belongs to (database). */
+  collections?: string[];
+  tags?: string[];
 }
 
 export interface Bundle {
@@ -166,12 +173,12 @@ export interface Article {
   body: string[];
 }
 
-export interface ShopifyProductOptionView {
+export interface ProductOptionView {
   name: string;
   values: string[];
 }
 
-export interface ShopifyVariantView {
+export interface ProductVariantView {
   id: string;
   title: string;
   availableForSale: boolean;
@@ -182,4 +189,5 @@ export interface ShopifyVariantView {
   }[];
   priceCents: number;
   compareAtCents?: number;
+  sku?: string | null;
 }

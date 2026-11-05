@@ -6,7 +6,7 @@ import { ArrowMark } from "@/components/primitives/Marks";
 
 /**
  * Root error boundary. Catches anything an async Server Component throws
- * (a Shopify fetch failure that isn't already handled gracefully upstream,
+ * (a database read failure that isn't already handled gracefully upstream,
  * for instance) so a customer sees this instead of Next's default error
  * page. Deliberately doesn't surface `error.message` — that's for the
  * console, not the storefront.

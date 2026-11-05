@@ -13,7 +13,7 @@ import { JournalStrip } from "@/components/sections/JournalStrip";
 import { Sequence } from "@/components/sections/Sequence";
 import { Marquee } from "@/components/sections/Marquee";
 import { BUNDLES } from "@/lib/catalog";
-import { getEnrichedProductsByHandles } from "@/lib/shopify/catalog";
+import { getEnrichedProductsByHandles } from "@/lib/commerce/catalog";
 
 /**
  * The homepage is a directed sequence, not a stack of blocks. It moves:

@@ -7,18 +7,19 @@ import { ProductMedia } from "@/components/product/ProductMedia";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, collectionSchema, pageMetadata } from "@/lib/seo";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
-import { getProductByHandle } from "@/lib/shopify";
-import { enrichProduct } from "@/lib/shopify/mappers";
+import { getEnrichedProduct, mergeEditorial } from "@/lib/commerce/catalog";
+
+export const dynamic = "force-dynamic";
 
 /**
  * Of this project's local nutrition catalogue (whey-protein,
  * creatine-monohydrate, c4-pre-workout, detox-tea), only these two are also
- * real handles in the connected Shopify store. Listing the other two would
+ * live products in the commerce database. Listing the other two would
  * link to a product page that 404s and an Add to Bag that fails — the same
- * regression already fixed for bundles/cart-drawer recommendations. Real
- * Shopify price/availability is merged onto the local editorial copy via
- * enrichProduct() so the nutrition-panel content (which Shopify doesn't
- * model) is preserved.
+ * regression already fixed for bundles/cart-drawer recommendations. Live
+ * price/availability is merged onto the local editorial copy via
+ * mergeEditorial() so the nutrition-panel content is preserved. A product
+ * that isn't live in the database is not shown as purchasable.
  */
 const REAL_NUTRITION_HANDLES = ["creatine-monohydrate", "detox-tea"];
 
@@ -54,8 +55,8 @@ export default async function FuelPage() {
       REAL_NUTRITION_HANDLES.map(async (slug) => {
         const local = getProduct(slug);
         if (!local) return null;
-        const shopify = await getProductByHandle(slug);
-        return enrichProduct(local, shopify);
+        const live = await getEnrichedProduct(slug);
+        return live ? mergeEditorial(local, live) : null;
       }),
     )
   ).filter((p): p is NonNullable<typeof p> => p !== null);
@@ -64,7 +65,7 @@ export default async function FuelPage() {
   /*
    * Each stack's copy describes a pairing; several of the original items
    * (heavyweight-hoodie-set, chisseled-sling-bag, performance-crew-sock)
-   * aren't real Shopify handles, so they're dropped rather than shown as
+   * aren't live products, so they're dropped rather than shown as
    * purchasable when they can't be bought. A stack that has no real product
    * left doesn't get rendered at all, rather than showing an empty card.
    */
@@ -94,8 +95,8 @@ export default async function FuelPage() {
             stack.items.map(async (slug) => {
               const local = getProduct(slug);
               if (!local) return null;
-              const shopify = await getProductByHandle(slug);
-              return shopify ? enrichProduct(local, shopify) : null;
+              const live = await getEnrichedProduct(slug);
+              return live ? mergeEditorial(local, live) : null;
             }),
           )
         ).filter((p): p is NonNullable<typeof p> => p !== null);
@@ -236,8 +237,8 @@ export default async function FuelPage() {
         This used to be four category sections (Protein/Performance/Recovery/
         Daily Essentials), each filtering by product category. That grouping
         never actually matched the catalogue's own category values, so every
-        section rendered empty regardless of the Shopify-data fix above — a
-        pre-existing content/taxonomy bug, not a Shopify staleness issue. At
+        section rendered empty regardless of the live-data fix above — a
+        pre-existing content/taxonomy bug, not a data staleness issue. At
         the current catalogue size (2 real nutrition products) a four-way
         split has nothing to divide; one honest grid replaces it rather than
         re-inventing categories the products don't actually carry.

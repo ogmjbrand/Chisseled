@@ -1,5 +1,5 @@
 import "server-only";
-import { getEnrichedProducts } from "@/lib/shopify/catalog";
+import { getEnrichedProducts } from "@/lib/commerce/catalog";
 import type { AssistantProduct } from "@/lib/assistant/types";
 import type { Product } from "@/lib/types";
 
@@ -14,7 +14,7 @@ function toAssistantProduct(p: Product): AssistantProduct {
     tagline: p.tagline,
     priceCents: p.price,
     compareAtCents: p.compareAt,
-    imageUrl: (typeof p.media === "string" ? p.media : undefined) ?? p.shopifyImages?.[0]?.url ?? null,
+    imageUrl: (typeof p.media === "string" ? p.media : undefined) ?? p.gallery?.[0]?.url ?? null,
     colorway: variant?.colorway ?? "apparel",
     sizes: p.sizes,
     inStockSizes: variant?.inStock ?? [],
@@ -23,7 +23,7 @@ function toAssistantProduct(p: Product): AssistantProduct {
 
 /**
  * The assistant's one and only source of product truth. Always the live,
- * cached Shopify catalogue (`getEnrichedProducts`, same call every storefront
+ * live database catalogue (`getEnrichedProducts`, same call every storefront
  * page already uses) — never the local editorial catalogue, which is mostly
  * not real, purchasable inventory. A query with no match returns an empty
  * array rather than the nearest thing to it, so the model has an honest

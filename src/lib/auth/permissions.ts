@@ -1,0 +1,30 @@
+/** Every permission key the app checks. Mirrors public.permissions. Safe for client import. */
+export const PERMISSIONS = [
+  "dashboard:view",
+  "products:read",
+  "products:write",
+  "inventory:read",
+  "inventory:write",
+  "orders:read",
+  "orders:write",
+  "fulfillment:write",
+  "customers:read",
+  "customers:write",
+  "payments:read",
+  "refunds:write",
+  "discounts:read",
+  "discounts:write",
+  "shipping:read",
+  "shipping:write",
+  "marketing:read",
+  "marketing:write",
+  "analytics:read",
+  "staff:read",
+  "staff:write",
+  "notifications:read",
+  "settings:read",
+  "settings:write",
+  "audit:read",
+] as const;
+
+export type Permission = (typeof PERMISSIONS)[number];

@@ -1,7 +1,7 @@
 /**
  * A trimmed, chat-safe product shape — never the full `Product` type. The
  * assistant tool returns exactly these fields (all sourced from live
- * Shopify data), so a card the client renders can never carry more than
+ * database data), so a card the client renders can never carry more than
  * the model was actually given, and the model can never be handed fields
  * (reviews, fabricated benefits copy, etc.) it has no business repeating.
  */

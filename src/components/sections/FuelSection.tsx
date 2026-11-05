@@ -5,18 +5,13 @@ import { formatPrice } from "@/lib/format";
 import { Specimen } from "@/components/primitives/Visual";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
-import { getProductByHandle } from "@/lib/shopify";
-import { enrichProduct } from "@/lib/shopify/mappers";
+import { getEnrichedProduct, mergeEditorial } from "@/lib/commerce/catalog";
 
 /**
- * Of this project's local nutrition catalogue, only these two slugs are also
- * real handles in the connected Shopify store — the rest (whey-protein,
- * c4-pre-workout) have no matching Shopify product, so linking to them would
- * 404 and Add to Bag would fail exactly like the bundle/cart-drawer
- * regression fixed earlier. Real Shopify price/availability is merged onto
- * the local editorial copy via enrichProduct() rather than switching to raw
- * Shopify data outright, so "What it does" / "When to take it" etc. — none
- * of which Shopify models — are preserved.
+ * Of this project's local nutrition catalogue, only these two slugs are real
+ * merchandise. Each is shown only while it is a live product in the commerce
+ * database; live price/availability is merged onto the local editorial copy
+ * via mergeEditorial(), so "What it does" / "When to take it" etc. survive.
  */
 const REAL_NUTRITION_HANDLES = ["creatine-monohydrate", "detox-tea"];
 
@@ -33,8 +28,8 @@ export async function FuelSection() {
       REAL_NUTRITION_HANDLES.map(async (slug) => {
         const local = getProduct(slug);
         if (!local) return null;
-        const shopify = await getProductByHandle(slug);
-        return enrichProduct(local, shopify);
+        const live = await getEnrichedProduct(slug);
+        return live ? mergeEditorial(local, live) : null;
       }),
     )
   ).filter((p): p is NonNullable<typeof p> => p !== null);

@@ -14,7 +14,7 @@ export function Bundles({
   products,
 }: {
   heading?: boolean;
-  /** Real Shopify products for every handle referenced in BUNDLES' items — fetched server-side. */
+  /** Live products for every handle referenced in BUNDLES' items — fetched server-side. */
   products: Product[];
 }) {
   const { addBundle, currency } = useStore();

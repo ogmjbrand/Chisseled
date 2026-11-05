@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
-import { getEnrichedFeatured } from "@/lib/shopify/catalog";
+import { getEnrichedFeatured } from "@/lib/commerce/catalog";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ArrowMark } from "@/components/primitives/Marks";
 

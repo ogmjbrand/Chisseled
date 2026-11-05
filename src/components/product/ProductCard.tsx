@@ -18,7 +18,7 @@ interface ProductCardProps {
   feature?: boolean;
 }
 
-/** A Shopify colour not in the local design map still needs a swatch and a name. */
+/** A stored colour not in the local design map still needs a swatch and a name. */
 function getColorInfo(colorway: string) {
   const color = COLORWAYS[colorway as keyof typeof COLORWAYS];
   return color ? { name: color.name, hex: color.hex } : { name: colorway, hex: "#3A3A3A" };
@@ -30,12 +30,12 @@ export function ProductCard({ product, index = 0, feature = false }: ProductCard
   const [sizeOpen, setSizeOpen] = useState(false);
   const [added, setAdded] = useState(false);
 
-  // A Shopify product can arrive between fetch and re-render with no variant
+  // A product can arrive between fetch and re-render with no variant
   // for the index a colour swap left behind — fall back before indexing sizes.
   const variant = product.variants[variantIndex] ?? product.variants[0];
   const saved = wishlist.includes(product.slug);
   const stock = stockLevel(product);
-  const secondaryMedia = product.shopifyImages?.[1]?.url;
+  const secondaryMedia = product.gallery?.[1]?.url;
 
   if (!variant) return null;
 

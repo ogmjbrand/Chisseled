@@ -1,17 +1,25 @@
 import type { NextConfig } from "next";
 
+/**
+ * Product photography is served from /public, from Supabase Storage, or from
+ * any extra HTTPS hosts listed in IMAGE_REMOTE_HOSTS (comma-separated) — e.g.
+ * while images migrated from an old platform are still being rehosted.
+ */
+const imageHosts = [
+  "*.supabase.co",
+  ...(process.env.IMAGE_REMOTE_HOSTS ?? "")
+    .split(",")
+    .map((h) => h.trim())
+    .filter(Boolean),
+];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.shopify.com",
-      },
-    ],
+    remotePatterns: imageHosts.map((hostname) => ({ protocol: "https" as const, hostname })),
   },
 
   experimental: {
@@ -32,6 +40,14 @@ const nextConfig: NextConfig = {
       : [];
 
     return [
+      {
+        source: "/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+          { key: "Cache-Control", value: "no-store" },
+          { key: "X-Frame-Options", value: "DENY" },
+        ],
+      },
       {
         source: "/:path*",
         headers: [

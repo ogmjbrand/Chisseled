@@ -370,8 +370,8 @@ function Result({
   onRestart: () => void;
 }) {
   // The scoring above weighs the full local catalogue (activities/fit/
-  // collection tags Shopify doesn't carry) — but only a real, currently
-  // purchasable Shopify product should render as a shoppable ProductCard.
+  // collection tags the live catalogue doesn't carry) — but only a real, currently
+  // purchasable live product should render as a shoppable ProductCard.
   const realHandles = new Set(realProductHandles);
   const shoppableProducts = result.products.filter((p) => realHandles.has(p.slug));
   return (

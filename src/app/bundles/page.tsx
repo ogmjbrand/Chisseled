@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/primitives/PageHeader";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata } from "@/lib/seo";
 import { CheckMark } from "@/components/primitives/Marks";
-import { getEnrichedProductsByHandles } from "@/lib/shopify/catalog";
+import { getEnrichedProductsByHandles } from "@/lib/commerce/catalog";
 
 export const metadata = pageMetadata({
   title: "Performance Bundles",

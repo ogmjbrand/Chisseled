@@ -3,6 +3,10 @@ import { PROGRAMS } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 import { ArrowMark, CheckMark } from "@/components/primitives/Marks";
 import { SignInPanel } from "@/components/account/SignInPanel";
+import { AccountDashboard } from "@/components/account/AccountDashboard";
+import { getCustomer } from "@/lib/auth/customer";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   ...pageMetadata({
@@ -28,7 +32,12 @@ const TIERS = [
   { name: "Chisseled", spend: "$1,500 lifetime", perks: "Member-only products · Coaching consultation · Priority support" },
 ];
 
-export default function AccountPage() {
+export default async function AccountPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const customer = await getCustomer();
+  if (customer) return <AccountDashboard customer={customer} />;
+  const { next } = await searchParams;
+  const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/account";
+
   return (
     <div className="shell pb-24 pt-[calc(var(--nav-h)+3rem)]">
       <div className="grid gap-12 lg:grid-cols-[1fr_26rem] lg:gap-20">
@@ -123,7 +132,7 @@ export default function AccountPage() {
 
         {/* --- Sign in --- */}
         <aside id="signin" className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:h-fit">
-          <SignInPanel />
+          <SignInPanel next={safeNext} />
 
           <div className="mt-4 border border-bone/10 bg-ink p-6">
             <p className="eyebrow mb-4">Continue training</p>

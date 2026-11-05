@@ -18,7 +18,7 @@ const MAX_TOOL_ROUNDS = 2;
 const SEARCH_PRODUCTS_TOOL = {
   name: "search_products",
   description:
-    "Search the real, live CHISSELED product catalogue on Shopify. Always call this before naming, describing, recommending, or pricing any specific product — never answer from memory. Returns only products that actually exist and are actually listed; an empty result means nothing matched, not that you should suggest something else.",
+    "Search the real, live CHISSELED product catalogue. Always call this before naming, describing, recommending, or pricing any specific product — never answer from memory. Returns only products that actually exist and are actually listed; an empty result means nothing matched, not that you should suggest something else.",
   input_schema: {
     type: "object" as const,
     properties: {

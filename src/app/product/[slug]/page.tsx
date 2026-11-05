@@ -1,18 +1,12 @@
-﻿import { notFound } from "next/navigation";
-import { getEnrichedProduct, getEnrichedProducts } from "@/lib/shopify/catalog";
+import { notFound } from "next/navigation";
+import { getEnrichedProduct, getEnrichedProducts } from "@/lib/commerce/catalog";
 import { ProductDetail } from "@/components/product/ProductDetail";
 import { ProductCard } from "@/components/product/ProductCard";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { breadcrumbSchema, pageMetadata, productSchema } from "@/lib/seo";
 
-export async function generateStaticParams() {
-  const products = await getEnrichedProducts();
-
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

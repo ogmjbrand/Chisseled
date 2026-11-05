@@ -46,7 +46,7 @@ function StudioLighting() {
 interface ProductMediaProps {
   media?: string | Partial<Record<string, string>>;
   /**
-   * A second real photo to show for the "detail" view — a genuine Shopify
+   * A second real photo to show for the "detail" view — a genuine
    * gallery image, never a generated or guessed one. Absent, the detail view
    * falls back to the technical flat exactly as it always has: the local
    * catalogue only ever photographs the front, and the flat is what actually

@@ -19,7 +19,7 @@ export function SearchOverlay({ realProductHandles }: { realProductHandles: stri
   const { searchOpen, setSearchOpen, currency } = useStore();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  // Most of the local catalogue isn't a real, purchasable Shopify product —
+  // Most of the local catalogue isn't a real, purchasable live product —
   // searching only the real subset is what stops a result from 404ing.
   const realHandles = useMemo(() => new Set(realProductHandles), [realProductHandles]);
 

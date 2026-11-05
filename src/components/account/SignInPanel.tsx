@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { customerRegisterAction, customerSignInAction } from "@/lib/auth/customer-actions";
+import type { ActionState } from "@/lib/security/validate";
 
 /**
  * Sign in, built on the light-spill login reference.
@@ -35,20 +36,35 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Field {
   id: string;
+  name: string;
   label: string;
   type: string;
   autoComplete: string;
+  required?: boolean;
 }
 
-const FIELDS: Field[] = [
-  { id: "account-email", label: "Email", type: "email", autoComplete: "email" },
-  { id: "account-password", label: "Password", type: "password", autoComplete: "current-password" },
+const SIGN_IN: Field[] = [
+  { id: "account-email", name: "email", label: "Email", type: "email", autoComplete: "email" },
+  { id: "account-password", name: "password", label: "Password", type: "password", autoComplete: "current-password" },
+];
+
+const REGISTER: Field[] = [
+  { id: "account-first", name: "firstName", label: "First name", type: "text", autoComplete: "given-name" },
+  { id: "account-last", name: "lastName", label: "Last name", type: "text", autoComplete: "family-name", required: false },
+  { id: "account-email", name: "email", label: "Email", type: "email", autoComplete: "email" },
+  { id: "account-password", name: "password", label: "Password (10+ characters, include a number)", type: "password", autoComplete: "new-password" },
 ];
 
 /** Where the light rests when nothing is focused: above the panel, off-centre. */
 const REST = { x: 34, y: -6 };
 
-export function SignInPanel() {
+export function SignInPanel({ next = "/account" }: { next?: string }) {
+  const [mode, setMode] = useState<"signin" | "register">("signin");
+  const [signInState, signIn, signingIn] = useActionState<ActionState, FormData>(customerSignInAction, { ok: true });
+  const [registerState, register, registering] = useActionState<ActionState, FormData>(customerRegisterAction, { ok: true });
+  const state = mode === "signin" ? signInState : registerState;
+  const pending = signingIn || registering;
+  const FIELDS = mode === "signin" ? SIGN_IN : REGISTER;
   const panelRef = useRef<HTMLDivElement>(null);
   const [spill, setSpill] = useState(REST);
   const [lit, setLit] = useState(false);
@@ -107,9 +123,10 @@ export function SignInPanel() {
         }}
       />
 
-      <h2 className="display-sm mb-6 text-bone">Sign in</h2>
+      <h2 className="display-sm mb-6 text-bone">{mode === "signin" ? "Sign in" : "Create account"}</h2>
 
-      <form className="space-y-4">
+      <form key={mode} action={mode === "signin" ? signIn : register} className="space-y-4">
+        <input type="hidden" name="next" value={next} />
         {FIELDS.map((f) => (
           <div key={f.id}>
             <label htmlFor={f.id} className="eyebrow mb-2 block">
@@ -117,9 +134,11 @@ export function SignInPanel() {
             </label>
             <input
               id={f.id}
+              name={f.name}
               type={f.type}
               autoComplete={f.autoComplete}
-              required
+              required={f.required ?? true}
+              minLength={f.name === "password" && mode === "register" ? 10 : undefined}
               className="field"
               onFocus={(e) => moveTo(e.currentTarget)}
               onBlur={release}
@@ -127,26 +146,44 @@ export function SignInPanel() {
           </div>
         ))}
 
+        {mode === "register" && (
+          <label className="flex items-center gap-2.5 text-caption text-fog">
+            <input type="checkbox" name="acceptsMarketing" className="size-4 accent-[var(--color-purple)]" />
+            Email me about drops and restocks
+          </label>
+        )}
+
+        {state.error && (
+          <p role="alert" className="text-caption" style={{ color: "var(--color-signal-out)" }}>
+            {state.error}
+          </p>
+        )}
+
         <button
           type="submit"
-          className="btn btn-primary btn-block"
+          disabled={pending}
+          className="btn btn-primary btn-block disabled:opacity-60"
           onFocus={(e) => moveTo(e.currentTarget)}
           onBlur={release}
         >
-          Sign in
+          {pending ? "One moment…" : mode === "signin" ? "Sign in" : "Create account"}
         </button>
       </form>
 
       <p className="mt-5 text-caption text-smoke">
-        New here?{" "}
-        <Link href="#signin" className="link-rule text-bone">
-          Create an account
-        </Link>
+        {mode === "signin" ? "New here? " : "Already have an account? "}
+        <button
+          type="button"
+          onClick={() => setMode(mode === "signin" ? "register" : "signin")}
+          className="link-rule text-bone"
+        >
+          {mode === "signin" ? "Create an account" : "Sign in"}
+        </button>
       </p>
 
       <p className="mt-6 border-t border-bone/10 pt-5 text-micro leading-relaxed text-ash">
-        Demonstration storefront — authentication is not connected. Guest checkout works
-        throughout without an account.
+        You never need an account to buy — guest checkout is always available. Orders placed as a
+        guest with the same email appear in your account once you create it.
       </p>
     </div>
   );

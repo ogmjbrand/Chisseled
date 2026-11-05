@@ -156,7 +156,7 @@ export function CartDrawer({ kitProducts }: { kitProducts: Product[] }) {
             <ul className="divide-y divide-bone/10">
               {lines.map((line) => {
                 const name = line.name || "Item";
-                // Shopify's own live line total — never re-derived from the
+                // The server's live line total — never re-derived from the
                 // static catalogue price, so it's correct even when the two
                 // have drifted.
                 const lineTotal = line.priceCents;
@@ -311,14 +311,7 @@ export function CartDrawer({ kitProducts }: { kitProducts: Product[] }) {
               Taxes and shipping calculated at checkout.
             </p>
 
-            {/*
-              Straight to Shopify's own real checkout URL when the client
-              already has it (true right after any successful cart mutation)
-              — skips a second, cookie-dependent round trip through our own
-              /checkout route, which was the failure mode when that cookie
-              didn't resolve on the very next navigation. /checkout remains
-              the fallback for direct/bookmarked visits.
-            */}
+            {/* First-party checkout: totals, stock and payment are all resolved server-side there. */}
             <Link
               href={checkoutUrl ?? "/checkout"}
               onClick={() => setCartOpen(false)}

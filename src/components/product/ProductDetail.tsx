@@ -60,10 +60,10 @@ export function ProductDetail({
   const saved = wishlist.includes(product.slug);
   const stock = stockLevel(product);
   const isNutrition = Boolean(product.nutrition);
-  // Real Shopify gallery photography, when there's more than one shot to
+  // Real gallery photography, when there's more than one shot to
   // gallery through. One shot is just the main image again — not a gallery.
-  const galleryImages = product.shopifyImages && product.shopifyImages.length > 1
-    ? product.shopifyImages
+  const galleryImages = product.gallery && product.gallery.length > 1
+    ? product.gallery
     : null;
   const activeGalleryImage = galleryImages?.[galleryIndex] ?? galleryImages?.[0];
 
@@ -133,11 +133,11 @@ export function ProductDetail({
   };
 
   /*
-   * Shopify can contain a colourway that does not exist
+   * The database can contain a colourway that does not exist
    * in the local COLORWAYS design map.
    *
    * Keep the local colour definition when available,
-   * otherwise use the Shopify colour name and a neutral
+   * otherwise use the stored colour name and a neutral
    * fallback swatch instead of crashing during prerender.
    */
   const currentColorway =
@@ -195,7 +195,7 @@ export function ProductDetail({
             </div>
           </div>
 
-          {/* Thumbnails — the real gallery where Shopify has one, otherwise
+          {/* Thumbnails — the real gallery where the product has one, otherwise
               the alternate technical view and a campaign frame. */}
           <div className="mt-3 grid grid-cols-4 gap-3">
             {galleryImages ? (

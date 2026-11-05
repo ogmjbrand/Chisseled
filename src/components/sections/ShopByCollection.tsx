@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SectionBackdrop } from "@/components/primitives/SectionBackdrop";
 import { COLLECTIONS, getProduct } from "@/lib/catalog";
-import { getEnrichedProductsByCollection } from "@/lib/shopify/catalog";
+import { getEnrichedProductsByCollection } from "@/lib/commerce/catalog";
 import { ProductMedia } from "@/components/product/ProductMedia";
 import { ArrowMark } from "@/components/primitives/Marks";
 import type { ColorwayKey } from "@/lib/art";
@@ -30,16 +30,10 @@ const COLLECTION_HERO: Record<string, { slug: string; colorway: ColorwayKey }> =
  * panel still says something concrete.
  */
 export async function ShopByCollection() {
-  // The count shown here has to be the same number the destination page
-  // will actually render. It previously came from the local editorial
-  // catalogue's own collection field, which is a different classification
-  // than the one `/shop/[collection]` uses for the real, live Shopify
-  // products (title/tag keyword matching in collectionForProduct()) — so
-  // the badge and a few panels ("Scarred", "Statement", "CH Monogram")
-  // promised a shelf that didn't exist: the real catalogue currently has
-  // zero products keyword-matched into those three, so their pages render
-  // 0 pieces. A collection with nothing real behind it is not shown at
-  // all, rather than linking to an empty page or inventing filler stock.
+  // The count shown here is the same number the destination page renders:
+  // live products assigned to that collection in /admin. A collection with
+  // nothing real behind it is not shown at all, rather than linking to an
+  // empty page or inventing filler stock.
   const withCounts = await Promise.all(
     COLLECTIONS.map(async (collection) => ({
       collection,

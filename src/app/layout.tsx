@@ -12,11 +12,17 @@ import { GrainDefs } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { StoreProvider } from "@/lib/store";
 import { SITE, organizationSchema, websiteSchema } from "@/lib/seo";
-import { getEnrichedProductsByHandles, getRealProductHandles } from "@/lib/shopify/catalog";
+import { getEnrichedProductsByHandles, getRealProductHandles } from "@/lib/commerce/catalog";
 
 /**
- * "Complete your performance kit" — real, addable Shopify handles. Kept here
- * (fetched once per request, cached like every other Shopify read) rather
+ * Every page reads live catalogue, cart and stock data, so nothing is
+ * prerendered with build-time data: admin changes appear on the next request.
+ */
+export const dynamic = "force-dynamic";
+
+/**
+ * "Complete your performance kit" — real, addable product slugs. Kept here
+ * (fetched once per request, cached like every other catalogue read) rather
  * than in the local catalogue, since a local slug has no guarantee of
  * existing in the connected store.
  */
