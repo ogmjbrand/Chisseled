@@ -11,7 +11,7 @@ create extension if not exists pgcrypto;
 -- helpers
 -- ---------------------------------------------------------------------
 create or replace function public.set_updated_at() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = '' as $$
 begin
   new.updated_at := now();
   return new;
