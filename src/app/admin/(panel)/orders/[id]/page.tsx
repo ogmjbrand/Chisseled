@@ -7,14 +7,16 @@ import { can } from "@/lib/auth/staff";
 import { isUuid } from "@/lib/security/validate";
 import { Badge, Card, Field, Forbidden, PageHeader, fmtDate } from "@/components/admin/ui";
 import { ActionForm, Submit } from "@/components/admin/ActionForm";
-import { cancelOrderAction, fulfilAction, noteAction, refundAction, reverifyAction, shipmentAction, staffNoteAction } from "@/lib/admin/order-actions";
+import { cancelOrderAction, fulfilAction, noteAction, paymentLinkAction, recordPaymentAction, refundAction, reverifyAction, shipmentAction, staffNoteAction } from "@/lib/admin/order-actions";
+import { getPaymentSettings } from "@/lib/commerce/settings";
+import { availableProviders } from "@/lib/payments";
 import { centsToInput, formatMoney } from "@/lib/commerce/money";
 import { getStoreSettings, orderName } from "@/lib/commerce/settings";
 import { COUNTRY_NAME } from "@/lib/commerce/countries";
 
 export const metadata = { title: "Order" };
 
-export default async function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
+export default async function OrderDetail({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
   const staff = await guard("orders:read");
   if (!staff) return <Forbidden />;
   const { id } = await params;
@@ -57,6 +59,9 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
   const refundable = o.total_cents - o.refunded_cents;
   const a = o.shipping_address;
   const name = orderName(o.number, settings.order_prefix);
+  const { created } = await searchParams;
+  const awaitingPayment = o.status === "pending" && ["pending", "failed"].includes(o.payment_status);
+  const [paySettings, linkProviders] = awaitingPayment ? await Promise.all([getPaymentSettings(), availableProviders(o.currency)]) : [null, []];
 
   return (
     <>
@@ -73,6 +78,40 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
         }
         actions={<Link href={`/admin/orders/${id}/invoice`} target="_blank" className="adm-btn adm-btn-ghost">Print invoice</Link>}
       />
+
+      {created && <p className="adm-msg adm-msg-ok mb-4">Order created and stock reserved. Record the payment or send a payment link below.</p>}
+      {awaitingPayment && can(staff, "orders:write") && (
+        <div className="mb-6 grid gap-4 lg:grid-cols-2">
+          {can(staff, "payments:read") && (
+            <Card title="Record offline payment">
+              <ActionForm action={recordPaymentAction} confirm={`Confirm ${money(o.total_cents)} was received?`} className="space-y-3">
+                <input type="hidden" name="id" value={id} />
+                <div className="grid grid-cols-2 gap-2">
+                  <Field label="Method">
+                    <select name="method" className="adm-input">{(paySettings?.manual_methods ?? ["Bank transfer"]).map((m) => <option key={m} value={m}>{m}</option>)}</select>
+                  </Field>
+                  <Field label="Reference" hint="Bank/POS reference, receipt no."><input name="external_ref" maxLength={120} className="adm-input font-mono" /></Field>
+                </div>
+                <Submit>Mark {money(o.total_cents)} as paid</Submit>
+              </ActionForm>
+            </Card>
+          )}
+          <Card title="Send a payment link">
+            {linkProviders.length === 0 ? (
+              <p className="text-[0.8125rem] text-smoke">No online provider is configured for {o.currency}.</p>
+            ) : (
+              <ActionForm action={paymentLinkAction} className="space-y-3">
+                <input type="hidden" name="id" value={id} />
+                <div className="grid grid-cols-2 gap-2">
+                  <Field label="Provider"><select name="provider" className="adm-input">{linkProviders.map((p) => <option key={p.id} value={p.id}>{p.id}</option>)}</select></Field>
+                  <Field label="Hold stock (hours)"><input name="hold_hours" type="number" min={1} max={168} defaultValue={48} className="adm-input" /></Field>
+                </div>
+                <Submit variant="ghost">Create link</Submit>
+              </ActionForm>
+            )}
+          </Card>
+        </div>
+      )}
 
       {o.flags.length > 0 && (
         <div className="adm-card mb-6 border-[rgba(243,154,154,0.35)] p-4 text-[0.8125rem] text-[var(--adm-bad)]">
@@ -137,6 +176,7 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
                   <Field label="Tracking number"><input name="tracking_number" className="adm-input font-mono" /></Field>
                   <Field label="Tracking URL"><input name="tracking_url" placeholder="https://" className="adm-input" /></Field>
                 </div>
+                <label className="flex items-center gap-2 text-[0.8125rem]"><input type="checkbox" name="notify" defaultChecked className="accent-[var(--color-purple)]" />Email the customer their tracking details</label>
                 <Submit>Mark as shipped</Submit>
               </ActionForm>
             </Card>

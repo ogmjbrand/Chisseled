@@ -6,6 +6,7 @@ import { hashPassword, randomToken, sha256, verifyPassword } from "@/lib/securit
 import { rateLimit } from "@/lib/security/rate-limit";
 import { clientIp } from "@/lib/security/request";
 import { UserFacingError, passwordStrength } from "@/lib/security/validate";
+import { subscribe } from "@/lib/commerce/marketing";
 
 assertServer("src/lib/auth/customer");
 
@@ -62,6 +63,7 @@ export async function registerCustomer(input: {
     where customers.password_hash is null
     returning id`;
   if (!row) throw new UserFacingError("An account with this email already exists. Sign in instead.");
+  if (input.acceptsMarketing) await subscribe(input.email, "register");
   await startSession(row.id);
 }
 

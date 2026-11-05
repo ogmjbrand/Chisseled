@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { getProduct } from "@/lib/catalog";
+import { useLiveProducts } from "@/lib/useLiveProducts";
 import { useStore } from "@/lib/store";
 import { ProductCard } from "@/components/product/ProductCard";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
@@ -10,9 +10,11 @@ import { ArrowMark, WishMark } from "@/components/primitives/Marks";
 export function WishlistView() {
   const { wishlist, ready } = useStore();
 
-  const products = wishlist
-    .map(getProduct)
-    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+  // Only products that are live in the store — a saved item that was archived
+  // or sold out of existence simply drops off rather than 404ing.
+  const live = useLiveProducts(ready ? wishlist : []);
+  const products = live ?? [];
+  const loading = !ready || live === null;
 
   return (
     <>
@@ -21,7 +23,7 @@ export function WishlistView() {
         <h1 className="display-md mb-12 text-bone">Your wishlist.</h1>
 
         {/* `ready` gates the empty state so it never flashes before hydration. */}
-        {!ready ? (
+        {loading ? (
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4 lg:gap-x-6">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="aspect-[4/5] animate-pulse bg-graphite" />

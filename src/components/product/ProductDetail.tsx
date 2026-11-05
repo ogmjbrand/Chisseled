@@ -18,6 +18,7 @@ import {
   MediaNote,
 } from "@/components/product/ProductMedia";
 import { SizeChart } from "@/components/product/SizeChart";
+import { BackInStock } from "@/components/product/BackInStock";
 import {
   ArrowMark,
   CheckMark,
@@ -555,16 +556,11 @@ export function ProductDetail({
                 (s) =>
                   !variant.inStock.includes(s),
               ) && (
-                <p className="mt-3 text-micro text-ash">
-                  Sold out in your size?{" "}
-                  <Link
-                    href="/account#alerts"
-                    className="link-rule text-smoke"
-                  >
-                    Get a back-in-stock alert
-                  </Link>
-                  .
-                </p>
+                <BackInStock
+                  slug={product.slug}
+                  colorway={variant.colorway}
+                  soldOut={product.sizes.filter((s) => !variant.inStock.includes(s))}
+                />
               )}
             </fieldset>
           )}

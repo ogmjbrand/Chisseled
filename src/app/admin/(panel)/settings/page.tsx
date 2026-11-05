@@ -56,12 +56,15 @@ export default async function Settings() {
                 {Object.values(PROVIDERS).map((p) => (
                   <label key={p.id} className="flex items-center justify-between gap-3 text-[0.8125rem]">
                     <span className="flex items-center gap-2">
-                      <input type="checkbox" name={`${p.id}_enabled`} defaultChecked={p.id === "paystack" ? pay.paystack_enabled : pay.flutterwave_enabled} className="accent-[var(--color-purple)]" />
+                      <input type="checkbox" name={`${p.id}_enabled`} defaultChecked={pay[`${p.id}_enabled`] !== false} className="accent-[var(--color-purple)]" />
                       <span><span className="text-bone capitalize">{p.id}</span><span className="block text-[0.75rem] text-smoke">{p.supportsCurrency(s.currency) ? `Accepts ${s.currency}` : `Doesn't accept ${s.currency}`} · webhook {base}/api/webhooks/{p.id}</span></span>
                     </span>
                     <Badge value={p.isConfigured() ? "active" : "disabled"} label={p.isConfigured() ? "keys set" : "no keys"} />
                   </label>
                 ))}
+                <Field label="Offline payment methods" hint="Comma-separated. Staff pick one when recording a payment on an order.">
+                  <input name="manual_methods" defaultValue={pay.manual_methods.join(", ")} className="adm-input" />
+                </Field>
                 {writable && <Submit variant="ghost">Save</Submit>}
               </ActionForm>
             </fieldset>

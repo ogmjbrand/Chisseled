@@ -13,6 +13,7 @@ import {
   bool,
   email,
   int,
+  list,
   oneOf,
   optStr,
   str,
@@ -185,7 +186,13 @@ export const saveStoreSettingsAction = adminAction("settings:write", async (staf
 });
 
 export const savePaymentSettingsAction = adminAction("settings:write", async (staff, form) => {
-  const next = { paystack_enabled: bool(form, "paystack_enabled"), flutterwave_enabled: bool(form, "flutterwave_enabled") };
+  const methods = list(form, "manual_methods", 10).map((m) => m.slice(0, 40));
+  const next = {
+    paystack_enabled: bool(form, "paystack_enabled"),
+    flutterwave_enabled: bool(form, "flutterwave_enabled"),
+    stripe_enabled: bool(form, "stripe_enabled"),
+    manual_methods: methods.length ? methods : ["Bank transfer"],
+  };
   await writeSetting("payments", next);
   await audit(staff, "settings.payments", "settings", "payments", next);
   return "Payment settings saved.";

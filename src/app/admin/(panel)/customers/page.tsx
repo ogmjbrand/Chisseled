@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { guard, likePattern, pageNumber } from "@/lib/admin/guard";
-import { Badge, Card, Empty, Filters, Forbidden, PageHeader, Pagination, Table, fmtDate } from "@/components/admin/ui";
+import { Badge, Card, Empty, Filters, Forbidden, PageHeader, Pagination, Table, fmtDate, ExportLink } from "@/components/admin/ui";
 import { formatMoney } from "@/lib/commerce/money";
 import { getStoreSettings } from "@/lib/commerce/settings";
 
@@ -56,7 +56,7 @@ export default async function Customers({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      <PageHeader title="Customers" description={SEGMENTS[segment].hint} />
+      <PageHeader title="Customers" description={SEGMENTS[segment].hint} actions={<ExportLink kind="customers" />} />
       <nav className="mb-4 flex flex-wrap gap-1.5" aria-label="Segments">
         {Object.entries(SEGMENTS).map(([k, v]) => (
           <Link key={k} href={href(1, k)} className={`adm-btn ${k === segment ? "adm-btn-primary" : "adm-btn-ghost"} !px-3 !py-1.5 !text-[0.75rem]`}>{v.label}</Link>

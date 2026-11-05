@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState } from "react";
+import { newsletterAction } from "@/lib/commerce/marketing-actions";
+import { useKeepForm } from "@/components/admin/useKeepForm";
+import type { ActionState } from "@/lib/security/validate";
 import { FOOTER_COLUMNS } from "@/lib/nav";
 import { CURRENCIES, type CurrencyCode } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -83,8 +86,8 @@ export function Footer() {
 /* ================================================================== */
 
 function NewsletterForm() {
-  const [email, setEmail] = useState("");
-  const [state, setState] = useState<"idle" | "done">("idle");
+  const [state, action, pending] = useActionState<ActionState, FormData>(newsletterAction, { ok: true });
+  const keep = useKeepForm(action);
 
   return (
     <div>
@@ -94,41 +97,39 @@ function NewsletterForm() {
         anywhere else. No more than twice a month.
       </p>
 
-      {state === "done" ? (
+      {state.ok && state.message ? (
         <p
           className="inline-flex items-center gap-2 border border-purple/30 bg-purple/10 px-5 py-4 text-body-sm text-purple-bright"
           role="status"
         >
           <CheckMark className="size-4 shrink-0" />
-          You&apos;re in. Check your inbox to confirm.
+          {state.message}
         </p>
       ) : (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            // Wire to the email platform in production.
-            setState("done");
-          }}
-          className="flex flex-col gap-2.5 sm:flex-row"
-        >
+        <form action={action} onSubmit={keep.onSubmit} className="flex flex-col gap-2.5 sm:flex-row">
           <label htmlFor="footer-email" className="sr-only">
             Email address
           </label>
           <input
             id="footer-email"
+            name="email"
             type="email"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            maxLength={254}
             placeholder="you@email.com"
             autoComplete="email"
             className="field flex-1"
           />
-          <button type="submit" className="btn btn-primary shrink-0">
-            Join
+          <button type="submit" disabled={pending || keep.pending} className="btn btn-primary shrink-0 disabled:opacity-60">
+            {pending || keep.pending ? "Joining…" : "Join"}
             <ArrowMark className="size-4" />
           </button>
         </form>
+      )}
+      {state.error && (
+        <p role="alert" className="mt-3 text-body-sm" style={{ color: "var(--color-signal-alert)" }}>
+          {state.error}
+        </p>
       )}
 
       <p className="mt-4 text-micro leading-relaxed text-ash">

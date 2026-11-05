@@ -172,6 +172,12 @@ export function SignInPanel({ next = "/account" }: { next?: string }) {
         </button>
       </form>
 
+      {mode === "signin" && (
+        <p className="mt-4 text-caption">
+          <a href="/account/forgot" className="link-rule text-smoke">Forgot your password?</a>
+        </p>
+      )}
+
       <p className="mt-5 text-caption text-smoke">
         {mode === "signin" ? "New here? " : "Already have an account? "}
         <button

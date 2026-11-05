@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db, isDatabaseConfigured } from "@/lib/db";
 import { safeEqual } from "@/lib/security/crypto";
 import { expireReservations, markAbandonedCarts } from "@/lib/commerce/orders";
+import { processStockAlerts } from "@/lib/commerce/marketing";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export const dynamic = "force-dynamic";
  * - releases stock held by unpaid orders past their reservation window
  *   (after re-checking each payment with its provider)
  * - marks idle carts abandoned
+ * - emails back-in-stock alerts whose size has stock again
  * - prunes expired sessions and rate-limit windows
  */
 async function run(req: Request) {
@@ -23,11 +25,12 @@ async function run(req: Request) {
 
   const reservations = await expireReservations();
   const abandoned = await markAbandonedCarts();
+  const stockAlerts = await processStockAlerts();
   const sql = db();
   await sql`delete from staff_sessions where expires_at < now() - interval '1 day' or revoked_at < now() - interval '1 day'`;
   await sql`delete from customer_sessions where expires_at < now() - interval '1 day' or revoked_at < now() - interval '1 day'`;
   await sql`delete from rate_limits where window_start < now() - interval '1 day'`;
-  return NextResponse.json({ ok: true, ...reservations, abandonedCarts: abandoned });
+  return NextResponse.json({ ok: true, ...reservations, abandonedCarts: abandoned, stockAlerts });
 }
 
 export const GET = run;

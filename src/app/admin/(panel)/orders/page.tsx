@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { guard, likePattern, pageNumber } from "@/lib/admin/guard";
-import { Badge, Card, Empty, Filters, Forbidden, PageHeader, Pagination, Table, fmtDate } from "@/components/admin/ui";
+import { Badge, Card, Empty, Filters, Forbidden, PageHeader, Pagination, Table, fmtDate, ExportLink } from "@/components/admin/ui";
 import { formatMoney } from "@/lib/commerce/money";
 import { getStoreSettings, orderName } from "@/lib/commerce/settings";
 
@@ -43,7 +43,16 @@ export default async function Orders({ searchParams }: { searchParams: Promise<R
 
   return (
     <>
-      <PageHeader title="Orders" description={`${total} order${total === 1 ? "" : "s"}${payment || fulfillment || q ? " match" : ""}. Abandoned checkouts are hidden unless you include them.`} />
+      <PageHeader
+        title="Orders"
+        description={`${total} order${total === 1 ? "" : "s"}${payment || fulfillment || q ? " match" : ""}. Abandoned checkouts are hidden unless you include them.`}
+        actions={
+          <>
+            <ExportLink kind="orders" />
+            <Link href="/admin/orders/new" className="adm-btn adm-btn-primary">Create order</Link>
+          </>
+        }
+      />
       <Card pad={false}>
         <Filters action="/admin/orders">
           <input name="q" defaultValue={sp.q ?? ""} placeholder="Order number, email or surname" aria-label="Search orders" className="adm-input max-w-xs" />

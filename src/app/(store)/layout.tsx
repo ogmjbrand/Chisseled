@@ -8,7 +8,7 @@ import { GrainDefs } from "@/components/primitives/Visual";
 import { JsonLd } from "@/components/primitives/JsonLd";
 import { StoreProvider } from "@/lib/store";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
-import { getEnrichedProductsByHandles, getRealProductHandles } from "@/lib/commerce/catalog";
+import { getEnrichedProductsByHandles } from "@/lib/commerce/catalog";
 
 /**
  * Every page reads live catalogue, cart and stock data, so nothing is
@@ -33,10 +33,6 @@ const CART_KIT_HANDLES = [
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const kitProducts = await getEnrichedProductsByHandles(CART_KIT_HANDLES);
-  // Passed to SearchOverlay so it only links search results through to a
-  // product page that actually exists — a Set isn't serialisable across the
-  // Server/Client boundary, so this crosses as a plain array.
-  const realProductHandles = [...(await getRealProductHandles())];
 
   return (
     <>
@@ -48,7 +44,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         <main id="main">{children}</main>
         <Footer />
         <CartDrawer kitProducts={kitProducts} />
-        <SearchOverlay realProductHandles={realProductHandles} />
+        <SearchOverlay />
         <Assistant />
       </StoreProvider>
     </>

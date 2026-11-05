@@ -3,7 +3,9 @@
 import { adminAction } from "@/lib/admin/action";
 import { db, pgCode } from "@/lib/db";
 import { audit } from "@/lib/commerce/audit";
-import { sendEmail } from "@/lib/commerce/email";
+import { emailLayout, sendEmail, siteUrl } from "@/lib/commerce/email";
+import { unsubscribeLink } from "@/lib/commerce/marketing";
+import { randomToken, sha256 } from "@/lib/security/crypto";
 import {
   UserFacingError,
   ValidationError,
@@ -203,14 +205,21 @@ export const remindCartAction = adminAction("marketing:write", async (staff, for
   if (cart.reminder_sent_at) throw new UserFacingError("A reminder was already sent for this cart.");
   const [c] = await db()<{ accepts_marketing: boolean }[]>`select accepts_marketing from customers where email = ${cart.email}`;
   if (!c?.accepts_marketing) throw new UserFacingError("This shopper hasn't opted in to marketing email.");
-  const base = (process.env.APP_URL ?? "").replace(/\/$/, "");
+  // A one-time link that restores this exact bag on any device (only its hash is stored).
+  const token = randomToken();
+  const unsub = await unsubscribeLink(cart.email);
   const sent = await sendEmail(
     cart.email,
     "You left something in your bag",
-    `<div style="font-family:system-ui,sans-serif"><p>Your CHISSELED bag is still waiting.</p><p><a href="${base}/shop">Return to the store</a></p></div>`,
+    emailLayout(
+      `<h1 style="font-size:20px">Your bag is still waiting.</h1>
+       <p>We've kept it exactly as you left it. Stock isn't held, so popular sizes can go.</p>
+       <p><a href="${siteUrl()}/cart/recover?token=${encodeURIComponent(token)}">Return to your bag</a></p>`,
+      unsub ? `You're receiving this because you subscribed to CHISSELED email. <a href="${unsub}">Unsubscribe</a>.` : "",
+    ),
   );
   if (!sent) throw new UserFacingError("Email isn't configured (RESEND_API_KEY / EMAIL_FROM).");
-  await db()`update carts set reminder_sent_at = now() where id = ${id}`;
+  await db()`update carts set reminder_sent_at = now(), recovery_token = ${sha256(token)} where id = ${id}`;
   await audit(staff, "cart.reminder", "cart", id, {});
   return "Reminder sent.";
 });

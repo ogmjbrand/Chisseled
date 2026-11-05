@@ -141,3 +141,13 @@ export function fmtDate(d: Date | string | null | undefined, withTime = false): 
   const date = typeof d === "string" ? new Date(d) : d;
   return date.toLocaleString("en-GB", withTime ? { dateStyle: "medium", timeStyle: "short" } : { dateStyle: "medium" });
 }
+
+/** File download from an admin export route — a plain download link, not client navigation. */
+export function ExportLink({ kind, label = "Export CSV", className = "adm-btn adm-btn-ghost" }: { kind: "orders" | "customers" | "products" | "subscribers"; label?: string; className?: string }) {
+  const href = `/admin/export/${kind}`;
+  return (
+    <a href={href} download className={className}>
+      {label}
+    </a>
+  );
+}

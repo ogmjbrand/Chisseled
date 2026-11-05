@@ -17,6 +17,9 @@ export interface StoreSettings {
 export interface PaymentSettings {
   paystack_enabled: boolean;
   flutterwave_enabled: boolean;
+  stripe_enabled: boolean;
+  /** Offline methods staff can record (bank transfer, cash, POS…). */
+  manual_methods: string[];
 }
 
 export const DEFAULT_STORE: StoreSettings = {
@@ -42,7 +45,7 @@ export const getStoreSettings = cache(async (): Promise<StoreSettings> => {
 });
 
 export const getPaymentSettings = cache(async (): Promise<PaymentSettings> => {
-  const fallback = { paystack_enabled: true, flutterwave_enabled: true };
+  const fallback: PaymentSettings = { paystack_enabled: true, flutterwave_enabled: true, stripe_enabled: true, manual_methods: ["Bank transfer", "Cash", "POS"] };
   if (!isDatabaseConfigured()) return fallback;
   return readSetting("payments", fallback);
 });

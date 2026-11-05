@@ -1,6 +1,8 @@
-export type ProviderId = "paystack" | "flutterwave";
+export type ProviderId = "paystack" | "flutterwave" | "stripe";
 
 export interface InitializeInput {
+  /** Where the shopper returns if they abandon the hosted page. */
+  cancelUrl?: string;
   reference: string;
   amountCents: number;
   currency: string;
@@ -45,7 +47,8 @@ export interface PaymentProvider {
   isConfigured(): boolean;
   supportsCurrency(currency: string): boolean;
   initialize(input: InitializeInput): Promise<{ authorizationUrl: string; raw: unknown }>;
-  verify(reference: string): Promise<VerifiedPayment>;
+  /** `hint` is the provider-side id stored at initialisation (Stripe's Checkout Session id). */
+  verify(reference: string, hint?: string | null): Promise<VerifiedPayment>;
   /** Signature check over the exact raw request body. */
   verifyWebhook(rawBody: string, headers: Headers): boolean;
   parseWebhook(body: unknown): WebhookEvent | null;

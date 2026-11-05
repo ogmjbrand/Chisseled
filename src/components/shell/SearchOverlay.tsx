@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useRef, useState, useEffect } from "react";
-import { ARTICLES, PROGRAMS, PRODUCTS, COLLECTIONS } from "@/lib/catalog";
+import { ARTICLES, PROGRAMS, COLLECTIONS } from "@/lib/catalog";
+import { searchProductsAction, type SearchHit } from "@/lib/commerce/catalog-actions";
 import { formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useEscape, useFocusTrap, useScrollLock } from "@/lib/motion";
@@ -15,13 +16,28 @@ type Result =
 
 const SUGGESTED = ["Scarred", "Hoodies", "Training sets", "Sports bras", "Creatine", "Bundles"];
 
-export function SearchOverlay({ realProductHandles }: { realProductHandles: string[] }) {
+export function SearchOverlay() {
   const { searchOpen, setSearchOpen, currency } = useStore();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  // Most of the local catalogue isn't a real, purchasable live product —
-  // searching only the real subset is what stops a result from 404ing.
-  const realHandles = useMemo(() => new Set(realProductHandles), [realProductHandles]);
+  // Products come from the live database (full-text search, active products
+  // only); editorial results (collections, programmes, journal) stay local.
+  const [hits, setHits] = useState<{ q: string; items: SearchHit[] }>({ q: "", items: [] });
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) return;
+    let cancelled = false;
+    const t = window.setTimeout(() => {
+      searchProductsAction(q)
+        .then((items) => !cancelled && setHits({ q, items }))
+        .catch(() => !cancelled && setHits({ q, items: [] }));
+    }, 180);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(t);
+    };
+  }, [query]);
+  const liveHits = useMemo(() => (hits.q === query.trim() ? hits.items : []), [hits, query]);
 
   useScrollLock(searchOpen);
   useEscape(searchOpen, () => setSearchOpen(false));
@@ -59,18 +75,14 @@ export function SearchOverlay({ realProductHandles }: { realProductHandles: stri
     const match = (...fields: string[]) =>
       fields.some((f) => f.toLowerCase().includes(q));
 
-    const products: Result[] = PRODUCTS.filter(
-      (p) => realHandles.has(p.slug) && match(p.name, p.category, p.tagline, p.collection, ...p.activities),
-    )
-      .slice(0, 5)
-      .map((p) => ({
-        kind: "product",
-        slug: p.slug,
-        title: p.name,
-        meta: p.category,
-        href: `/product/${p.slug}`,
-        price: p.price,
-      }));
+    const products: Result[] = liveHits.slice(0, 5).map((p) => ({
+      kind: "product",
+      slug: p.slug,
+      title: p.name,
+      meta: p.category,
+      href: `/product/${p.slug}`,
+      price: p.price,
+    }));
 
     const collections: Result[] = COLLECTIONS.filter((w) => match(w.name, ...w.lines))
       .slice(0, 2)
@@ -105,7 +117,7 @@ export function SearchOverlay({ realProductHandles }: { realProductHandles: stri
       }));
 
     return [...products, ...collections, ...programmes, ...articles];
-  }, [query, realHandles]);
+  }, [query, liveHits]);
 
   const grouped = useMemo(() => {
     return {
@@ -193,7 +205,7 @@ export function SearchOverlay({ realProductHandles }: { realProductHandles: stri
                     <h2 className="eyebrow mb-4">Products</h2>
                     <ul className="space-y-1">
                       {grouped.product.map((r) => {
-                        const p = PRODUCTS.find((x) => x.slug === r.slug)!;
+                        const p = liveHits.find((x) => x.slug === r.slug)!;
                         return (
                           <li key={r.slug}>
                             <Link
@@ -205,7 +217,7 @@ export function SearchOverlay({ realProductHandles }: { realProductHandles: stri
                                 <ProductMedia
                                   media={p.media}
                                   flat={p.flat}
-                                  colorway={p.variants[0].colorway}
+                                  colorway={p.colorway}
                                   seed={`search-${p.slug}`}
                                   view="front"
                                   name={p.name}

@@ -68,7 +68,9 @@ function isRemoteImage(source: string): boolean {
 }
 
 function resolveImageSource(source: string): string {
-  if (isRemoteImage(source)) {
+  // Full URLs (Supabase Storage) and site paths ("/media/...") from the
+  // commerce database are used as-is; bare names are local catalogue slugs.
+  if (isRemoteImage(source) || source.startsWith("/")) {
     return source;
   }
 

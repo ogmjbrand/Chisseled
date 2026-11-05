@@ -1,6 +1,6 @@
 "use client";
 
-import { getProduct } from "@/lib/catalog";
+import { useLiveProducts } from "@/lib/useLiveProducts";
 import { useStore } from "@/lib/store";
 import { ProductCard } from "@/components/product/ProductCard";
 
@@ -8,11 +8,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 export function RecentlyViewed({ exclude }: { exclude?: string }) {
   const { recent } = useStore();
 
-  const products = recent
-    .filter((s) => s !== exclude)
-    .map(getProduct)
-    .filter((p): p is NonNullable<typeof p> => Boolean(p))
-    .slice(0, 4);
+  const products = (useLiveProducts(recent.filter((s) => s !== exclude).slice(0, 8)) ?? []).slice(0, 4);
 
   if (products.length < 2) return null;
 

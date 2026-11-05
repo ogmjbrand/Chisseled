@@ -3,7 +3,7 @@ import Image from "next/image";
 import { db } from "@/lib/db";
 import { guard, likePattern, pageNumber } from "@/lib/admin/guard";
 import { can } from "@/lib/auth/staff";
-import { Badge, Card, Empty, Filters, Forbidden, PageHeader, Pagination, Table } from "@/components/admin/ui";
+import { Badge, Card, Empty, Filters, Forbidden, PageHeader, Pagination, Table, ExportLink } from "@/components/admin/ui";
 import { ActionForm, Submit } from "@/components/admin/ActionForm";
 import { bulkStatusAction } from "@/lib/admin/product-actions";
 import { formatMoney } from "@/lib/commerce/money";
@@ -53,7 +53,12 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       <PageHeader
         title="Products"
         description={`${count("active")} active · ${count("draft")} draft · ${count("archived")} archived`}
-        actions={writable && <Link href="/admin/products/new" className="adm-btn adm-btn-primary">Add product</Link>}
+        actions={
+          <>
+            <ExportLink kind="products" />
+            {writable && <Link href="/admin/products/new" className="adm-btn adm-btn-primary">Add product</Link>}
+          </>
+        }
       />
       {sp.deleted && <p className="adm-msg adm-msg-ok mb-4">Product deleted.</p>}
       <Card pad={false}>

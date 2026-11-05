@@ -3,7 +3,7 @@ import { PaymentProviderError } from "@/lib/payments/types";
 /** JSON request to a provider API with a timeout. Never logs headers (they carry the secret key). */
 export async function providerFetch<T>(
   url: string,
-  init: { method?: string; secret: string; body?: unknown },
+  init: { method?: string; secret: string; body?: unknown; form?: Record<string, string> },
 ): Promise<T> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 20_000);
@@ -12,10 +12,10 @@ export async function providerFetch<T>(
       method: init.method ?? "GET",
       headers: {
         Authorization: `Bearer ${init.secret}`,
-        "Content-Type": "application/json",
+        "Content-Type": init.form ? "application/x-www-form-urlencoded" : "application/json",
         Accept: "application/json",
       },
-      body: init.body === undefined ? undefined : JSON.stringify(init.body),
+      body: init.form ? new URLSearchParams(init.form).toString() : init.body === undefined ? undefined : JSON.stringify(init.body),
       cache: "no-store",
       signal: ctrl.signal,
     });
@@ -27,7 +27,8 @@ export async function providerFetch<T>(
       throw new PaymentProviderError(`Provider returned a non-JSON response (${res.status}).`);
     }
     if (!res.ok) {
-      const msg = (json as { message?: string } | null)?.message ?? res.statusText;
+      const j = json as { message?: string; error?: { message?: string } } | null;
+      const msg = j?.message ?? j?.error?.message ?? res.statusText;
       throw new PaymentProviderError(`Provider error ${res.status}: ${msg}`);
     }
     return json as T;

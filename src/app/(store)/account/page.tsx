@@ -108,25 +108,13 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
               Back-in-stock alerts
             </h2>
             <p className="mb-6 max-w-[52ch] text-body-sm leading-relaxed text-smoke">
-              Tell us the product and size. You will hear the moment it lands — before the
-              restock is announced anywhere else.
+              Pick a sold-out size on any product page and choose “Get a back-in-stock alert”.
+              You will hear the moment it lands — one email, before the restock is announced
+              anywhere else.
             </p>
-            <form className="flex flex-col gap-2.5 sm:flex-row sm:max-w-[34rem]">
-              <label htmlFor="alert-email" className="sr-only">
-                Email for stock alerts
-              </label>
-              <input
-                id="alert-email"
-                type="email"
-                required
-                placeholder="you@email.com"
-                autoComplete="email"
-                className="field flex-1"
-              />
-              <button type="submit" className="btn btn-primary shrink-0">
-                Notify me
-              </button>
-            </form>
+            <Link href="/shop" className="btn btn-ghost btn-sm">
+              Browse the collection
+            </Link>
           </section>
         </div>
 

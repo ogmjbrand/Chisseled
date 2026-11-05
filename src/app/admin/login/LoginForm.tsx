@@ -21,6 +21,7 @@ export function LoginForm() {
       </label>
       {state.error && <p role="alert" className="adm-msg adm-msg-error">{state.error}</p>}
       <button disabled={pending} className="adm-btn adm-btn-primary w-full">{pending ? "Signing in…" : "Sign in"}</button>
+      <p className="text-center text-[0.75rem]"><a href="/admin/forgot" className="text-smoke hover:text-bone">Forgot password?</a></p>
     </form>
   );
 }

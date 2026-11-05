@@ -14,7 +14,7 @@ export default async function Payments({ searchParams }: { searchParams: Promise
   const sp = await searchParams;
   const q = (sp.q ?? "").trim().slice(0, 100);
   const status = ["initialized", "pending", "succeeded", "failed", "abandoned"].includes(sp.status ?? "") ? sp.status! : "";
-  const provider = ["paystack", "flutterwave"].includes(sp.provider ?? "") ? sp.provider! : "";
+  const provider = ["paystack", "flutterwave", "stripe", "manual"].includes(sp.provider ?? "") ? sp.provider! : "";
   const page = pageNumber(sp.page);
   const settings = await getStoreSettings();
   const sql = db();
@@ -68,7 +68,7 @@ export default async function Payments({ searchParams }: { searchParams: Promise
             <option value="">Any status</option>{["succeeded", "pending", "initialized", "failed", "abandoned"].map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
           <select name="provider" defaultValue={provider} aria-label="Provider" className="adm-input w-auto">
-            <option value="">Any provider</option><option value="paystack">Paystack</option><option value="flutterwave">Flutterwave</option>
+            <option value="">Any provider</option><option value="paystack">Paystack</option><option value="flutterwave">Flutterwave</option><option value="stripe">Stripe</option><option value="manual">Offline (manual)</option>
           </select>
         </Filters>
         <Table head={["Date", "Order", "Provider", "Reference", "Status", "Fee", <span key="a" className="block text-right">Amount</span>]} empty={rows.length === 0 ? <Empty title="No payments yet." /> : null}>

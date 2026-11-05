@@ -3,6 +3,7 @@
 import { adminAction } from "@/lib/admin/action";
 import { db, pgCode } from "@/lib/db";
 import { audit } from "@/lib/commerce/audit";
+import { syncConsent } from "@/lib/commerce/marketing";
 import { ValidationError, bool, email, list, oneOf, optStr, str, uuid } from "@/lib/security/validate";
 
 export const updateCustomerAction = adminAction("customers:write", async (staff, form) => {
@@ -20,6 +21,7 @@ export const updateCustomerAction = adminAction("customers:write", async (staff,
     if (pgCode(err) === "23505") throw new ValidationError("email", "Another customer already uses that email.");
     throw err;
   });
+  await syncConsent(data.email, data.accepts_marketing);
   if (data.status === "disabled") await db()`update customer_sessions set revoked_at = now() where customer_id = ${id} and revoked_at is null`;
   await audit(staff, "customer.update", "customer", id, { status: data.status, tags: data.tags });
   return "Customer saved.";

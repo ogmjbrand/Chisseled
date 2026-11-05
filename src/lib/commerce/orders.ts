@@ -10,7 +10,8 @@ import {
 } from "@/lib/commerce/inventory";
 import { computeTotals } from "@/lib/commerce/pricing";
 import { readSetting, DEFAULT_STORE, orderName, type StoreSettings } from "@/lib/commerce/settings";
-import { sendOrderConfirmation } from "@/lib/commerce/email";
+import { sendOrderConfirmation, sendOrderUpdate } from "@/lib/commerce/email";
+import { subscribe } from "@/lib/commerce/marketing";
 import { getProvider } from "@/lib/payments";
 import type { ProviderId, VerifiedPayment } from "@/lib/payments/types";
 import { randomToken, sha256 } from "@/lib/security/crypto";
@@ -66,8 +67,13 @@ export interface CheckoutInput {
   shippingAddress: Address;
   shippingRateId: string | null;
   discountCode: string | null;
-  provider: ProviderId;
+  /** "manual" for staff-created orders paid offline or by link. */
+  provider: ProviderId | "manual";
   customerNote: string;
+  /** Staff-created orders: a fixed delivery charge (e.g. pickup, courier quote) instead of a zone rate. */
+  shippingOverride?: { name: string; priceCents: number } | null;
+  /** Staff-created orders: hold stock longer than the online checkout window. */
+  holdMinutes?: number;
 }
 
 export interface CreatedOrder {
@@ -118,7 +124,7 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<Created
         })),
         discountCode: input.discountCode,
         email: input.email,
-        country: input.shippingAddress.country,
+        country: input.shippingOverride ? null : input.shippingAddress.country,
         shippingRateId: input.shippingRateId,
         settings,
         lockDiscount: true,
@@ -126,7 +132,16 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<Created
       tx,
     );
     if (input.discountCode && totals.discountError) throw new UserFacingError(totals.discountError);
-    if (totals.shippingError || !totals.shippingRate) throw new UserFacingError(totals.shippingError ?? "Choose a delivery option.");
+    let shipping: { id: string | null; name: string; priceCents: number };
+    if (input.shippingOverride) {
+      const priceCents = totals.discount?.freeShipping ? 0 : input.shippingOverride.priceCents;
+      shipping = { id: null, name: input.shippingOverride.name, priceCents };
+      totals.shippingCents = priceCents;
+      totals.totalCents += priceCents;
+    } else {
+      if (totals.shippingError || !totals.shippingRate) throw new UserFacingError(totals.shippingError ?? "Choose a delivery option.");
+      shipping = totals.shippingRate;
+    }
     if (totals.totalCents <= 0) throw new UserFacingError("This order total can't be charged online. Contact support.");
 
     // Customer: signed-in account, or a guest record keyed by email.
@@ -154,9 +169,9 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<Created
       values (
         ${customerId}, ${input.cartId}, ${input.email}, ${input.phone}, ${settings.currency},
         ${totals.subtotalCents}, ${totals.discountCents}, ${totals.shippingCents}, ${totals.taxCents}, ${totals.totalCents},
-        ${totals.discount?.id ?? null}, ${totals.discount?.code ?? null}, ${totals.shippingRate.id}, ${totals.shippingRate.name},
+        ${totals.discount?.id ?? null}, ${totals.discount?.code ?? null}, ${shipping.id}, ${shipping.name},
         ${tx.json(address as never)}, ${tx.json(address as never)}, ${input.customerNote}, ${input.provider},
-        ${sha256(accessToken)}, now() + make_interval(mins => ${settings.reservation_minutes}))
+        ${sha256(accessToken)}, now() + make_interval(mins => ${input.holdMinutes ?? settings.reservation_minutes}))
       returning id, number`;
 
     for (const i of cart.items) {
@@ -176,6 +191,7 @@ export async function createOrderFromCart(input: CheckoutInput): Promise<Created
     }
 
     await tx`update carts set email = ${input.email}, customer_id = coalesce(customer_id, ${customerId}) where id = ${input.cartId}`;
+    if (input.acceptsMarketing) await subscribe(input.email, "checkout", tx);
     await addEvent(tx, order.id, "created", "Order placed — awaiting payment", {
       total_cents: totals.totalCents,
       provider: input.provider,
@@ -211,6 +227,7 @@ export async function initializePayment(
       name: input.name,
       phone: input.phone,
       callbackUrl: `${input.callbackUrl}${input.callbackUrl.includes("?") ? "&" : "?"}provider=${provider.id}&reference=${encodeURIComponent(reference)}`,
+      cancelUrl: `${new URL(input.callbackUrl).origin}/checkout?error=declined`,
       orderId: order.orderId,
       orderNumber: order.number,
     });
@@ -241,13 +258,13 @@ export type VerificationOutcome = "paid" | "already_paid" | "failed" | "pending"
 export async function verifyAndApplyPayment(providerId: string, reference: string): Promise<{ outcome: VerificationOutcome; orderId: string | null }> {
   const provider = getProvider(providerId);
   if (!provider) return { outcome: "unknown", orderId: null };
-  const [existing] = await db()<{ order_id: string; status: string; provider: string }[]>`
-    select order_id, status, provider from payments where reference = ${reference}`;
+  const [existing] = await db()<{ order_id: string; status: string; provider: string; hint: string | null }[]>`
+    select order_id, status, provider, raw->>'id' as hint from payments where reference = ${reference}`;
   if (!existing || existing.provider !== provider.id) return { outcome: "unknown", orderId: null };
   if (existing.status === "succeeded") return { outcome: "already_paid", orderId: existing.order_id };
 
   // Never trust the redirect query string or webhook body — ask the provider.
-  const verified = await provider.verify(reference);
+  const verified = await provider.verify(reference, existing.hint);
   const outcome = await applyVerifiedPayment(reference, verified);
   return { outcome, orderId: existing.order_id };
 }
@@ -316,7 +333,13 @@ export async function applyVerifiedPayment(reference: string, v: VerifiedPayment
     if (order.cart_id) {
       await tx`update carts set status = 'converted', converted_order_id = ${order.id} where id = ${order.cart_id}`;
     }
-    await addEvent(tx, order.id, "paid", `Payment verified with ${p.provider}`, { reference, transaction_id: v.transactionId });
+    await addEvent(
+      tx,
+      order.id,
+      "paid",
+      p.provider === "manual" ? `Offline payment recorded (${v.channel ?? "manual"})` : `Payment verified with ${p.provider}`,
+      { reference, transaction_id: v.transactionId },
+    );
     await notify({ kind: "new_order", title: `New order ${orderName(order.number)}`, body: `Paid via ${p.provider}.`,
       entityType: "order", entityId: order.id, dedupeKey: `new-order:${order.id}` }, tx);
     paidOrderId = order.id;
@@ -357,6 +380,7 @@ async function cancelPendingInTx(tx: Tx, orderId: string, reason: string, staffI
  * optionally restocks; money is returned through refundOrder().
  */
 export async function cancelOrder(orderId: string, reason: string, opts: { restock: boolean }, staff: StaffUser | null) {
+  let wasPaid = false;
   await transaction(async (tx) => {
     const [o] = await tx<{ status: string; payment_status: string; fulfillment_status: string; inventory_state: string }[]>`
       select status, payment_status, fulfillment_status, inventory_state from orders where id = ${orderId} for update`;
@@ -365,6 +389,7 @@ export async function cancelOrder(orderId: string, reason: string, opts: { resto
     if (o.payment_status === "pending" || o.payment_status === "failed") {
       await cancelPendingInTx(tx, orderId, reason, staff?.id ?? null);
     } else {
+      wasPaid = true;
       if (o.fulfillment_status !== "unfulfilled") {
         throw new UserFacingError("Items have already shipped. Use a refund with restock for returns instead.");
       }
@@ -382,6 +407,7 @@ export async function cancelOrder(orderId: string, reason: string, opts: { resto
     }
     await audit(staff, "order.cancel", "order", orderId, { reason, restock: opts.restock }, tx);
   });
+  if (wasPaid) await sendOrderUpdate(orderId, "cancelled");
 }
 
 /**
@@ -481,6 +507,10 @@ export async function refundOrder(
   const provider = getProvider(prepared.payment.provider);
   let result: { refundId: string | null; status: "pending" | "succeeded" | "failed"; failureReason: string | null; raw: unknown };
   try {
+    if (prepared.payment.provider === "manual") {
+      // Paid offline (bank transfer, cash, POS) — the money goes back the same way, outside the system.
+      result = { refundId: null, status: "succeeded", failureReason: null, raw: { offline: true } };
+    } else {
     if (!provider) throw new Error("Unknown provider");
     result = await provider.refund({
       reference: prepared.payment.reference,
@@ -488,6 +518,7 @@ export async function refundOrder(
       amountCents: input.amountCents,
       currency: prepared.currency,
     });
+    }
   } catch (err) {
     result = { refundId: null, status: "failed", failureReason: err instanceof Error ? err.message : "Refund failed", raw: {} };
   }
@@ -516,6 +547,7 @@ export async function refundOrder(
       { amount_cents: input.amountCents, reason: input.reason, provider_refund_id: result.refundId }, staff.id);
     await audit(staff, "order.refund", "order", orderId, { amount_cents: input.amountCents, status: result.status }, tx);
   });
+  if (result.status !== "failed") await sendOrderUpdate(orderId, "refunded", { amountCents: input.amountCents });
   return { status: result.status };
 }
 
@@ -575,6 +607,9 @@ export async function createShipment(
       { shipment_id: s.id, items }, staff.id);
     await audit(staff, "order.fulfill", "order", orderId, { shipment_id: s.id }, tx);
   });
+  if (input.notify) {
+    await sendOrderUpdate(orderId, "shipped", { carrier: input.carrier, trackingNumber: input.trackingNumber, trackingUrl: input.trackingUrl });
+  }
 }
 
 export async function updateShipment(
@@ -582,7 +617,8 @@ export async function updateShipment(
   input: { status: string; carrier: string; trackingNumber: string; trackingUrl: string | null },
   staff: StaffUser,
 ) {
-  await transaction(async (tx) => {
+  const [before] = await db()<{ status: string }[]>`select status from shipments where id = ${shipmentId}`;
+  const orderId = await transaction(async (tx) => {
     const [s] = await tx<{ order_id: string }[]>`
       update shipments set status = ${input.status}, carrier = ${input.carrier}, tracking_number = ${input.trackingNumber},
         tracking_url = ${input.trackingUrl},
@@ -591,5 +627,88 @@ export async function updateShipment(
     if (!s) throw new UserFacingError("Shipment not found.");
     await addEvent(tx, s.order_id, "shipment_updated", `Shipment ${input.status.replace(/_/g, " ")}`, { shipment_id: shipmentId }, staff.id);
     await audit(staff, "shipment.update", "shipment", shipmentId, input, tx);
+    return s.order_id;
   });
+  if (input.status === "delivered" && before?.status !== "delivered") await sendOrderUpdate(orderId, "delivered");
+}
+
+/* =====================================================================
+   STAFF-CREATED ORDERS & OFFLINE PAYMENTS
+   ===================================================================== */
+
+/** Builds a server-side cart from staff-chosen lines, then runs the normal checkout path. */
+export async function createManualOrder(
+  input: Omit<CheckoutInput, "cartId" | "provider" | "customerId"> & { lines: { variantId: string; quantity: number }[] },
+  staff: StaffUser,
+): Promise<CreatedOrder> {
+  if (input.lines.length === 0) throw new UserFacingError("Add at least one item.");
+  const [cart] = await db()<{ id: string }[]>`insert into carts (email) values (${input.email}) returning id`;
+  for (const l of input.lines) {
+    await db()`insert into cart_items (cart_id, variant_id, quantity) values (${cart.id}, ${l.variantId}, ${l.quantity})
+               on conflict (cart_id, variant_id) do update set quantity = least(cart_items.quantity + excluded.quantity, 99)`;
+  }
+  const [existing] = await db()<{ id: string }[]>`select id from customers where email = ${input.email}`;
+  try {
+    const order = await createOrderFromCart({ ...input, cartId: cart.id, customerId: existing?.id ?? null, provider: "manual" });
+    // Staff-built carts are never "abandoned carts" to market to.
+    await db()`update carts set status = 'converted', converted_order_id = ${order.orderId} where id = ${cart.id}`;
+    await addEvent(db(), order.orderId, "created_by_staff", `Order created by ${staff.name}`, {}, staff.id);
+    await audit(staff, "order.create_manual", "order", order.orderId, { total_cents: order.totalCents });
+    return order;
+  } catch (err) {
+    await db()`delete from carts where id = ${cart.id}`;
+    throw err;
+  }
+}
+
+/** Staff records money received outside the online providers (bank transfer, cash, POS). */
+export async function recordManualPayment(orderId: string, input: { method: string; externalRef: string }, staff: StaffUser): Promise<VerificationOutcome> {
+  const [o] = await db()<{ number: number; total_cents: number; currency: string; payment_status: string; status: string }[]>`
+    select number, total_cents, currency, payment_status, status from orders where id = ${orderId}`;
+  if (!o) throw new UserFacingError("Order not found.");
+  if (o.status === "cancelled") throw new UserFacingError("This order is cancelled. Create a new order instead.");
+  if (!["pending", "failed"].includes(o.payment_status)) throw new UserFacingError("This order is already paid.");
+  const reference = `MAN${o.number}-${randomToken(6).replace(/[^a-zA-Z0-9]/g, "")}`;
+  await db()`insert into payments (order_id, provider, reference, amount_cents, currency, status, manual_method, recorded_by, provider_transaction_id)
+             values (${orderId}, 'manual', ${reference}, ${o.total_cents}, ${o.currency}, 'pending', ${input.method}, ${staff.id}, ${input.externalRef || null})`;
+  const outcome = await applyVerifiedPayment(reference, {
+    status: "succeeded",
+    amountCents: o.total_cents,
+    currency: o.currency,
+    transactionId: input.externalRef || null,
+    channel: input.method,
+    feeCents: null,
+    failureReason: null,
+    raw: { recorded_by: staff.email, method: input.method },
+  });
+  await audit(staff, "order.manual_payment", "order", orderId, { method: input.method, reference, amount_cents: o.total_cents });
+  return outcome;
+}
+
+/**
+ * A payment link for an unpaid order (e.g. sent over WhatsApp). Issues a fresh
+ * confirmation key so the link the customer receives can show their receipt.
+ */
+export async function createPaymentLink(orderId: string, input: { provider: ProviderId; origin: string; holdHours: number }, staff: StaffUser): Promise<string> {
+  const [o] = await db()<{ number: number; total_cents: number; currency: string; email: string; phone: string; payment_status: string; status: string; shipping_address: Record<string, string> | null }[]>`
+    select number, total_cents, currency, email, phone, payment_status, status, shipping_address from orders where id = ${orderId}`;
+  if (!o) throw new UserFacingError("Order not found.");
+  if (o.status !== "pending" || o.payment_status !== "pending") throw new UserFacingError("Payment links are only for unpaid, open orders.");
+  const accessToken = randomToken(24);
+  await db()`update orders set access_token_hash = ${sha256(accessToken)}, payment_provider = ${input.provider},
+             reservation_expires_at = greatest(coalesce(reservation_expires_at, now()), now() + make_interval(hours => ${input.holdHours}))
+             where id = ${orderId}`;
+  const url = await initializePayment(
+    { orderId, number: o.number, accessToken, totalCents: o.total_cents, currency: o.currency },
+    {
+      provider: input.provider,
+      email: o.email,
+      name: `${o.shipping_address?.firstName ?? ""} ${o.shipping_address?.lastName ?? ""}`.trim() || o.email,
+      phone: o.phone,
+      callbackUrl: `${input.origin}/checkout/return?order=${orderId}&key=${encodeURIComponent(accessToken)}`,
+    },
+  );
+  await addEvent(db(), orderId, "payment_link", `Payment link created by ${staff.name} (${input.provider})`, {}, staff.id);
+  await audit(staff, "order.payment_link", "order", orderId, { provider: input.provider });
+  return url;
 }
