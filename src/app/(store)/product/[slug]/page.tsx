@@ -126,7 +126,7 @@ export default async function ProductPage({
         </ol>
       </nav>
 
-      <ProductDetail product={product} />
+      <ProductDetail key={product.slug} product={product} />
 
       {related.length > 0 ? (
         <section

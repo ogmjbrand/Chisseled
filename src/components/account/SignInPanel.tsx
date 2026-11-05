@@ -154,7 +154,7 @@ export function SignInPanel({ next = "/account" }: { next?: string }) {
         )}
 
         {state.error && (
-          <p role="alert" className="text-caption" style={{ color: "var(--color-signal-out)" }}>
+          <p role="alert" className="text-caption" style={{ color: "var(--color-signal-alert)" }}>
             {state.error}
           </p>
         )}

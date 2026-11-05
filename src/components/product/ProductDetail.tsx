@@ -44,7 +44,7 @@ export function ProductDetail({
   } = useStore();
 
   const [variantIndex, setVariantIndex] = useState(0);
-  const [size, setSize] = useState<string | null>(null);
+  const [chosenSize, setSize] = useState<string | null>(null);
   const [view, setView] =
     useState<(typeof VIEWS)[number]>("front");
   const [sizeError, setSizeError] = useState(false);
@@ -56,6 +56,7 @@ export function ProductDetail({
   const variant =
     product.variants[variantIndex] ??
     product.variants[0];
+  const size = chosenSize && variant?.inStock.includes(chosenSize) ? chosenSize : null;
 
   const saved = wishlist.includes(product.slug);
   const stock = stockLevel(product);
@@ -71,20 +72,9 @@ export function ProductDetail({
     markViewed(product.slug);
   }, [product.slug, markViewed]);
 
-  useEffect(() => {
-    setGalleryIndex(0);
-  }, [product.slug]);
-
-  useEffect(() => {
-    if (!variant) return;
-
-    if (
-      size &&
-      !variant.inStock.includes(size)
-    ) {
-      setSize(null);
-    }
-  }, [variant, size]);
+  // Gallery position resets per product because the page keys this
+  // component by slug. A chosen size that the newly selected colourway
+  // doesn't stock is treated as unselected (derived, not synced via effect).
 
   const price = useMemo(() => {
     if (!subscribe || !product.nutrition) {

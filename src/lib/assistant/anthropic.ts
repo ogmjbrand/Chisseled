@@ -158,7 +158,6 @@ export async function runAssistantTurn(
   const seenSlugs = new Set<string>();
 
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round += 1) {
-    // eslint-disable-next-line no-await-in-loop
     const response = await callAnthropic(apiKey, messages, system);
 
     const toolUses = response.content.filter((b): b is AnthropicToolUseBlock => b.type === "tool_use");
@@ -169,8 +168,6 @@ export async function runAssistantTurn(
     }
 
     messages.push({ role: "assistant", content: response.content });
-
-    // eslint-disable-next-line no-await-in-loop
     const toolResults = await Promise.all(
       toolUses.map(async (call) => {
         const input = call.input as { query?: string; category?: string };

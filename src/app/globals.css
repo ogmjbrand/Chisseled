@@ -70,6 +70,8 @@
   /* --- SIGNAL: semantic only --- */
   --color-signal-low: #c9743f;
   --color-signal-out: #7a3f3f;
+  /* Readable error ink on obsidian (6.9:1) — signal-out is a surface/mark colour, not text. */
+  --color-signal-alert: #f39a9a;
 
   /* --- TYPE FAMILIES --- */
   --font-display: var(--font-archivo), "Archivo", "Helvetica Neue", Arial, sans-serif;

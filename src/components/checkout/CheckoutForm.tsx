@@ -173,7 +173,7 @@ export function CheckoutForm({ currency, defaultCountry, countries, providers, s
         {/* Shipping method */}
         <fieldset>
           <legend className="display-sm mb-5 text-bone">Delivery method</legend>
-          {quote?.shippingError && <p className="text-body-sm" style={{ color: "var(--color-signal-out)" }}>{quote.shippingError}</p>}
+          {quote?.shippingError && <p className="text-body-sm" style={{ color: "var(--color-signal-alert)" }}>{quote.shippingError}</p>}
           <div className="space-y-2">
             {quote?.shippingOptions.map((o) => (
               <label key={o.id} className={`flex cursor-pointer items-center justify-between gap-4 border px-4 py-3.5 text-body-sm ${rateId === o.id ? "border-purple bg-purple/10" : "border-bone/12"}`}>
@@ -203,7 +203,7 @@ export function CheckoutForm({ currency, defaultCountry, countries, providers, s
         <fieldset>
           <legend className="display-sm mb-5 text-bone">Payment</legend>
           {providers.length === 0 ? (
-            <p className="text-body-sm" style={{ color: "var(--color-signal-out)" }}>
+            <p className="text-body-sm" style={{ color: "var(--color-signal-alert)" }}>
               Online payment isn&apos;t available right now. Please try again later.
             </p>
           ) : (
@@ -240,7 +240,7 @@ export function CheckoutForm({ currency, defaultCountry, countries, providers, s
               <div className="min-w-0 flex-1 text-body-sm">
                 <p className="truncate text-bone">{i.name}</p>
                 {i.variant && <p className="text-caption text-smoke">{i.variant}</p>}
-                {i.problem && <p className="text-caption" style={{ color: "var(--color-signal-out)" }}>{i.problem}</p>}
+                {i.problem && <p className="text-caption" style={{ color: "var(--color-signal-alert)" }}>{i.problem}</p>}
               </div>
               <p className="numeric text-body-sm text-bone">{money(i.totalCents)}</p>
             </li>
@@ -270,7 +270,7 @@ export function CheckoutForm({ currency, defaultCountry, countries, providers, s
           </button>
         </div>
         {quote?.discountError && appliedCode && (
-          <p className="-mt-3 mb-4 text-caption" style={{ color: "var(--color-signal-out)" }}>{quote.discountError}</p>
+          <p className="-mt-3 mb-4 text-caption" style={{ color: "var(--color-signal-alert)" }}>{quote.discountError}</p>
         )}
 
         <dl className="space-y-2 border-t border-bone/10 pt-4 text-body-sm">
@@ -286,7 +286,7 @@ export function CheckoutForm({ currency, defaultCountry, countries, providers, s
         </dl>
 
         {state.error && (
-          <p role="alert" className="mt-5 text-body-sm" style={{ color: "var(--color-signal-out)" }}>{state.error}</p>
+          <p role="alert" className="mt-5 text-body-sm" style={{ color: "var(--color-signal-alert)" }}>{state.error}</p>
         )}
 
         <button

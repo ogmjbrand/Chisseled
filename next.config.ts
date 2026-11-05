@@ -24,6 +24,8 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizePackageImports: ["react", "react-dom"],
+    // Admin product-image uploads go through a server action (validated, max 8 MB).
+    serverActions: { bodySizeLimit: "10mb" },
   },
 
   async headers() {

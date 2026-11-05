@@ -212,7 +212,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         if (!p.variants[0] || (p.sizes.length > 0 && !size)) continue;
         // Sequential, not parallel: each call reads-then-writes the same
         // cart, and concurrent writes to one cart can race.
-        // eslint-disable-next-line no-await-in-loop
         await add({ slug: p.slug, colorway: p.variants[0].colorway, size, qty: 1 });
       }
     },

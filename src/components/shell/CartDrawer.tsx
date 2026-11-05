@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { COLORWAYS } from "@/lib/art";
 import { FREE_SHIPPING_THRESHOLD, formatPrice } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -34,18 +34,16 @@ export function CartDrawer({ kitProducts }: { kitProducts: Product[] }) {
   const [leaving, setLeaving] = useState<Set<string>>(new Set());
   const removeLine = (id: string) => {
     setLeaving((prev) => new Set(prev).add(id));
-    window.setTimeout(() => remove(id), 360);
+    window.setTimeout(async () => {
+      await remove(id);
+      // The server has confirmed the line gone; its "leaving" flag has done its job.
+      setLeaving((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 360);
   };
-
-  // Once the server confirms a line gone, its "leaving" flag has done its
-  // job — drop it so the set doesn't keep every id removed all session.
-  useEffect(() => {
-    const ids = new Set(lines.map((l) => l.id));
-    setLeaving((prev) => {
-      const next = new Set([...prev].filter((id) => ids.has(id)));
-      return next.size === prev.size ? prev : next;
-    });
-  }, [lines]);
 
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);

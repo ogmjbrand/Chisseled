@@ -27,11 +27,15 @@ export function SearchOverlay({ realProductHandles }: { realProductHandles: stri
   useEscape(searchOpen, () => setSearchOpen(false));
   const trapRef = useFocusTrap<HTMLDivElement>(searchOpen);
 
+  // Clear the query when the panel closes (adjusted during render, not in an effect).
+  const [wasOpen, setWasOpen] = useState(searchOpen);
+  if (wasOpen !== searchOpen) {
+    setWasOpen(searchOpen);
+    if (!searchOpen) setQuery("");
+  }
+
   useEffect(() => {
-    if (!searchOpen) {
-      setQuery("");
-      return;
-    }
+    if (!searchOpen) return;
     const t = window.setTimeout(() => inputRef.current?.focus(), 80);
     return () => window.clearTimeout(t);
   }, [searchOpen]);

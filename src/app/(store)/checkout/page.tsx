@@ -64,7 +64,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Pro
       <p className="eyebrow mb-4">Secure checkout</p>
       <h1 className="display-md mb-10 text-bone">Complete your order.</h1>
       {error && ERRORS[error] && (
-        <p role="alert" className="mb-8 border border-bone/15 bg-carbon px-5 py-4 text-body-sm" style={{ color: "var(--color-signal-out)" }}>
+        <p role="alert" className="mb-8 border border-bone/15 bg-carbon px-5 py-4 text-body-sm" style={{ color: "var(--color-signal-alert)" }}>
           {ERRORS[error]}
         </p>
       )}

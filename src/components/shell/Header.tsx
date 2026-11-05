@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { NAV } from "@/lib/nav";
 import { useStore } from "@/lib/store";
@@ -40,9 +40,14 @@ export function Header() {
   useEscape(Boolean(openSection) || mobileOpen, closeAll);
   useScrollLock(mobileOpen);
 
-  useEffect(() => {
-    closeAll();
-  }, [pathname, closeAll]);
+  // Close menus on navigation — adjusted during render rather than in an
+  // effect, so there is no frame where the old menu shows on the new page.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setOpenSection(null);
+    setMobileOpen(false);
+  }
 
   // A short grace period stops the menu snapping shut as the pointer
   // crosses the gap between the trigger and the panel.
